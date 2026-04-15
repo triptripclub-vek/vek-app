@@ -1,68 +1,60 @@
-# 🚀 ENTREGA 2A — index.html COMPLETO
-
-## Reemplaza TODO tu archivo actual en GitHub
-
----
-
 ```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VEK</title>
+<title>VEK APP</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box}
 body{
-margin:0;
 font-family:Arial,Helvetica,sans-serif;
-background:#f4f6fb;
+background:#eef2f7;
 color:#111;
 }
 .topbar{
-background:#0f172a;
+background:#08152f;
 color:#fff;
-text-align:center;
 padding:12px;
-font-weight:bold;
+text-align:center;
+font-weight:700;
 font-size:15px;
 }
-#countdown{
-color:#22c55e;
-font-weight:bold;
-}
 .hero{
-padding:30px 20px;
-text-align:center;
-background:linear-gradient(135deg,#1e3a8a,#2563eb);
+background:linear-gradient(135deg,#173fbc,#2f66ff);
 color:#fff;
+padding:45px 20px;
+text-align:center;
 }
 .hero h1{
-font-size:34px;
-margin:10px 0;
+font-size:42px;
+margin-bottom:12px;
 }
 .hero p{
-font-size:18px;
-opacity:.95;
+font-size:20px;
+max-width:700px;
+margin:auto;
 }
 .wrap{
-max-width:460px;
+max-width:520px;
 margin:auto;
 padding:20px;
 }
 .box{
 background:#fff;
-padding:22px;
+padding:24px;
 border-radius:18px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
-margin-top:20px;
+margin-top:18px;
 }
 input,select{
 width:100%;
-padding:13px;
+padding:14px;
 margin:8px 0;
-border:1px solid #d7d7d7;
+border:1px solid #d9d9d9;
 border-radius:12px;
 font-size:15px;
 }
@@ -76,187 +68,223 @@ font-size:16px;
 font-weight:bold;
 cursor:pointer;
 }
-.btn-primary{
-background:#16a34a;
-color:#fff;
-}
-.btn-secondary{
-background:#1e3a8a;
-color:#fff;
-}
-.btn-light{
-background:#eef2ff;
-color:#1e3a8a;
-}
+.primary{background:#16a34a;color:#fff}
+.secondary{background:#1d4ed8;color:#fff}
+.light{background:#eff6ff;color:#1d4ed8}
 .card{
 background:#fff;
-padding:16px;
+padding:18px;
 border-radius:14px;
-margin:12px 0;
+margin:14px 0;
 box-shadow:0 6px 16px rgba(0,0,0,.06);
 }
 .center{text-align:center}
 .link{
-margin-top:10px;
 display:block;
-color:#1e3a8a;
+margin-top:10px;
+text-align:center;
+color:#1d4ed8;
 font-weight:bold;
 cursor:pointer;
-text-align:center;
 }
-.small{
-font-size:13px;
-color:#666;
+.small{font-size:13px;color:#666}
+.feature{
+padding:8px 0;
+font-size:16px;
 }
 .wa{
 position:fixed;
 right:18px;
 bottom:18px;
-width:58px;
-height:58px;
+width:60px;
+height:60px;
 border-radius:50%;
 background:#25D366;
 display:flex;
 align-items:center;
 justify-content:center;
+font-size:30px;
 color:#fff;
-font-size:28px;
 text-decoration:none;
-box-shadow:0 8px 20px rgba(0,0,0,.2);
-z-index:99;
-}
-.features{
-padding:10px 0;
-}
-.features div{
-padding:8px 0;
-font-size:15px;
+box-shadow:0 10px 20px rgba(0,0,0,.2);
+z-index:999;
 }
 </style>
 </head>
-
 <body>
 
 <div id="app"></div>
-
-<a class="wa" id="waBtn" href="https://wa.me/5219999999999" target="_blank">✆</a>
+<a class="wa" id="wabtn" href="https://wa.me/5219999999999" target="_blank">✆</a>
 
 <script>
-const APP = document.getElementById("app");
+/* CONFIG */
+const SUPABASE_URL = "https://fztcpxdlakbregupsush.supabase.co";
+const SUPABASE_KEY = "sb_publishable_aq7SNHs2gTQbV9OuD9D50Q_V6CFl8eJ";
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const app = document.getElementById("app");
+
 const params = new URLSearchParams(location.search);
 const ref = params.get("ref");
-const user = localStorage.getItem("vek_user");
+const sesion = localStorage.getItem("vek_user");
 
-/* Inicio automático */
-if(user){
-inicio(user);
-}else if(ref){
+/* INICIO */
+boot();
+
+function boot(){
+if(sesion){
+inicio(sesion);
+return;
+}
+if(ref){
 landing(ref);
-}else{
+return;
+}
 login();
 }
 
 /* CONTADOR */
 setInterval(()=>{
+const el = document.getElementById("timer");
+if(!el) return;
 let now = new Date();
 let end = new Date();
 end.setHours(23,59,59,999);
 let diff = end-now;
-
 let h = Math.floor(diff/1000/60/60);
 let m = Math.floor((diff/1000/60)%60);
 let s = Math.floor((diff/1000)%60);
-
-let el = document.getElementById("countdown");
-if(el){
-el.innerText = h+"h "+m+"m "+s+"s";
-}
+el.innerText = `${h}h ${m}m ${s}s`;
 },1000);
 
 /* LOGIN */
 function login(){
-APP.innerHTML = `
+app.innerHTML = `
 <div class="hero">
 <h1>VEK SYSTEM</h1>
-<p>Accede a tu oficina virtual</p>
+<p>Tu oficina digital inteligente</p>
 </div>
 
 <div class="wrap">
 <div class="box">
 <h2 class="center">🔐 Iniciar Sesión</h2>
 
-<input id="u" placeholder="Usuario">
-<input id="p" type="password" placeholder="Contraseña">
+<input id="lu" placeholder="Usuario">
+<input id="lp" type="password" placeholder="Contraseña">
 
-<button class="btn-secondary" onclick="entrar()">Ingresar</button>
+<button class="secondary" onclick="loginUser()">Ingresar</button>
 
 <span class="link" onclick="recuperar()">Recuperar contraseña</span>
-<span class="link" onclick="admin()">Acceso Admin</span>
+<span class="link" onclick="adminLogin()">Acceso Admin</span>
 
 <p class="small center">Demo: demo123 / 1234</p>
 </div>
-</div>
-`;
+</div>`;
 }
 
-/* LOGIN USER */
-function entrar(){
-let u = val("u");
-let p = val("p");
+/* LOGIN USER REAL */
+async function loginUser(){
+let u = val("lu");
+let p = val("lp");
 
-if(u==="demo123" && p==="1234"){
-localStorage.setItem("vek_user",u);
-inicio(u);
+const {data,error} = await sb
+.from("users")
+.select("*")
+.eq("username",u)
+.eq("password",p)
+.limit(1);
+
+if(error || !data || data.length===0){
+alert("Datos incorrectos");
 return;
 }
 
-let data = JSON.parse(localStorage.getItem("vek_users") || "[]");
-
-let ok = data.find(x=>x.username===u && x.password===p);
-
-if(ok){
 localStorage.setItem("vek_user",u);
 inicio(u);
-}else{
-alert("Datos incorrectos");
 }
+
+/* PANEL USUARIO */
+function inicio(user){
+const link = location.origin + location.pathname + "?ref=" + user;
+
+app.innerHTML = `
+<div class="hero">
+<h1>Bienvenido</h1>
+<p>${user}</p>
+</div>
+
+<div class="wrap">
+
+<div class="card center">
+🔗 Tu enlace personal:<br><br>
+<b>${link}</b>
+</div>
+
+<button class="primary" onclick="copyLink('${link}')">Copiar enlace</button>
+<button class="secondary" onclick="logout()">Cerrar sesión</button>
+
+</div>`;
+}
+
+function copyLink(link){
+navigator.clipboard.writeText(link);
+alert("Enlace copiado");
+}
+
+function logout(){
+localStorage.removeItem("vek_user");
+location.href = location.pathname;
 }
 
 /* RECUPERAR */
 function recuperar(){
-alert("Módulo activo en Entrega 2B");
+alert("Entrega 2B");
 }
 
 /* ADMIN */
-function admin(){
-let u = prompt("Usuario admin");
+function adminLogin(){
+let u = prompt("Usuario Admin");
 let p = prompt("Contraseña");
 
 if(u==="admin" && p==="admin123"){
-APP.innerHTML=`
-<div class="wrap">
-<div class="box">
-<h2>👑 Panel Admin</h2>
-<div class="card">Acceso correcto</div>
-<div class="card">Entrega 2A instalada</div>
-<button class="btn-secondary" onclick="salir()">Cerrar sesión</button>
-</div>
-</div>`;
+panelAdmin();
 }else{
 alert("Acceso denegado");
 }
 }
 
+async function panelAdmin(){
+const {data} = await sb.from("users").select("*");
+
+let filas = "";
+(data || []).forEach(x=>{
+filas += `<div class="card">${x.username} - ${x.nombre || ""}</div>`;
+});
+
+app.innerHTML = `
+<div class="hero">
+<h1>ADMIN</h1>
+<p>Backoffice VEK</p>
+</div>
+
+<div class="wrap">
+${filas}
+<button class="secondary" onclick="logout()">Salir</button>
+</div>`;
+}
+
 /* LANDING */
 function landing(ref){
-APP.innerHTML = `
+document.getElementById("wabtn").href = "https://wa.me/5219999999999";
+
+app.innerHTML = `
 <div class="topbar">
-🔥 PROMOCIÓN TERMINA EN <span id="countdown">...</span>
+🔥 PROMOCIÓN TERMINA EN <span id="timer">...</span>
 </div>
 
 <div class="hero">
 <h1>Transforma Tu Futuro</h1>
-<p>Únete gratis al sistema que está cambiando vidas.</p>
+<p>Únete gratis al sistema que está cambiando vidas y genera ingresos con apoyo profesional.</p>
 </div>
 
 <div class="wrap">
@@ -265,12 +293,10 @@ APP.innerHTML = `
 👤 Tu patrocinador: <b>${ref}</b>
 </div>
 
-<div class="features">
-<div>✅ Plataforma digital profesional</div>
-<div>✅ Capacitación constante</div>
-<div>✅ Sistema duplicable</div>
-<div>✅ Comunidad de crecimiento</div>
-</div>
+<div class="feature">✅ Plataforma digital profesional</div>
+<div class="feature">✅ Capacitación constante</div>
+<div class="feature">✅ Sistema duplicable</div>
+<div class="feature">✅ Comunidad de crecimiento</div>
 
 <div class="box">
 <h2 class="center">🚀 Regístrate Gratis Ahora</h2>
@@ -279,85 +305,66 @@ APP.innerHTML = `
 <input id="rn" placeholder="Nombre completo">
 <input id="re" placeholder="Email">
 <input id="rt" placeholder="Teléfono">
-<input id="rp" placeholder="País">
+<input id="rpais" placeholder="País">
 <input id="rc" type="password" placeholder="Crear contraseña">
 
-<button class="btn-primary" onclick="guardar('${ref}')">
-Registrarme Gratis
-</button>
-
-<button class="btn-light" onclick="login()">
-Ya tengo cuenta
-</button>
+<button class="primary" onclick="registrar('${ref}')">Registrarme Gratis</button>
+<button class="light" onclick="login()">Ya tengo cuenta</button>
 </div>
 
-</div>
-`;
+</div>`;
 }
 
-/* GUARDAR NUEVO */
-function guardar(ref){
+/* REGISTRO REAL */
+async function registrar(ref){
 let username = val("ru");
 let nombre = val("rn");
 let email = val("re");
 let telefono = val("rt");
-let pais = val("rp");
+let pais = val("rpais");
 let password = val("rc");
 
-if(!username || !password || !nombre){
-alert("Completa los campos requeridos");
+if(!username || !nombre || !password){
+alert("Completa campos requeridos");
 return;
 }
 
-let data = JSON.parse(localStorage.getItem("vek_users") || "[]");
+/* verificar existente */
+const existe = await sb
+.from("users")
+.select("username")
+.eq("username",username);
 
-if(data.find(x=>x.username===username)){
+if(existe.data && existe.data.length>0){
 alert("Ese usuario ya existe");
 return;
 }
 
-data.push({
-username,nombre,email,telefono,pais,password,sponsor:ref
-});
+const {error} = await sb
+.from("users")
+.insert([{
+username,
+password,
+nombre,
+email,
+telefono,
+pais
+}]);
 
-localStorage.setItem("vek_users",JSON.stringify(data));
+if(error){
+alert("Error al registrar");
+return;
+}
+
+/* patrocinado */
+await sb.from("patrocinados").insert([{
+sponsor: ref,
+user_id: username,
+nombre: nombre
+}]);
 
 alert("Cuenta creada correctamente");
 login();
-}
-
-/* INICIO */
-function inicio(u){
-APP.innerHTML = `
-<div class="hero">
-<h1>Bienvenido</h1>
-<p>${u}</p>
-</div>
-
-<div class="wrap">
-<div class="card">
-🔗 Tu enlace personal:<br><br>
-<b>${location.origin}${location.pathname}?ref=${u}</b>
-</div>
-
-<button class="btn-primary" onclick="copiar('${u}')">Copiar enlace</button>
-<button class="btn-secondary" onclick="salir()">Cerrar sesión</button>
-</div>
-`;
-}
-
-/* COPIAR */
-function copiar(u){
-navigator.clipboard.writeText(
-location.origin + location.pathname + "?ref=" + u
-);
-alert("Enlace copiado");
-}
-
-/* SALIR */
-function salir(){
-localStorage.removeItem("vek_user");
-location.href = location.pathname;
 }
 
 /* HELPERS */
@@ -365,7 +372,6 @@ function val(id){
 return document.getElementById(id).value.trim();
 }
 </script>
-
 </body>
 </html>
 ```
