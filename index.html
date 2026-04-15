@@ -1,215 +1,194 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VEK</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEK APP</title>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:#eef1f5;
-}
-.box{
-max-width:430px;
-margin:35px auto;
-background:#fff;
-padding:25px;
-border-radius:16px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-input,select{
-width:100%;
-padding:12px;
-margin:8px 0;
-border:1px solid #ccc;
-border-radius:10px;
-box-sizing:border-box;
-}
-button{
-width:100%;
-padding:14px;
-margin-top:10px;
-border:none;
-border-radius:10px;
-background:#21409a;
-color:#fff;
-font-weight:bold;
-cursor:pointer;
-}
-.card{
-background:#fff;
-padding:15px;
-border-radius:14px;
-margin:10px 0;
-box-shadow:0 6px 18px rgba(0,0,0,.08);
-}
-.small{font-size:13px;color:#666}
-.link{
-color:#21409a;
-cursor:pointer;
-font-weight:bold;
-margin-top:10px;
-display:block;
-text-align:center;
-}
+body{font-family:Arial;background:#f2f2f2;margin:0;padding:20px}
+.card{padding:15px;border-radius:10px;margin:10px 0;color:#fff;text-align:center}
+.red{background:#e53935}
+.orange{background:#fb8c00}
+.green{background:#43a047}
+button{width:100%;padding:12px;margin:5px 0;border:none;border-radius:8px;background:#1e3a8a;color:white}
+input{width:100%;padding:10px;margin:5px 0;border-radius:6px;border:1px solid #ccc}
+.hidden{display:none}
 </style>
-</head>
 
+</head>
 <body>
-<div id="app"></div>
+
+<div id="login">
+<h2>🔐 Login</h2>
+<input id="user" placeholder="Usuario">
+<input id="pass" type="password" placeholder="Contraseña">
+<button onclick="login()">Ingresar</button>
+<p onclick="showRegister()" style="color:blue">Crear cuenta</p>
+</div>
+
+<div id="register" class="hidden">
+<h2>Registro</h2>
+<input id="newuser" placeholder="Usuario">
+<input id="newpass" placeholder="Contraseña">
+<input id="newname" placeholder="Nombre">
+<button onclick="register()">Crear</button>
+<button onclick="backLogin()">Volver</button>
+</div>
+
+<div id="app" class="hidden">
+<h2>Dashboard</h2>
+
+<div class="card red" id="pub">Publicaciones 0</div>
+<div class="card orange" id="pros">Prospectos 0</div>
+<div class="card orange" id="conv">Conversaciones 0</div>
+<div class="card green" id="cal">Calificados 0</div>
+
+<button onclick="openAct()">Actividad diaria</button> <button onclick="openPatro()">Patrocinados</button> <button onclick="openVol()">Volumen</button> <button onclick="logout()">Cerrar sesión</button>
+
+</div>
+
+<div id="act" class="hidden">
+<h2>Actividad</h2>
+<input id="a1" placeholder="Publicaciones">
+<input id="a2" placeholder="Prospectos">
+<input id="a3" placeholder="Conversaciones">
+<input id="a4" placeholder="Calificados">
+<button onclick="saveAct()">Guardar</button>
+<button onclick="back()">Volver</button>
+</div>
+
+<div id="patro" class="hidden">
+<h2>Patrocinados</h2>
+<div id="lista"></div>
+<input id="np" placeholder="Nombre">
+<button onclick="addPatro()">Agregar</button>
+<button onclick="back()">Volver</button>
+</div>
+
+<div id="vol" class="hidden">
+<h2>Volumen</h2>
+<div id="vdata"></div>
+<button onclick="back()">Volver</button>
+</div>
 
 <script>
-const supabase = window.supabase.createClient(
+const supabaseClient = supabase.createClient(
 "https://fztcpxdlakbregupsush.supabase.co",
 "sb_publishable_aq7SNHs2gTQbV9OuD9D50Q_V6CFl8eJ"
 );
 
-let params = new URLSearchParams(window.location.search);
-let ref = params.get("ref");
+let user=null;
 
-let user = localStorage.getItem("vek_user");
-let role = localStorage.getItem("vek_role");
+/* LOGIN REAL */
+async function login(){
+let u=userInput("user");
+let p=userInput("pass");
 
-if(user){
-inicio();
-}else if(ref){
-landing();
-}else{
-login();
-}
-
-function login(){
-document.getElementById("app").innerHTML=`
-<div class="box">
-<h2>🔐 Login</h2>
-<input id="u" placeholder="Usuario">
-<input id="p" type="password" placeholder="Contraseña">
-<button onclick="ingresar()">Ingresar</button>
-<span class="link" onclick="adminLogin()">Admin</span>
-<p class="small">Si tienes link referido entra por ese enlace.</p>
-</div>`;
-}
-
-function landing(){
-document.getElementById("app").innerHTML=`
-<div class="box">
-<h2>🚀 Únete a VEK</h2>
-<div class="card">Patrocinador: ${ref}</div>
-
-<button onclick="registro()">Regístrate gratis ahora</button>
-<button onclick="login()">Ya tengo cuenta</button>
-</div>`;
-}
-
-function registro(){
-document.getElementById("app").innerHTML=`
-<div class="box">
-<h2>📝 Crear Cuenta</h2>
-
-<input id="ru" placeholder="Nombre de usuario">
-<input id="rn" placeholder="Nombre completo">
-<input id="re" placeholder="Email">
-<input id="rt" placeholder="Teléfono">
-<input id="rp" placeholder="País">
-<input id="rc" type="password" placeholder="Contraseña">
-
-<button onclick="guardarRegistro()">Crear Cuenta</button>
-</div>`;
-}
-
-async function guardarRegistro(){
-let username = val("ru");
-let nombre = val("rn");
-let email = val("re");
-let telefono = val("rt");
-let pais = val("rp");
-let password = val("rc");
-
-let {error} = await supabase.from("users").insert([{
-username,password,nombre,email,telefono,pais,sponsor:ref
-}]);
-
-if(error){
-alert("Usuario existente o error");
-return;
-}
-
-alert("Cuenta creada correctamente");
-login();
-}
-
-async function ingresar(){
-let u = val("u");
-let p = val("p");
-
-let {data,error} = await supabase
-.from("users")
+let {data}=await supabaseClient.from("users")
 .select("*")
 .eq("username",u)
 .eq("password",p);
 
-if(data && data.length>0){
-localStorage.setItem("vek_user",u);
-localStorage.setItem("vek_role","user");
-inicio();
+if(data && data.length){
+user=u;
+show("app");
+loadKPIs();
 }else{
 alert("Datos incorrectos");
 }
 }
 
-function inicio(){
-let u = localStorage.getItem("vek_user");
+/* REGISTRO */
+async function register(){
+await supabaseClient.from("users").insert([{
+username:userInput("newuser"),
+password:userInput("newpass"),
+nombre:userInput("newname")
+}]);
 
-document.getElementById("app").innerHTML=`
-<div class="box">
-<h2>🏠 Inicio</h2>
-
-<div class="card">👤 Usuario: ${u}</div>
-
-<div class="card">
-🔗 Tu enlace:<br>
-${location.origin + location.pathname}?ref=${u}
-</div>
-
-<button onclick="copiar()">Copiar enlace</button>
-<button onclick="logout()">Cerrar sesión</button>
-</div>`;
+alert("Usuario creado");
+backLogin();
 }
 
-function copiar(){
-let u = localStorage.getItem("vek_user");
-navigator.clipboard.writeText(location.origin + location.pathname + "?ref=" + u);
-alert("Enlace copiado");
-}
+/* KPIs */
+async function loadKPIs(){
+let {data}=await supabaseClient.from("activity")
+.select("*")
+.eq("user_id",user);
 
-function adminLogin(){
-let u=prompt("Usuario admin");
-let p=prompt("Password");
-
-if(u==="admin" && p==="admin123"){
-document.getElementById("app").innerHTML=`
-<div class="box">
-<h2>👑 Admin</h2>
-<div class="card">Entrega 2 instalada</div>
-<button onclick="logout()">Salir</button>
-</div>`;
-}else{
-alert("Acceso denegado");
+if(data && data.length){
+let d=data[0];
+set("pub","Publicaciones "+d.publicaciones);
+set("pros","Prospectos "+d.prospectos);
+set("conv","Conversaciones "+d.conversaciones);
+set("cal","Calificados "+d.calificados);
 }
 }
 
-function logout(){
-localStorage.clear();
-window.location.href=location.pathname;
+/* ACTIVIDAD */
+function openAct(){show("act")}
+async function saveAct(){
+await supabaseClient.from("activity").upsert([{
+user_id:user,
+publicaciones:userInput("a1"),
+prospectos:userInput("a2"),
+conversaciones:userInput("a3"),
+calificados:userInput("a4")
+}]);
+alert("Guardado");
+back();
+loadKPIs();
 }
 
-function val(id){
-return document.getElementById(id).value.trim();
+/* PATRO */
+function openPatro(){show("patro");loadPatro()}
+async function addPatro(){
+await supabaseClient.from("patrocinados").insert([{
+sponsor:user,
+user_id:user,
+nombre:userInput("np")
+}]);
+loadPatro();
 }
+async function loadPatro(){
+let {data}=await supabaseClient.from("patrocinados")
+.select("*").eq("sponsor",user);
+
+let html="";
+if(data) data.forEach(p=>html+=`<p>${p.nombre}</p>`);
+setHTML("lista",html);
+}
+
+/* VOLUMEN */
+function openVol(){show("vol");loadVol()}
+async function loadVol(){
+let {data}=await supabaseClient.from("patrocinados")
+.select("*").eq("sponsor",user);
+
+set("vdata","Total: "+(data?data.length:0));
+}
+
+/* UI */
+function show(id){
+["login","register","app","act","patro","vol"].forEach(x=>{
+document.getElementById(x).classList.add("hidden")
+});
+document.getElementById(id).classList.remove("hidden");
+}
+function back(){show("app")}
+function showRegister(){show("register")}
+function backLogin(){show("login")}
+function logout(){location.reload()}
+
+/* helpers */
+function userInput(id){return document.getElementById(id).value}
+function set(id,val){document.getElementById(id).innerText=val}
+function setHTML(id,val){document.getElementById(id).innerHTML=val}
 </script>
+
 </body>
 </html>
