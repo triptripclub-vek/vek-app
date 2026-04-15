@@ -1,3 +1,10 @@
+# 🚀 ENTREGA 2A — index.html COMPLETO
+
+## Reemplaza TODO tu archivo actual en GitHub
+
+---
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,48 +13,124 @@
 <title>VEK</title>
 
 <style>
+*{box-sizing:border-box}
 body{
 margin:0;
-font-family:Arial;
-background:#eef1f5;
+font-family:Arial,Helvetica,sans-serif;
+background:#f4f6fb;
+color:#111;
+}
+.topbar{
+background:#0f172a;
+color:#fff;
+text-align:center;
+padding:12px;
+font-weight:bold;
+font-size:15px;
+}
+#countdown{
+color:#22c55e;
+font-weight:bold;
+}
+.hero{
+padding:30px 20px;
+text-align:center;
+background:linear-gradient(135deg,#1e3a8a,#2563eb);
+color:#fff;
+}
+.hero h1{
+font-size:34px;
+margin:10px 0;
+}
+.hero p{
+font-size:18px;
+opacity:.95;
+}
+.wrap{
+max-width:460px;
+margin:auto;
+padding:20px;
 }
 .box{
-max-width:420px;
-margin:40px auto;
 background:#fff;
-padding:25px;
-border-radius:16px;
+padding:22px;
+border-radius:18px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
+margin-top:20px;
 }
-input{
+input,select{
 width:100%;
-padding:12px;
+padding:13px;
 margin:8px 0;
-border:1px solid #ccc;
-border-radius:10px;
-box-sizing:border-box;
+border:1px solid #d7d7d7;
+border-radius:12px;
+font-size:15px;
 }
 button{
 width:100%;
 padding:14px;
 margin-top:10px;
 border:none;
-border-radius:10px;
-background:#21409a;
-color:#fff;
+border-radius:12px;
+font-size:16px;
 font-weight:bold;
 cursor:pointer;
 }
+.btn-primary{
+background:#16a34a;
+color:#fff;
+}
+.btn-secondary{
+background:#1e3a8a;
+color:#fff;
+}
+.btn-light{
+background:#eef2ff;
+color:#1e3a8a;
+}
 .card{
 background:#fff;
-padding:15px;
+padding:16px;
 border-radius:14px;
-margin:10px 0;
-box-shadow:0 6px 18px rgba(0,0,0,.08);
+margin:12px 0;
+box-shadow:0 6px 16px rgba(0,0,0,.06);
+}
+.center{text-align:center}
+.link{
+margin-top:10px;
+display:block;
+color:#1e3a8a;
+font-weight:bold;
+cursor:pointer;
+text-align:center;
 }
 .small{
 font-size:13px;
-color:#777;
+color:#666;
+}
+.wa{
+position:fixed;
+right:18px;
+bottom:18px;
+width:58px;
+height:58px;
+border-radius:50%;
+background:#25D366;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#fff;
+font-size:28px;
+text-decoration:none;
+box-shadow:0 8px 20px rgba(0,0,0,.2);
+z-index:99;
+}
+.features{
+padding:10px 0;
+}
+.features div{
+padding:8px 0;
+font-size:15px;
 }
 </style>
 </head>
@@ -56,94 +139,233 @@ color:#777;
 
 <div id="app"></div>
 
-<script>
-let user = localStorage.getItem("vek_user");
-let role = localStorage.getItem("vek_role");
+<a class="wa" id="waBtn" href="https://wa.me/5219999999999" target="_blank">✆</a>
 
-if(user && role==="user"){
-dashboard();
-}else if(user && role==="admin"){
-admin();
+<script>
+const APP = document.getElementById("app");
+const params = new URLSearchParams(location.search);
+const ref = params.get("ref");
+const user = localStorage.getItem("vek_user");
+
+/* Inicio automático */
+if(user){
+inicio(user);
+}else if(ref){
+landing(ref);
 }else{
 login();
 }
 
+/* CONTADOR */
+setInterval(()=>{
+let now = new Date();
+let end = new Date();
+end.setHours(23,59,59,999);
+let diff = end-now;
+
+let h = Math.floor(diff/1000/60/60);
+let m = Math.floor((diff/1000/60)%60);
+let s = Math.floor((diff/1000)%60);
+
+let el = document.getElementById("countdown");
+if(el){
+el.innerText = h+"h "+m+"m "+s+"s";
+}
+},1000);
+
+/* LOGIN */
 function login(){
-document.getElementById("app").innerHTML = `
+APP.innerHTML = `
+<div class="hero">
+<h1>VEK SYSTEM</h1>
+<p>Accede a tu oficina virtual</p>
+</div>
+
+<div class="wrap">
 <div class="box">
-<h2>🚀 VEK Login</h2>
+<h2 class="center">🔐 Iniciar Sesión</h2>
 
 <input id="u" placeholder="Usuario">
 <input id="p" type="password" placeholder="Contraseña">
 
-<button onclick="ingresar()">Ingresar</button>
-<button onclick="adminLogin()">Admin</button>
+<button class="btn-secondary" onclick="entrar()">Ingresar</button>
 
-<p class="small">
-Usuario demo: demo123 / 1234
-</p>
+<span class="link" onclick="recuperar()">Recuperar contraseña</span>
+<span class="link" onclick="admin()">Acceso Admin</span>
+
+<p class="small center">Demo: demo123 / 1234</p>
+</div>
 </div>
 `;
 }
 
-function ingresar(){
-let u=document.getElementById("u").value;
-let p=document.getElementById("p").value;
+/* LOGIN USER */
+function entrar(){
+let u = val("u");
+let p = val("p");
 
 if(u==="demo123" && p==="1234"){
 localStorage.setItem("vek_user",u);
-localStorage.setItem("vek_role","user");
-dashboard();
+inicio(u);
+return;
+}
+
+let data = JSON.parse(localStorage.getItem("vek_users") || "[]");
+
+let ok = data.find(x=>x.username===u && x.password===p);
+
+if(ok){
+localStorage.setItem("vek_user",u);
+inicio(u);
 }else{
 alert("Datos incorrectos");
 }
 }
 
-function adminLogin(){
-let u=prompt("Usuario admin");
-let p=prompt("Password");
+/* RECUPERAR */
+function recuperar(){
+alert("Módulo activo en Entrega 2B");
+}
+
+/* ADMIN */
+function admin(){
+let u = prompt("Usuario admin");
+let p = prompt("Contraseña");
 
 if(u==="admin" && p==="admin123"){
-localStorage.setItem("vek_user",u);
-localStorage.setItem("vek_role","admin");
-admin();
+APP.innerHTML=`
+<div class="wrap">
+<div class="box">
+<h2>👑 Panel Admin</h2>
+<div class="card">Acceso correcto</div>
+<div class="card">Entrega 2A instalada</div>
+<button class="btn-secondary" onclick="salir()">Cerrar sesión</button>
+</div>
+</div>`;
 }else{
 alert("Acceso denegado");
 }
 }
 
-function dashboard(){
-document.getElementById("app").innerHTML = `
+/* LANDING */
+function landing(ref){
+APP.innerHTML = `
+<div class="topbar">
+🔥 PROMOCIÓN TERMINA EN <span id="countdown">...</span>
+</div>
+
+<div class="hero">
+<h1>Transforma Tu Futuro</h1>
+<p>Únete gratis al sistema que está cambiando vidas.</p>
+</div>
+
+<div class="wrap">
+
+<div class="card center">
+👤 Tu patrocinador: <b>${ref}</b>
+</div>
+
+<div class="features">
+<div>✅ Plataforma digital profesional</div>
+<div>✅ Capacitación constante</div>
+<div>✅ Sistema duplicable</div>
+<div>✅ Comunidad de crecimiento</div>
+</div>
+
 <div class="box">
-<h2>📊 Inicio Usuario</h2>
+<h2 class="center">🚀 Regístrate Gratis Ahora</h2>
 
-<div class="card">👤 Usuario: demo123</div>
-<div class="card">📈 Sistema base activo</div>
-<div class="card">🔐 Sesión iniciada</div>
+<input id="ru" placeholder="Nombre de usuario">
+<input id="rn" placeholder="Nombre completo">
+<input id="re" placeholder="Email">
+<input id="rt" placeholder="Teléfono">
+<input id="rp" placeholder="País">
+<input id="rc" type="password" placeholder="Crear contraseña">
 
-<button onclick="logout()">Cerrar sesión</button>
+<button class="btn-primary" onclick="guardar('${ref}')">
+Registrarme Gratis
+</button>
+
+<button class="btn-light" onclick="login()">
+Ya tengo cuenta
+</button>
+</div>
+
 </div>
 `;
 }
 
-function admin(){
-document.getElementById("app").innerHTML = `
-<div class="box">
-<h2>👑 Panel Admin</h2>
+/* GUARDAR NUEVO */
+function guardar(ref){
+let username = val("ru");
+let nombre = val("rn");
+let email = val("re");
+let telefono = val("rt");
+let pais = val("rp");
+let password = val("rc");
 
-<div class="card">Usuarios activos: 1</div>
-<div class="card">Sistema listo para Entrega 2</div>
-
-<button onclick="logout()">Cerrar sesión</button>
-</div>
-`;
+if(!username || !password || !nombre){
+alert("Completa los campos requeridos");
+return;
 }
 
-function logout(){
-localStorage.clear();
+let data = JSON.parse(localStorage.getItem("vek_users") || "[]");
+
+if(data.find(x=>x.username===username)){
+alert("Ese usuario ya existe");
+return;
+}
+
+data.push({
+username,nombre,email,telefono,pais,password,sponsor:ref
+});
+
+localStorage.setItem("vek_users",JSON.stringify(data));
+
+alert("Cuenta creada correctamente");
 login();
+}
+
+/* INICIO */
+function inicio(u){
+APP.innerHTML = `
+<div class="hero">
+<h1>Bienvenido</h1>
+<p>${u}</p>
+</div>
+
+<div class="wrap">
+<div class="card">
+🔗 Tu enlace personal:<br><br>
+<b>${location.origin}${location.pathname}?ref=${u}</b>
+</div>
+
+<button class="btn-primary" onclick="copiar('${u}')">Copiar enlace</button>
+<button class="btn-secondary" onclick="salir()">Cerrar sesión</button>
+</div>
+`;
+}
+
+/* COPIAR */
+function copiar(u){
+navigator.clipboard.writeText(
+location.origin + location.pathname + "?ref=" + u
+);
+alert("Enlace copiado");
+}
+
+/* SALIR */
+function salir(){
+localStorage.removeItem("vek_user");
+location.href = location.pathname;
+}
+
+/* HELPERS */
+function val(id){
+return document.getElementById(id).value.trim();
 }
 </script>
 
 </body>
 </html>
+```
