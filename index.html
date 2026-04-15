@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VEK</title>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#eef1f5;
+}
+.box{
+max-width:430px;
+margin:35px auto;
+background:#fff;
+padding:25px;
+border-radius:16px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+input,select{
+width:100%;
+padding:12px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:10px;
+box-sizing:border-box;
+}
+button{
+width:100%;
+padding:14px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:#21409a;
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+}
+.card{
+background:#fff;
+padding:15px;
+border-radius:14px;
+margin:10px 0;
+box-shadow:0 6px 18px rgba(0,0,0,.08);
+}
+.small{font-size:13px;color:#666}
+.link{
+color:#21409a;
+cursor:pointer;
+font-weight:bold;
+margin-top:10px;
+display:block;
+text-align:center;
+}
+</style>
+</head>
+
+<body>
+<div id="app"></div>
+
+<script>
+const supabase = window.supabase.createClient(
+"https://fztcpxdlakbregupsush.supabase.co",
+"sb_publishable_aq7SNHs2gTQbV9OuD9D50Q_V6CFl8eJ"
+);
+
+let params = new URLSearchParams(window.location.search);
+let ref = params.get("ref");
+
+let user = localStorage.getItem("vek_user");
+let role = localStorage.getItem("vek_role");
+
+if(user){
+inicio();
+}else if(ref){
+landing();
+}else{
+login();
+}
+
+function login(){
+document.getElementById("app").innerHTML=`
+<div class="box">
+<h2>🔐 Login</h2>
+<input id="u" placeholder="Usuario">
+<input id="p" type="password" placeholder="Contraseña">
+<button onclick="ingresar()">Ingresar</button>
+<span class="link" onclick="adminLogin()">Admin</span>
+<p class="small">Si tienes link referido entra por ese enlace.</p>
+</div>`;
+}
+
+function landing(){
+document.getElementById("app").innerHTML=`
+<div class="box">
+<h2>🚀 Únete a VEK</h2>
+<div class="card">Patrocinador: ${ref}</div>
+
+<button onclick="registro()">Regístrate gratis ahora</button>
+<button onclick="login()">Ya tengo cuenta</button>
+</div>`;
+}
+
+function registro(){
+document.getElementById("app").innerHTML=`
+<div class="box">
+<h2>📝 Crear Cuenta</h2>
+
+<input id="ru" placeholder="Nombre de usuario">
+<input id="rn" placeholder="Nombre completo">
+<input id="re" placeholder="Email">
+<input id="rt" placeholder="Teléfono">
+<input id="rp" placeholder="País">
+<input id="rc" type="password" placeholder="Contraseña">
+
+<button onclick="guardarRegistro()">Crear Cuenta</button>
+</div>`;
+}
+
+async function guardarRegistro(){
+let username = val("ru");
+let nombre = val("rn");
+let email = val("re");
+let telefono = val("rt");
+let pais = val("rp");
+let password = val("rc");
+
+let {error} = await supabase.from("users").insert([{
+username,password,nombre,email,telefono,pais,sponsor:ref
+}]);
+
+if(error){
+alert("Usuario existente o error");
+return;
+}
+
+alert("Cuenta creada correctamente");
+login();
+}
+
+async function ingresar(){
+let u = val("u");
+let p = val("p");
+
+let {data,error} = await supabase
+.from("users")
+.select("*")
+.eq("username",u)
+.eq("password",p);
+
+if(data && data.length>0){
+localStorage.setItem("vek_user",u);
+localStorage.setItem("vek_role","user");
+inicio();
+}else{
+alert("Datos incorrectos");
+}
+}
+
+function inicio(){
+let u = localStorage.getItem("vek_user");
+
+document.getElementById("app").innerHTML=`
+<div class="box">
+<h2>🏠 Inicio</h2>
+
+<div class="card">👤 Usuario: ${u}</div>
+
+<div class="card">
+🔗 Tu enlace:<br>
+${location.origin + location.pathname}?ref=${u}
+</div>
+
+<button onclick="copiar()">Copiar enlace</button>
+<button onclick="logout()">Cerrar sesión</button>
+</div>`;
+}
+
+function copiar(){
+let u = localStorage.getItem("vek_user");
+navigator.clipboard.writeText(location.origin + location.pathname + "?ref=" + u);
+alert("Enlace copiado");
+}
+
+function adminLogin(){
+let u=prompt("Usuario admin");
+let p=prompt("Password");
+
+if(u==="admin" && p==="admin123"){
+document.getElementById("app").innerHTML=`
+<div class="box">
+<h2>👑 Admin</h2>
+<div class="card">Entrega 2 instalada</div>
+<button onclick="logout()">Salir</button>
+</div>`;
+}else{
+alert("Acceso denegado");
+}
+}
+
+function logout(){
+localStorage.clear();
+window.location.href=location.pathname;
+}
+
+function val(id){
+return document.getElementById(id).value.trim();
+}
+</script>
+</body>
+</html>
