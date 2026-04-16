@@ -1,377 +1,441 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VEK APP</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>VEK App - Entrega 2A Final</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-font-family:Arial,Helvetica,sans-serif;
-background:#eef2f7;
-color:#111;
-}
-.topbar{
-background:#08152f;
-color:#fff;
-padding:12px;
-text-align:center;
-font-weight:700;
-font-size:15px;
-}
-.hero{
-background:linear-gradient(135deg,#173fbc,#2f66ff);
-color:#fff;
-padding:45px 20px;
-text-align:center;
-}
-.hero h1{
-font-size:42px;
-margin-bottom:12px;
-}
-.hero p{
-font-size:20px;
-max-width:700px;
-margin:auto;
-}
-.wrap{
-max-width:520px;
-margin:auto;
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{background:#eef2f7;color:#111}
+.hidden{display:none!important}
+
+/* LOGIN */
+#loginPage{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
 padding:20px;
+background:#e9edf3;
 }
-.box{
+.card{
 background:#fff;
-padding:24px;
+padding:35px;
 border-radius:18px;
+max-width:430px;
+width:100%;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
-margin-top:18px;
+}
+.card h1{
+text-align:center;
+margin-bottom:25px;
+font-size:34px;
+color:#173fcf;
 }
 input,select{
 width:100%;
-padding:14px;
-margin:8px 0;
-border:1px solid #d9d9d9;
+padding:15px;
 border-radius:12px;
-font-size:15px;
+border:1px solid #ccc;
+margin-bottom:14px;
+font-size:16px;
 }
 button{
 width:100%;
-padding:14px;
-margin-top:10px;
+padding:15px;
 border:none;
 border-radius:12px;
-font-size:16px;
+font-size:18px;
 font-weight:bold;
 cursor:pointer;
+margin-bottom:12px;
 }
-.primary{background:#16a34a;color:#fff}
-.secondary{background:#1d4ed8;color:#fff}
-.light{background:#eff6ff;color:#1d4ed8}
-.card{
-background:#fff;
+.btnBlue{background:#1747d1;color:#fff}
+.btnGreen{background:#22c55e;color:#fff}
+.btnDark{background:#111827;color:#fff}
+.small{text-align:center;font-size:14px;color:#666;margin-top:10px}
+
+/* LANDING */
+#landingPage{background:#dce8f7}
+.topTimer{
+position:sticky;
+top:0;
+z-index:999;
+background:#172433;
+color:#fff;
+text-align:center;
+padding:18px 10px;
+font-size:22px;
+font-weight:bold;
+}
+.timerNum{color:#53ff18}
+.section{
+padding:30px 18px;
+text-align:center;
+}
+.badge{
+display:inline-block;
+background:#b8c7ff;
+padding:12px 18px;
+border-radius:14px;
+font-weight:bold;
+margin-bottom:18px;
+}
+h2{
+font-size:46px;
+line-height:1.15;
+margin-bottom:20px;
+font-weight:900;
+}
+.blue{color:#173fcf}
+p{
+font-size:22px;
+line-height:1.45;
+margin-bottom:20px;
+}
+.bigBtn{
+display:block;
+background:#0b84e3;
+color:#fff;
+text-decoration:none;
 padding:18px;
 border-radius:14px;
-margin:14px 0;
-box-shadow:0 6px 16px rgba(0,0,0,.06);
-}
-.center{text-align:center}
-.link{
-display:block;
-margin-top:10px;
-text-align:center;
-color:#1d4ed8;
+font-size:24px;
 font-weight:bold;
-cursor:pointer;
+max-width:760px;
+margin:20px auto;
+box-shadow:0 5px 0 #045f9f;
 }
-.small{font-size:13px;color:#666}
-.feature{
-padding:8px 0;
-font-size:16px;
+img{
+max-width:100%;
+border-radius:18px;
+margin:20px auto;
+display:block;
 }
-.wa{
-position:fixed;
-right:18px;
-bottom:18px;
-width:60px;
-height:60px;
+.titleBlue{
+font-size:34px;
+font-style:italic;
+font-weight:900;
+color:#173fcf;
+margin-top:15px;
+margin-bottom:15px;
+}
+.boxLav{
+background:#bfcaf9;
+padding:28px;
+margin:20px;
+font-size:22px;
+line-height:1.5;
+}
+.testi{
+background:#fff;
+padding:25px;
+margin:25px auto;
+max-width:780px;
+box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+.avatar{
+width:170px;
+height:170px;
 border-radius:50%;
-background:#25D366;
+object-fit:cover;
+margin-top:18px;
+}
+.formWrap{
+background:#fff;
+max-width:800px;
+margin:30px auto;
+padding:30px;
+border-radius:20px;
+}
+.whatsFloat{
+position:fixed;
+bottom:22px;
+right:20px;
+background:#22c55e;
+width:72px;
+height:72px;
+border-radius:50%;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:30px;
+font-size:34px;
 color:#fff;
 text-decoration:none;
-box-shadow:0 10px 20px rgba(0,0,0,.2);
 z-index:999;
+box-shadow:0 8px 18px rgba(0,0,0,.2)
+}
+footer{
+background:#8f8f8f;
+color:#fff;
+text-align:center;
+padding:45px 20px;
+font-size:22px;
+margin-top:0;
+}
+
+/* BACKOFFICE */
+#dashboard{
+min-height:100vh;
+padding:30px;
+background:#eef2f7;
+}
+.panel{
+background:#fff;
+padding:30px;
+border-radius:20px;
+max-width:850px;
+margin:auto;
+}
+.linkbox{
+background:#eef2f7;
+padding:18px;
+border-radius:12px;
+word-break:break-all;
+font-size:20px;
+margin:20px 0;
+}
+
+@media(max-width:768px){
+h2{font-size:30px}
+p{font-size:18px}
+.bigBtn{font-size:21px}
+.topTimer{font-size:16px}
 }
 </style>
 </head>
+
 <body>
 
-<div id="app"></div>
-<a class="wa" id="wabtn" href="https://wa.me/5219999999999" target="_blank">✆</a>
+<!-- LOGIN -->
+<section id="loginPage">
+<div class="card">
+<h1>🚀 VEK Login</h1>
+
+<input id="user" placeholder="Usuario">
+<input id="pass" type="password" placeholder="Contraseña">
+
+<button class="btnBlue" onclick="login()">Ingresar</button>
+<button class="btnDark" onclick="adminLogin()">Admin</button>
+
+<div class="small">Usuario demo: demo123 / 1234</div>
+</div>
+</section>
+
+<!-- LANDING -->
+<section id="landingPage" class="hidden">
+
+<div class="topTimer">
+Obtén registro TOTALMENTE GRATIS antes de que termine el tiempo<br><br>
+<span class="timerNum" id="clock">00 : 00 : 00 : 00</span><br>
+DÍAS &nbsp;&nbsp; HORAS &nbsp;&nbsp; MINUTOS &nbsp;&nbsp; SEGUNDOS
+</div>
+
+<div class="section">
+<div class="badge">🟢 REGISTRO ABIERTO Y GRATUITO</div>
+<h2>Monetiza tu consumo,<br>lidera la <span class="blue">economía colaborativa</span></h2>
+<p>Únete al sistema <b>VEK</b> como emprendedor digital. Tu registro es 100% gratuito y sin riesgos.</p>
+
+<a href="#registro" class="bigBtn">QUIERO ACCEDER GRATIS</a>
+
+<p><i>Ingresos residuales desde casa. Empieza hoy mismo.</i></p>
+
+<img src="foto 1 chica laptop.jpg">
+
+<div class="badge">🌎 Impacto Global &nbsp; 🛡️ Operación Segura</div>
+
+<h2 class="blue">Un modelo diseñado para el éxito</h2>
+<p>Dos pilares fundamentales que transforman tus gastos cotidianos en una fuente de crecimiento empresarial.</p>
+
+<img src="foto 2 mujer de compras.jpg">
+<div class="titleBlue">Consumo Inteligente</div>
+<p>Descubre como optimizar y ahorrar en los gastos fijos de tu hogar.</p>
+
+<img src="Foto 3 llave en mano.jpg">
+<div class="titleBlue">Sistema Llave en Mano</div>
+<p>Accede al sistema operativo <b>VEK</b>. Infraestructura tecnológica robusta trabajando en piloto automático.</p>
+
+<div class="boxLav">
+<b>La autoridad digital que respalda tu futuro</b><br><br>
+No solo ofrecemos una plataforma, ofrecemos un ecosistema de crecimiento validado por miles.
+<br><br>
+✅ Capacitación de Élite<br>
+Programas de formación continua.<br><br>
+✅ Dashboard en tiempo real<br>
+Control total de tus ingresos residuales y métricas.
+</div>
+
+<h2>Testimonios</h2>
+
+<div class="testi">
+<p>El sistema VEK cambió mi perspectiva sobre el consumo. Ahora mis gastos mensuales son mi mayor activo financiero.</p>
+<img class="avatar" src="Foto 4 Testimonio Carolina Hernadez.jpg">
+<h3 class="blue">Carolina Méndez</h3>
+<p>Asesor Senior</p>
+</div>
+
+<div class="testi">
+<p>La infraestructura "Llave en Mano" me permitió escalar mi negocio sin complicaciones técnicas desde el primer día.</p>
+<img class="avatar" src="Foto 5 Testimonio Elena Rivas.jpg">
+<h3 class="blue">Elena Rivas</h3>
+<p>Fundadora de una empresa</p>
+</div>
+
+<img src="Foto 6 Cohete start up.jpg">
+
+<h2>¿Listo para liderar la nueva economía?</h2>
+
+<a href="#registro" class="bigBtn">Regístrate Gratis Ahora</a>
+
+<p>Sin cuotas de mantenimiento.<br>Sin permanencia obligatoria.</p>
+
+<a href="https://wa.me/529981112233" class="bigBtn" style="background:#22c55e;box-shadow:0 5px 0 #168a40">Whatsapp<br><span style="font-size:16px">Solicita más información aquí</span></a>
+
+<!-- FORM -->
+<div id="registro" class="formWrap">
+<h2 style="font-size:42px">🚀 Regístrate Gratis Ahora</h2>
+
+<input id="ruser" placeholder="Nombre de usuario">
+<input id="rname" placeholder="Nombre completo">
+<input id="remail" placeholder="Email">
+<input id="rphone" placeholder="Teléfono">
+<input id="rcountry" placeholder="País">
+<input id="rpass" type="password" placeholder="Contraseña">
+
+<button class="btnBlue" onclick="register()">CREAR CUENTA GRATIS</button>
+</div>
+
+</div>
+
+<footer>
+<h2 style="color:#fff">Sistema VEK</h2>
+© 2026 Systeme VEK
+</footer>
+
+<a class="whatsFloat" href="https://wa.me/529981112233">☎</a>
+
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="hidden">
+<div class="panel">
+<h1 style="color:#1747d1;font-size:50px;text-align:center">Bienvenido</h1>
+<h2 id="dashUser" style="text-align:center;font-size:42px"></h2>
+
+<div class="linkbox">
+🔗 Tu enlace personal:<br><br>
+<b id="myLink"></b>
+</div>
+
+<button class="btnGreen" onclick="copyLink()">Copiar enlace</button>
+<button class="btnBlue" onclick="logout()">Cerrar sesión</button>
+</div>
+</section>
 
 <script>
-/* CONFIG */
-const SUPABASE_URL = "https://fztcpxdlakbregupsush.supabase.co";
-const SUPABASE_KEY = "sb_publishable_aq7SNHs2gTQbV9OuD9D50Q_V6CFl8eJ";
+let users = JSON.parse(localStorage.getItem("vekUsers")) || {
+demo123:{user:"demo123",pass:"1234",name:"Demo User"}
+};
 
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const app = document.getElementById("app");
-
-const params = new URLSearchParams(location.search);
-const ref = params.get("ref");
-const sesion = localStorage.getItem("vek_user");
-
-/* INICIO */
-boot();
-
-function boot(){
-if(sesion){
-inicio(sesion);
-return;
-}
-if(ref){
-landing(ref);
-return;
-}
-login();
+function saveUsers(){
+localStorage.setItem("vekUsers",JSON.stringify(users));
 }
 
-/* CONTADOR */
-setInterval(()=>{
-const el = document.getElementById("timer");
-if(!el) return;
-let now = new Date();
-let end = new Date();
-end.setHours(23,59,59,999);
-let diff = end-now;
-let h = Math.floor(diff/1000/60/60);
-let m = Math.floor((diff/1000/60)%60);
-let s = Math.floor((diff/1000)%60);
-el.innerText = `${h}h ${m}m ${s}s`;
-},1000);
-
-/* LOGIN */
 function login(){
-app.innerHTML = `
-<div class="hero">
-<h1>VEK SYSTEM</h1>
-<p>Tu oficina digital inteligente</p>
-</div>
+let u=document.getElementById("user").value.trim();
+let p=document.getElementById("pass").value.trim();
 
-<div class="wrap">
-<div class="box">
-<h2 class="center">🔐 Iniciar Sesión</h2>
-
-<input id="lu" placeholder="Usuario">
-<input id="lp" type="password" placeholder="Contraseña">
-
-<button class="secondary" onclick="loginUser()">Ingresar</button>
-
-<span class="link" onclick="recuperar()">Recuperar contraseña</span>
-<span class="link" onclick="adminLogin()">Acceso Admin</span>
-
-<p class="small center">Demo: demo123 / 1234</p>
-</div>
-</div>`;
-}
-
-/* LOGIN USER REAL */
-async function loginUser(){
-let u = val("lu");
-let p = val("lp");
-
-const {data,error} = await sb
-.from("users")
-.select("*")
-.eq("username",u)
-.eq("password",p)
-.limit(1);
-
-if(error || !data || data.length===0){
+if(users[u] && users[u].pass===p){
+openDashboard(u);
+}else{
 alert("Datos incorrectos");
-return;
+}
 }
 
-localStorage.setItem("vek_user",u);
-inicio(u);
+function adminLogin(){
+let u=document.getElementById("user").value.trim();
+let p=document.getElementById("pass").value.trim();
+
+if(u==="admin" && p==="admin123"){
+alert("Acceso Admin correcto");
+}else{
+alert("Admin incorrecto");
+}
 }
 
-/* PANEL USUARIO */
-function inicio(user){
-const link = location.origin + location.pathname + "?ref=" + user;
+function register(){
+let u=ruser.value.trim();
+if(!u)return alert("Ingresa usuario");
 
-app.innerHTML = `
-<div class="hero">
-<h1>Bienvenido</h1>
-<p>${user}</p>
-</div>
+if(users[u]) return alert("Usuario ya existe");
 
-<div class="wrap">
+users[u]={
+user:u,
+pass:rpass.value,
+name:rname.value
+};
 
-<div class="card center">
-🔗 Tu enlace personal:<br><br>
-<b>${link}</b>
-</div>
-
-<button class="primary" onclick="copyLink('${link}')">Copiar enlace</button>
-<button class="secondary" onclick="logout()">Cerrar sesión</button>
-
-</div>`;
+saveUsers();
+alert("Cuenta creada");
+openDashboard(u);
 }
 
-function copyLink(link){
-navigator.clipboard.writeText(link);
-alert("Enlace copiado");
+function openDashboard(u){
+loginPage.classList.add("hidden");
+landingPage.classList.add("hidden");
+dashboard.classList.remove("hidden");
+dashUser.innerText=u;
+myLink.innerText=location.origin+"/?ref="+u;
 }
 
 function logout(){
-localStorage.removeItem("vek_user");
-location.href = location.pathname;
+location.href=location.origin;
 }
 
-/* RECUPERAR */
-function recuperar(){
-alert("Entrega 2B");
+function copyLink(){
+navigator.clipboard.writeText(myLink.innerText);
+alert("Enlace copiado");
 }
 
-/* ADMIN */
-function adminLogin(){
-let u = prompt("Usuario Admin");
-let p = prompt("Contraseña");
+function loadPage(){
+const params=new URLSearchParams(location.search);
+const ref=params.get("ref");
 
-if(u==="admin" && p==="admin123"){
-panelAdmin();
+if(ref){
+loginPage.classList.add("hidden");
+landingPage.classList.remove("hidden");
+dashboard.classList.add("hidden");
 }else{
-alert("Acceso denegado");
+loginPage.classList.remove("hidden");
+landingPage.classList.add("hidden");
+dashboard.classList.add("hidden");
 }
 }
 
-async function panelAdmin(){
-const {data} = await sb.from("users").select("*");
+function timer(){
+let end=new Date();
+end.setHours(23,59,59);
 
-let filas = "";
-(data || []).forEach(x=>{
-filas += `<div class="card">${x.username} - ${x.nombre || ""}</div>`;
-});
+setInterval(()=>{
+let now=new Date();
+let diff=end-now;
+if(diff<0) diff=0;
 
-app.innerHTML = `
-<div class="hero">
-<h1>ADMIN</h1>
-<p>Backoffice VEK</p>
-</div>
+let h=Math.floor(diff/1000/60/60);
+let m=Math.floor(diff/1000/60)%60;
+let s=Math.floor(diff/1000)%60;
 
-<div class="wrap">
-${filas}
-<button class="secondary" onclick="logout()">Salir</button>
-</div>`;
+clock.innerText=
+"00 : "+String(h).padStart(2,"0")+" : "+
+String(m).padStart(2,"0")+" : "+
+String(s).padStart(2,"0");
+},1000);
 }
 
-/* LANDING */
-function landing(ref){
-document.getElementById("wabtn").href = "https://wa.me/5219999999999";
-
-app.innerHTML = `
-<div class="topbar">
-🔥 PROMOCIÓN TERMINA EN <span id="timer">...</span>
-</div>
-
-<div class="hero">
-<h1>Transforma Tu Futuro</h1>
-<p>Únete gratis al sistema que está cambiando vidas y genera ingresos con apoyo profesional.</p>
-</div>
-
-<div class="wrap">
-
-<div class="card center">
-👤 Tu patrocinador: <b>${ref}</b>
-</div>
-
-<div class="feature">✅ Plataforma digital profesional</div>
-<div class="feature">✅ Capacitación constante</div>
-<div class="feature">✅ Sistema duplicable</div>
-<div class="feature">✅ Comunidad de crecimiento</div>
-
-<div class="box">
-<h2 class="center">🚀 Regístrate Gratis Ahora</h2>
-
-<input id="ru" placeholder="Nombre de usuario">
-<input id="rn" placeholder="Nombre completo">
-<input id="re" placeholder="Email">
-<input id="rt" placeholder="Teléfono">
-<input id="rpais" placeholder="País">
-<input id="rc" type="password" placeholder="Crear contraseña">
-
-<button class="primary" onclick="registrar('${ref}')">Registrarme Gratis</button>
-<button class="light" onclick="login()">Ya tengo cuenta</button>
-</div>
-
-</div>`;
-}
-
-/* REGISTRO REAL */
-async function registrar(ref){
-let username = val("ru");
-let nombre = val("rn");
-let email = val("re");
-let telefono = val("rt");
-let pais = val("rpais");
-let password = val("rc");
-
-if(!username || !nombre || !password){
-alert("Completa campos requeridos");
-return;
-}
-
-/* verificar existente */
-const existe = await sb
-.from("users")
-.select("username")
-.eq("username",username);
-
-if(existe.data && existe.data.length>0){
-alert("Ese usuario ya existe");
-return;
-}
-
-const {error} = await sb
-.from("users")
-.insert([{
-username,
-password,
-nombre,
-email,
-telefono,
-pais
-}]);
-
-if(error){
-alert("Error al registrar");
-return;
-}
-
-/* patrocinado */
-await sb.from("patrocinados").insert([{
-sponsor: ref,
-user_id: username,
-nombre: nombre
-}]);
-
-alert("Cuenta creada correctamente");
-login();
-}
-
-/* HELPERS */
-function val(id){
-return document.getElementById(id).value.trim();
-}
+loadPage();
+timer();
 </script>
+
 </body>
 </html>
-```
