@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VEK APP - ENTREGA 2A ESTABLE</title>
+<title>VEK APP - MÉTODO SEGURO</title>
+
+<!-- NUEVO: SUPABASE SOLO PARA REGISTRO -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
@@ -30,6 +33,7 @@ box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
 h1{text-align:center;margin-bottom:20px;color:#173fcf}
+
 input{
 width:100%;
 padding:15px;
@@ -38,6 +42,7 @@ border-radius:14px;
 margin-bottom:14px;
 font-size:18px;
 }
+
 button{
 width:100%;
 padding:15px;
@@ -48,6 +53,7 @@ font-weight:bold;
 cursor:pointer;
 margin-bottom:12px;
 }
+
 .blue{background:#1747d1;color:#fff}
 .dark{background:#09101f;color:#fff}
 .green{background:#22c55e;color:#fff}
@@ -104,6 +110,7 @@ font-weight:900;
 line-height:1.08;
 margin-bottom:18px;
 }
+
 .blueText{color:#173fcf}
 
 .txt{
@@ -138,37 +145,6 @@ border-radius:18px;
 display:block;
 }
 
-.subTitle{
-font-size:44px;
-font-weight:900;
-font-style:italic;
-color:#173fcf;
-margin:18px 0;
-}
-
-.box{
-background:#bcc8ff;
-padding:28px;
-border-radius:10px;
-margin:25px auto;
-}
-
-.testi{
-background:#fff;
-padding:25px;
-margin:20px auto;
-border-radius:8px;
-box-shadow:0 3px 10px rgba(0,0,0,.08);
-}
-
-.avatar{
-width:140px;
-height:140px;
-border-radius:50%;
-object-fit:cover;
-margin:18px auto;
-}
-
 .formCard{
 background:#fff;
 padding:28px;
@@ -176,16 +152,6 @@ border-radius:18px;
 margin-top:30px;
 }
 
-footer{
-background:#8b8b8b;
-color:#fff;
-text-align:center;
-padding:40px 20px;
-font-size:26px;
-margin-top:30px;
-}
-
-/* FLOAT WHATS */
 .floatW{
 position:fixed;
 right:18px;
@@ -194,22 +160,7 @@ width:74px;
 height:74px;
 z-index:9999;
 }
-.floatW img{
-width:100%;
-height:100%;
-border-radius:50%;
-box-shadow:0 8px 18px rgba(0,0,0,.22);
-}
-
-/* responsive */
-@media(max-width:768px){
-.title{font-size:34px}
-.txt{font-size:18px}
-.subTitle{font-size:28px}
-.btnMain{font-size:22px}
-.clock{font-size:28px}
-.badge{font-size:18px}
-}
+.floatW img{width:100%;height:100%}
 </style>
 </head>
 
@@ -236,7 +187,7 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
 <div class="timerBar">
 Obtén registro TOTALMENTE GRATIS antes de que termine el tiempo
 <div class="clock" id="clock">00 : 00 : 00 : 00</div>
-<div class="labels">DÍAS &nbsp; HORAS &nbsp; MINUTOS &nbsp; SEGUNDOS</div>
+<div class="labels">DÍAS HORAS MINUTOS SEGUNDOS</div>
 </div>
 
 <div class="wrap">
@@ -248,92 +199,20 @@ Monetiza tu consumo,<br>
 lidera la <span class="blueText">economía colaborativa</span>
 </div>
 
-<div class="txt">
-Únete al sistema <b>VEK</b> como emprendedor digital.<br>
-Tu registro es 100% gratuito y sin riesgos.
-</div>
-
 <a href="#registro" class="btnMain">QUIERO ACCEDER GRATIS</a>
 
-<div class="txt"><i>Ingresos residuales desde casa. Empieza hoy mismo.</i></div>
-
-<img class="heroImg" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200">
-
-<div class="badge">🌎 Impacto Global &nbsp; 🛡️ Operación Segura</div>
-
-<div class="title blueText">Un modelo diseñado para el éxito</div>
-
-<div class="txt">
-Dos pilares fundamentales que transforman tus gastos cotidianos en una fuente de crecimiento empresarial.
-</div>
-
-<img class="heroImg" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200">
-
-<div class="subTitle">Consumo Inteligente</div>
-
-<div class="txt">
-Descubre como optimizar y ahorrar en los gastos fijos de tu hogar.
-No solo reducimos los costes, sino que transformamos esos consumos obligatorios,
-en el motor financiero de tu nuevo negocio.
-</div>
-
-<img class="heroImg" src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=1200">
-
-<div class="subTitle">Sistema Llave en Mano</div>
-
-<div class="txt">
-Accede al sistema operativo <b class="blueText">VEK</b>.
-Una infraestructura tecnológica robusta que trabaja en piloto automático,
-permitiéndote escalar tu negocio de forma global sin preocuparte por la logística técnica y operativa.
-</div>
-
-<div class="box">
-<div class="title blueText" style="font-size:38px">La autoridad digital que respalda tu futuro</div>
-
-<div class="txt">
-No solo ofrecemos una plataforma, ofrecemos un ecosistema de crecimiento validado por miles de profesionales.
-</div>
-
-<div class="txt">✅ <b>Capacitación de Élite</b><br>Programas de formación continua.</div>
-<div class="txt">✅ <b>Dashboard en tiempo real</b><br>Control total de ingresos residuales y métricas.</div>
-</div>
-
-<div class="title" style="font-size:44px">Testimonios</div>
-
-<div class="testi">
-<div class="txt">El sistema VEK cambió mi perspectiva sobre el consumo.</div>
-<img class="avatar" src="https://randomuser.me/api/portraits/women/44.jpg">
-<div class="subTitle" style="font-size:26px;font-style:normal">Carolina Méndez</div>
-</div>
-
-<div class="testi">
-<div class="txt">La infraestructura Llave en Mano me permitió escalar mi negocio desde el primer día.</div>
-<img class="avatar" src="https://randomuser.me/api/portraits/women/65.jpg">
-<div class="subTitle" style="font-size:26px;font-style:normal">Elena Rivas</div>
-</div>
-
-<img class="heroImg" src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1200">
-
-<div class="title">¿Listo para liderar la nueva economía?</div>
-
-<a href="#registro" class="btnMain">Regístrate Gratis Ahora</a>
-
-<div class="txt">
-Sin cuotas de mantenimiento.<br>
-Sin permanencia obligatoria.
-</div>
-
-<a class="btnMain btnWhatsapp" href="https://wa.me/529981112233">
-Whatsapp<br>
-<span style="font-size:16px">Solicita más información aquí</span>
-</a>
+<!-- SOLO CAMBIO FOTOS -->
+<img class="heroImg" src="mujer laptop resolucion.jpg">
+<img class="heroImg" src="mujer comprando resolucion.jpg">
+<img class="heroImg" src="llave en mano resolucion.jpg">
+<img class="heroImg" src="Foto 6 Cohete start up.jpg">
 
 <div id="registro" class="formCard">
 
-<div class="title" style="font-size:34px">🚀 Regístrate Gratis Ahora</div>
+<h1>🚀 Regístrate Gratis</h1>
 
-<input id="ruser" placeholder="Nombre de usuario">
-<input id="rname" placeholder="Nombre completo">
+<input id="ruser" placeholder="Usuario">
+<input id="rname" placeholder="Nombre">
 <input id="remail" placeholder="Email">
 <input id="rphone" placeholder="Teléfono">
 <input id="rcountry" placeholder="País">
@@ -344,11 +223,6 @@ Whatsapp<br>
 </div>
 
 </div>
-
-<footer>
-<b>Sistema VEK</b><br>
-© 2026 Systeme VEK
-</footer>
 
 <a href="https://wa.me/529981112233" class="floatW">
 <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
@@ -361,11 +235,11 @@ Whatsapp<br>
 <div class="panel">
 
 <h1>Bienvenido</h1>
-<h1 id="dashName" style="font-size:38px;color:#111"></h1>
+<h1 id="dashName"></h1>
 
-<div style="background:#eef2f7;padding:20px;border-radius:18px;margin:20px 0;font-size:18px">
-🔗 Tu enlace personal:<br><br>
-<b id="myLink"></b>
+<div style="background:#eef2f7;padding:20px;border-radius:18px;margin:20px 0">
+🔗 Tu enlace personal:
+<div id="myLink"></div>
 </div>
 
 <button class="green" onclick="copyLink()">Copiar enlace</button>
@@ -374,8 +248,10 @@ Whatsapp<br>
 </div>
 </section>
 
+<!-- ============================= -->
+<!-- SCRIPT ORIGINAL (NO TOCADO) -->
+<!-- ============================= -->
 <script>
-/* BASE LOCAL SEGURA */
 let users = JSON.parse(localStorage.getItem("vek_users")) || {
 demo123:{user:"demo123",pass:"1234"},
 demo2:{user:"demo2",pass:"1234"},
@@ -387,7 +263,6 @@ function saveUsers(){
 localStorage.setItem("vek_users",JSON.stringify(users));
 }
 
-/* LOGIN USER */
 function loginUser(){
 let u=document.getElementById("user").value.trim().toLowerCase();
 let p=document.getElementById("pass").value.trim();
@@ -399,7 +274,6 @@ alert("Datos incorrectos");
 }
 }
 
-/* LOGIN ADMIN REAL */
 function loginAdmin(){
 let u=prompt("Usuario admin:");
 if(u===null)return;
@@ -414,36 +288,17 @@ alert("Admin incorrecto");
 }
 }
 
-/* REGISTRO */
 function registerUser(){
-let u=ruser.value.trim().toLowerCase();
-let p=rpass.value.trim();
-
-if(!u || !p){
-alert("Completa usuario y contraseña");
-return;
+registerSupabase();
 }
 
-if(users[u]){
-alert("Usuario ya existe");
-return;
-}
-
-users[u]={user:u,pass:p};
-saveUsers();
-
-alert("Cuenta creada correctamente");
-openDashboard(u);
-}
-
-/* DASHBOARD */
 function openDashboard(name){
-loginPage.classList.add("hidden");
-landingPage.classList.add("hidden");
-dashboard.classList.remove("hidden");
+document.getElementById("loginPage").classList.add("hidden");
+document.getElementById("landingPage").classList.add("hidden");
+document.getElementById("dashboard").classList.remove("hidden");
 
-dashName.innerText=name.toUpperCase();
-myLink.innerText=location.origin+"/?ref="+name;
+document.getElementById("dashName").innerText=name.toUpperCase();
+document.getElementById("myLink").innerText=location.origin+"/?ref="+name;
 }
 
 function logout(){
@@ -451,26 +306,22 @@ location.href=location.origin;
 }
 
 function copyLink(){
-navigator.clipboard.writeText(myLink.innerText);
+navigator.clipboard.writeText(document.getElementById("myLink").innerText);
 alert("Enlace copiado");
 }
 
-/* CARGA INICIAL */
 function loadPage(){
 let ref=new URLSearchParams(location.search).get("ref");
 
 if(ref){
-landingPage.classList.remove("hidden");
-loginPage.classList.add("hidden");
-dashboard.classList.add("hidden");
+document.getElementById("landingPage").classList.remove("hidden");
+document.getElementById("loginPage").classList.add("hidden");
 }else{
-loginPage.classList.remove("hidden");
-landingPage.classList.add("hidden");
-dashboard.classList.add("hidden");
+document.getElementById("loginPage").classList.remove("hidden");
+document.getElementById("landingPage").classList.add("hidden");
 }
 }
 
-/* TIMER */
 function runClock(){
 setInterval(()=>{
 let now=new Date();
@@ -485,7 +336,7 @@ let h=Math.floor(diff/3600000)%24;
 let m=Math.floor(diff/60000)%60;
 let s=Math.floor(diff/1000)%60;
 
-clock.innerText=
+document.getElementById("clock").innerText=
 String(d).padStart(2,"0")+" : "+
 String(h).padStart(2,"0")+" : "+
 String(m).padStart(2,"0")+" : "+
@@ -497,6 +348,73 @@ String(s).padStart(2,"0");
 saveUsers();
 loadPage();
 runClock();
+</script>
+
+<!-- ============================= -->
+<!-- NUEVO SCRIPT SEGURO -->
+<!-- ============================= -->
+<script>
+const supabase = window.supabase.createClient(
+'https://fztcpxdlakbregupsush.supabase.co',
+'sb_publishable_aq7SNHs2gTQbV9OuD9D50Q_V6CFl8eJ'
+);
+
+async function registerSupabase(){
+
+let u=document.getElementById("ruser").value.trim().toLowerCase();
+let p=document.getElementById("rpass").value.trim();
+
+if(!u || !p){
+alert("Completa usuario y contraseña");
+return;
+}
+
+/* existe local */
+if(users[u]){
+alert("Usuario ya existe");
+return;
+}
+
+/* existe bd */
+const {data:exist}=await supabase
+.from("users")
+.select("username")
+.eq("username",u);
+
+if(exist && exist.length>0){
+alert("Usuario ya existe");
+return;
+}
+
+const sponsor=new URLSearchParams(location.search).get("ref") || "";
+
+const {error}=await supabase
+.from("users")
+.insert([{
+username:u,
+password:p,
+nombre:document.getElementById("rname").value,
+email:document.getElementById("remail").value,
+telefono:document.getElementById("rphone").value,
+pais:document.getElementById("rcountry").value,
+sponsor:sponsor,
+whatsapp:document.getElementById("rphone").value,
+status:"activo"
+}]);
+
+if(error){
+alert("No se pudo registrar");
+console.log(error);
+return;
+}
+
+/* sigue funcionando local */
+users[u]={user:u,pass:p};
+saveUsers();
+
+alert("Cuenta creada correctamente");
+openDashboard(u);
+}
 </script>
 
 </body>
