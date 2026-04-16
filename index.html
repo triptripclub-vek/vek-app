@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VEK APP - ENTREGA 2A FINAL ESTABLE</title>
+<title>VEK APP - ENTREGA 2A ESTABLE</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
@@ -201,6 +201,7 @@ border-radius:50%;
 box-shadow:0 8px 18px rgba(0,0,0,.22);
 }
 
+/* responsive */
 @media(max-width:768px){
 .title{font-size:34px}
 .txt{font-size:18px}
@@ -210,8 +211,6 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
 .badge{font-size:18px}
 }
 </style>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -258,7 +257,7 @@ Tu registro es 100% gratuito y sin riesgos.
 
 <div class="txt"><i>Ingresos residuales desde casa. Empieza hoy mismo.</i></div>
 
-<img class="heroImg" src="mujer laptop resolucion.jpg">
+<img class="heroImg" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200">
 
 <div class="badge">🌎 Impacto Global &nbsp; 🛡️ Operación Segura</div>
 
@@ -268,7 +267,7 @@ Tu registro es 100% gratuito y sin riesgos.
 Dos pilares fundamentales que transforman tus gastos cotidianos en una fuente de crecimiento empresarial.
 </div>
 
-<img class="heroImg" src="mujer comprando resolucion.jpg">
+<img class="heroImg" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200">
 
 <div class="subTitle">Consumo Inteligente</div>
 
@@ -278,7 +277,7 @@ No solo reducimos los costes, sino que transformamos esos consumos obligatorios,
 en el motor financiero de tu nuevo negocio.
 </div>
 
-<img class="heroImg" src="llave en mano resolucion.jpg">
+<img class="heroImg" src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=1200">
 
 <div class="subTitle">Sistema Llave en Mano</div>
 
@@ -313,7 +312,7 @@ No solo ofrecemos una plataforma, ofrecemos un ecosistema de crecimiento validad
 <div class="subTitle" style="font-size:26px;font-style:normal">Elena Rivas</div>
 </div>
 
-<img class="heroImg" src="Foto 6 Cohete start up.jpg">
+<img class="heroImg" src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1200">
 
 <div class="title">¿Listo para liderar la nueva economía?</div>
 
@@ -376,12 +375,7 @@ Whatsapp<br>
 </section>
 
 <script>
-const supabase = window.supabase.createClient(
-'https://fztcpxdlakbregupsush.supabase.co',
-'sb_publishable_aq7SNHs2gTQbV9OuD9D50Q_V6CFl8eJ'
-);
-
-/* NO TOCO LOGIN ORIGINAL */
+/* BASE LOCAL SEGURA */
 let users = JSON.parse(localStorage.getItem("vek_users")) || {
 demo123:{user:"demo123",pass:"1234"},
 demo2:{user:"demo2",pass:"1234"},
@@ -393,9 +387,10 @@ function saveUsers(){
 localStorage.setItem("vek_users",JSON.stringify(users));
 }
 
+/* LOGIN USER */
 function loginUser(){
-let u=user.value.trim().toLowerCase();
-let p=pass.value.trim();
+let u=document.getElementById("user").value.trim().toLowerCase();
+let p=document.getElementById("pass").value.trim();
 
 if(users[u] && users[u].pass===p){
 openDashboard(u);
@@ -404,6 +399,7 @@ alert("Datos incorrectos");
 }
 }
 
+/* LOGIN ADMIN REAL */
 function loginAdmin(){
 let u=prompt("Usuario admin:");
 if(u===null)return;
@@ -418,9 +414,8 @@ alert("Admin incorrecto");
 }
 }
 
-/* SOLO CAMBIO REGISTRO */
-async function registerUser(){
-
+/* REGISTRO */
+function registerUser(){
 let u=ruser.value.trim().toLowerCase();
 let p=rpass.value.trim();
 
@@ -434,38 +429,6 @@ alert("Usuario ya existe");
 return;
 }
 
-const {data:exists}=await supabase
-.from("users")
-.select("username")
-.eq("username",u);
-
-if(exists && exists.length>0){
-alert("Usuario ya existe");
-return;
-}
-
-const sponsor=new URLSearchParams(location.search).get("ref") || "";
-
-const {error}=await supabase
-.from("users")
-.insert([{
-username:u,
-password:p,
-nombre:rname.value,
-email:remail.value,
-telefono:rphone.value,
-pais:rcountry.value,
-sponsor:sponsor,
-whatsapp:rphone.value,
-status:"activo"
-}]);
-
-if(error){
-alert("Error al registrar");
-console.log(error);
-return;
-}
-
 users[u]={user:u,pass:p};
 saveUsers();
 
@@ -473,6 +436,7 @@ alert("Cuenta creada correctamente");
 openDashboard(u);
 }
 
+/* DASHBOARD */
 function openDashboard(name){
 loginPage.classList.add("hidden");
 landingPage.classList.add("hidden");
@@ -491,6 +455,7 @@ navigator.clipboard.writeText(myLink.innerText);
 alert("Enlace copiado");
 }
 
+/* CARGA INICIAL */
 function loadPage(){
 let ref=new URLSearchParams(location.search).get("ref");
 
@@ -505,6 +470,7 @@ dashboard.classList.add("hidden");
 }
 }
 
+/* TIMER */
 function runClock(){
 setInterval(()=>{
 let now=new Date();
