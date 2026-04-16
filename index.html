@@ -2,342 +2,501 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>VEK</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VEK APP - ENTREGA 2A ESTABLE</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-font-family:Arial,Helvetica,sans-serif;
-background:#dfe6ef;
-color:#111;
-overflow-x:hidden;
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{background:#dfe6ef;color:#111}
+.hidden{display:none!important}
+img{max-width:100%;display:block}
+a{text-decoration:none}
+
+#loginPage,#dashboard{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
 }
-section{padding:30px 18px;text-align:center}
-h1,h2,h3{font-weight:800}
-.azul{color:#1d46d7}
-.btn{
-display:block;
+
+.card,.panel{
+background:#fff;
 width:100%;
-max-width:720px;
-margin:18px auto;
-padding:22px;
+max-width:430px;
+padding:35px;
+border-radius:24px;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+h1{text-align:center;margin-bottom:20px;color:#173fcf}
+input{
+width:100%;
+padding:15px;
+border:1px solid #ccc;
+border-radius:14px;
+margin-bottom:14px;
+font-size:18px;
+}
+button{
+width:100%;
+padding:15px;
 border:none;
-border-radius:18px;
-font-size:20px;
-font-weight:800;
+border-radius:14px;
+font-size:22px;
+font-weight:bold;
 cursor:pointer;
-text-decoration:none;
+margin-bottom:12px;
 }
-.btn-main{background:#1388ea;color:#fff;box-shadow:0 8px 0 #0b5ea3}
-.badge{
-background:#cfd2ff;
-padding:14px 18px;
-border-radius:22px;
-display:inline-block;
-font-weight:700;
-margin:10px auto 18px;
-}
-.heroImg{
-width:100%;
-max-width:420px;
-display:block;
-margin:20px auto;
-border-radius:18px;
-object-fit:cover;
-height:auto;
-}
-#sticky{
+.blue{background:#1747d1;color:#fff}
+.dark{background:#09101f;color:#fff}
+.green{background:#22c55e;color:#fff}
+.small{text-align:center;color:#666;font-size:15px}
+
+/* LANDING */
+#landingPage{background:#d8e5f6}
+
+.timerBar{
 position:sticky;
 top:0;
 z-index:999;
-background:#071e3b;
-padding:14px 8px;
-text-align:center;
+background:#162433;
 color:#fff;
-}
-#clock{
-font-size:32px;
-font-weight:900;
-color:#62ff2f;
-letter-spacing:2px;
-display:flex;
-justify-content:center;
-gap:10px;
-}
-#labels{
-display:flex;
-justify-content:center;
-gap:18px;
-font-weight:800;
-margin-top:8px;
-}
-input{
-width:100%;
-padding:16px;
-margin:8px 0;
-border-radius:12px;
-border:1px solid #ccc;
+text-align:center;
+padding:18px 10px;
+font-weight:bold;
 font-size:18px;
 }
-.card{
-background:#fff;
-padding:25px;
-border-radius:22px;
-max-width:800px;
+
+.clock{
+font-size:42px;
+color:#57ff19;
+font-weight:900;
+margin-top:10px;
+}
+
+.labels{
+font-size:14px;
+margin-top:6px;
+letter-spacing:1px;
+}
+
+.wrap{
+max-width:820px;
+margin:auto;
+padding:25px 16px;
+text-align:center;
+}
+
+.badge{
+display:inline-block;
+background:#bcc8ff;
+padding:14px 22px;
+border-radius:18px;
+font-weight:bold;
+font-size:22px;
+margin-bottom:22px;
+}
+
+.title{
+font-size:56px;
+font-weight:900;
+line-height:1.08;
+margin-bottom:18px;
+}
+.blueText{color:#173fcf}
+
+.txt{
+font-size:26px;
+line-height:1.45;
+margin-bottom:20px;
+}
+
+.btnMain{
+display:block;
+background:#0b84e3;
+color:#fff;
+padding:18px;
+font-size:28px;
+font-weight:bold;
+border-radius:16px;
+box-shadow:0 6px 0 #085d9f;
+margin:25px auto;
+max-width:760px;
+}
+
+.btnWhatsapp{
+background:#22c55e;
+box-shadow:0 6px 0 #178244;
+}
+
+.heroImg{
+width:100%;
+max-width:760px;
+margin:18px auto;
+border-radius:18px;
+display:block;
+}
+
+.subTitle{
+font-size:44px;
+font-weight:900;
+font-style:italic;
+color:#173fcf;
+margin:18px 0;
+}
+
+.box{
+background:#bcc8ff;
+padding:28px;
+border-radius:10px;
 margin:25px auto;
 }
-#wa{
+
+.testi{
+background:#fff;
+padding:25px;
+margin:20px auto;
+border-radius:8px;
+box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.avatar{
+width:140px;
+height:140px;
+border-radius:50%;
+object-fit:cover;
+margin:18px auto;
+}
+
+.formCard{
+background:#fff;
+padding:28px;
+border-radius:18px;
+margin-top:30px;
+}
+
+footer{
+background:#8b8b8b;
+color:#fff;
+text-align:center;
+padding:40px 20px;
+font-size:26px;
+margin-top:30px;
+}
+
+/* FLOAT WHATS */
+.floatW{
 position:fixed;
 right:18px;
 bottom:18px;
+width:74px;
+height:74px;
 z-index:9999;
-width:64px;
-height:64px;
 }
-#wa img{width:100%;height:100%}
-.hidden{display:none}
+.floatW img{
+width:100%;
+height:100%;
+border-radius:50%;
+box-shadow:0 8px 18px rgba(0,0,0,.22);
+}
+
+/* responsive */
+@media(max-width:768px){
+.title{font-size:34px}
+.txt{font-size:18px}
+.subTitle{font-size:28px}
+.btnMain{font-size:22px}
+.clock{font-size:28px}
+.badge{font-size:18px}
+}
 </style>
 </head>
 
 <body>
 
-<div id="sticky">
-<div style="font-size:18px;font-weight:800;margin-bottom:8px">
+<!-- LOGIN -->
+<section id="loginPage">
+<div class="card">
+<h1>🚀 VEK Login</h1>
+
+<input id="user" placeholder="Usuario">
+<input id="pass" type="password" placeholder="Contraseña">
+
+<button class="blue" onclick="loginUser()">Ingresar</button>
+<button class="dark" onclick="loginAdmin()">Admin</button>
+
+<div class="small">Usuario demo: demo123 / 1234</div>
+</div>
+</section>
+
+<!-- LANDING -->
+<section id="landingPage" class="hidden">
+
+<div class="timerBar">
 Obtén registro TOTALMENTE GRATIS antes de que termine el tiempo
+<div class="clock" id="clock">00 : 00 : 00 : 00</div>
+<div class="labels">DÍAS &nbsp; HORAS &nbsp; MINUTOS &nbsp; SEGUNDOS</div>
 </div>
 
-<div id="clock">
-<span id="d">00</span> :
-<span id="h">22</span> :
-<span id="m">14</span> :
-<span id="s">25</span>
-</div>
-
-<div id="labels">
-<span>DÍAS</span>
-<span>HORAS</span>
-<span>MINUTOS</span>
-<span>SEGUNDOS</span>
-</div>
-</div>
-
-<section id="landing">
+<div class="wrap">
 
 <div class="badge">🟢 REGISTRO ABIERTO Y GRATUITO</div>
 
-<h1 style="font-size:56px;line-height:1.1">
+<div class="title">
 Monetiza tu consumo,<br>
-lidera la <span class="azul">economía colaborativa</span>
-</h1>
+lidera la <span class="blueText">economía colaborativa</span>
+</div>
 
-<p style="font-size:24px;margin-top:25px;line-height:1.5">
+<div class="txt">
 Únete al sistema <b>VEK</b> como emprendedor digital.<br>
 Tu registro es 100% gratuito y sin riesgos.
-</p>
+</div>
 
-<button class="btn btn-main" onclick="showLogin()">QUIERO ACCEDER GRATIS</button>
+<a href="#registro" class="btnMain">QUIERO ACCEDER GRATIS</a>
 
-<p style="font-size:26px;font-style:italic;margin-top:10px">
-Ingresos residuales desde casa. Empieza hoy mismo.
-</p>
+<div class="txt"><i>Ingresos residuales desde casa. Empieza hoy mismo.</i></div>
 
-<!-- FOTO 1 -->
-<img class="heroImg" src="https://i.postimg.cc/44xqL7FQ/espaldas.jpg">
+<img class="heroImg" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200">
 
-<div class="badge">🌍 Impacto Global &nbsp;&nbsp; 🛡 Operación Segura</div>
+<div class="badge">🌎 Impacto Global &nbsp; 🛡️ Operación Segura</div>
 
-<h2 class="azul" style="font-size:58px;margin-top:15px">
-Un modelo diseñado para el éxito
-</h2>
+<div class="title blueText">Un modelo diseñado para el éxito</div>
 
-<p style="font-size:24px;line-height:1.5;margin-top:18px">
-Dos pilares fundamentales que transforman tus gastos cotidianos
-en una fuente de crecimiento empresarial.
-</p>
+<div class="txt">
+Dos pilares fundamentales que transforman tus gastos cotidianos en una fuente de crecimiento empresarial.
+</div>
 
-<!-- FOTO 2 -->
-<img class="heroImg" src="https://i.postimg.cc/J4W4H6n6/rojo.jpg">
+<img class="heroImg" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200">
 
-<h2 class="azul" style="font-size:52px;font-style:italic">Consumo Inteligente</h2>
+<div class="subTitle">Consumo Inteligente</div>
 
-<p style="font-size:23px;line-height:1.6">
+<div class="txt">
 Descubre como optimizar y ahorrar en los gastos fijos de tu hogar.
 No solo reducimos los costes, sino que transformamos esos consumos obligatorios,
 en el motor financiero de tu nuevo negocio.
-</p>
+</div>
 
-<!-- FOTO 3 -->
-<img class="heroImg" src="https://i.postimg.cc/W4S9yt2M/llave.jpg">
+<img class="heroImg" src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=1200">
 
-<h2 class="azul" style="font-size:52px">Llave en Mano</h2>
+<div class="subTitle">Sistema Llave en Mano</div>
 
-<p style="font-size:23px;line-height:1.6">
-Accede al sistema operativo <b class="azul">VEK</b>.
+<div class="txt">
+Accede al sistema operativo <b class="blueText">VEK</b>.
 Una infraestructura tecnológica robusta que trabaja en piloto automático,
 permitiéndote escalar tu negocio de forma global sin preocuparte por la logística técnica y operativa.
-</p>
-
-<!-- FOTO 4 -->
-<img class="heroImg" src="https://i.postimg.cc/yY4Pbfj4/cohete.jpg">
-
-<h2 class="azul" style="font-size:48px">
-La autoridad digital que respalda el futuro
-</h2>
-
-<div class="card">
-<h2 style="margin-bottom:18px">🚀 VEK Login</h2>
-
-<input id="user" placeholder="Usuario">
-<input id="pass" placeholder="Contraseña" type="password">
-
-<button class="btn btn-main" onclick="login()">Ingresar</button>
-<button class="btn" style="background:#08111f;color:#fff" onclick="adminLogin()">Admin</button>
-
-<p style="margin-top:15px">
-Usuario demo: demo123 / 1234
-</p>
 </div>
 
-</section>
+<div class="box">
+<div class="title blueText" style="font-size:38px">La autoridad digital que respalda tu futuro</div>
 
-<section id="dashboard" class="hidden">
-<div class="card">
-<h1 class="azul">Bienvenido</h1>
-<h2 id="dashUser" style="font-size:58px;margin:15px 0"></h2>
-
-<div style="background:#eef1f7;padding:20px;border-radius:18px">
-<p>🔗 Tu enlace personal:</p>
-<h3 id="refLink" style="margin-top:10px"></h3>
+<div class="txt">
+No solo ofrecemos una plataforma, ofrecemos un ecosistema de crecimiento validado por miles de profesionales.
 </div>
 
-<button class="btn" style="background:#20c85a;color:#fff" onclick="copyLink()">Copiar enlace</button>
-<button class="btn btn-main" onclick="logout()">Cerrar sesión</button>
+<div class="txt">✅ <b>Capacitación de Élite</b><br>Programas de formación continua.</div>
+<div class="txt">✅ <b>Dashboard en tiempo real</b><br>Control total de ingresos residuales y métricas.</div>
 </div>
-</section>
 
-<a id="wa" href="https://wa.me/" target="_blank">
+<div class="title" style="font-size:44px">Testimonios</div>
+
+<div class="testi">
+<div class="txt">El sistema VEK cambió mi perspectiva sobre el consumo.</div>
+<img class="avatar" src="https://randomuser.me/api/portraits/women/44.jpg">
+<div class="subTitle" style="font-size:26px;font-style:normal">Carolina Méndez</div>
+</div>
+
+<div class="testi">
+<div class="txt">La infraestructura Llave en Mano me permitió escalar mi negocio desde el primer día.</div>
+<img class="avatar" src="https://randomuser.me/api/portraits/women/65.jpg">
+<div class="subTitle" style="font-size:26px;font-style:normal">Elena Rivas</div>
+</div>
+
+<img class="heroImg" src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1200">
+
+<div class="title">¿Listo para liderar la nueva economía?</div>
+
+<a href="#registro" class="btnMain">Regístrate Gratis Ahora</a>
+
+<div class="txt">
+Sin cuotas de mantenimiento.<br>
+Sin permanencia obligatoria.
+</div>
+
+<a class="btnMain btnWhatsapp" href="https://wa.me/529981112233">
+Whatsapp<br>
+<span style="font-size:16px">Solicita más información aquí</span>
+</a>
+
+<div id="registro" class="formCard">
+
+<div class="title" style="font-size:34px">🚀 Regístrate Gratis Ahora</div>
+
+<input id="ruser" placeholder="Nombre de usuario">
+<input id="rname" placeholder="Nombre completo">
+<input id="remail" placeholder="Email">
+<input id="rphone" placeholder="Teléfono">
+<input id="rcountry" placeholder="País">
+<input id="rpass" type="password" placeholder="Contraseña">
+
+<button class="blue" onclick="registerUser()">CREAR CUENTA GRATIS</button>
+
+</div>
+
+</div>
+
+<footer>
+<b>Sistema VEK</b><br>
+© 2026 Systeme VEK
+</footer>
+
+<a href="https://wa.me/529981112233" class="floatW">
 <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
 </a>
 
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="hidden">
+<div class="panel">
+
+<h1>Bienvenido</h1>
+<h1 id="dashName" style="font-size:38px;color:#111"></h1>
+
+<div style="background:#eef2f7;padding:20px;border-radius:18px;margin:20px 0;font-size:18px">
+🔗 Tu enlace personal:<br><br>
+<b id="myLink"></b>
+</div>
+
+<button class="green" onclick="copyLink()">Copiar enlace</button>
+<button class="blue" onclick="logout()">Cerrar sesión</button>
+
+</div>
+</section>
+
 <script>
-const supabase = window.supabase.createClient(
-'https://fztcpxdlakbregupsush.supabase.co',
-'sb_publishable_aq7SNHs2gTQbV9OuD9D50Q_V6CFl8eJ'
-);
+/* BASE LOCAL SEGURA */
+let users = JSON.parse(localStorage.getItem("vek_users")) || {
+demo123:{user:"demo123",pass:"1234"},
+demo2:{user:"demo2",pass:"1234"},
+demo3:{user:"demo3",pass:"1234"},
+demo4:{user:"demo4",pass:"1234"}
+};
 
-/* reloj */
-let total=86400;
-setInterval(()=>{
-if(total<0)return;
-let d=Math.floor(total/86400);
-let h=Math.floor((total%86400)/3600);
-let m=Math.floor((total%3600)/60);
-let s=total%60;
-document.getElementById("d").innerText=String(d).padStart(2,'0');
-document.getElementById("h").innerText=String(h).padStart(2,'0');
-document.getElementById("m").innerText=String(m).padStart(2,'0');
-document.getElementById("s").innerText=String(s).padStart(2,'0');
-total--;
-},1000);
-
-function showLogin(){
-window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+function saveUsers(){
+localStorage.setItem("vek_users",JSON.stringify(users));
 }
 
-async function login(){
-let u=user.value.trim();
-let p=pass.value.trim();
+/* LOGIN USER */
+function loginUser(){
+let u=document.getElementById("user").value.trim().toLowerCase();
+let p=document.getElementById("pass").value.trim();
 
-const {data,error}=await supabase
-.from("users")
-.select("*")
-.eq("username",u)
-.eq("password",p)
-.single();
-
-if(data){
-openDash(data.username);
+if(users[u] && users[u].pass===p){
+openDashboard(u);
 }else{
 alert("Datos incorrectos");
 }
 }
 
-async function adminLogin(){
-let u=prompt("Usuario Admin");
-let p=prompt("Password");
+/* LOGIN ADMIN REAL */
+function loginAdmin(){
+let u=prompt("Usuario admin:");
+if(u===null)return;
 
-if(u==="admin" && p==="1234"){
-window.location.href="admin.html";
+let p=prompt("Contraseña admin:");
+if(p===null)return;
+
+if(u==="admin" && p==="admin123"){
+openDashboard("ADMIN");
 }else{
 alert("Admin incorrecto");
 }
 }
 
-function openDash(name){
-landing.classList.add("hidden");
-dashboard.classList.remove("hidden");
-dashUser.innerText=name.toUpperCase();
-refLink.innerText=location.origin+"/?ref="+name;
-localStorage.setItem("vekUser",name);
+/* REGISTRO */
+function registerUser(){
+let u=ruser.value.trim().toLowerCase();
+let p=rpass.value.trim();
+
+if(!u || !p){
+alert("Completa usuario y contraseña");
+return;
 }
 
-function logout(){
-localStorage.removeItem("vekUser");
-location.reload();
-}
-
-function copyLink(){
-navigator.clipboard.writeText(refLink.innerText);
-alert("Enlace copiado");
-}
-
-/* registro automático si viene referido */
-async function autoRegister(){
-const params=new URLSearchParams(location.search);
-const ref=params.get("ref");
-if(!ref)return;
-
-let username=prompt("Crea tu usuario");
-if(!username)return;
-
-let password=prompt("Crea tu contraseña");
-if(!password)return;
-
-const {data:existe}=await supabase
-.from("users")
-.select("username")
-.eq("username",username);
-
-if(existe.length>0){
+if(users[u]){
 alert("Usuario ya existe");
 return;
 }
 
-await supabase.from("users").insert([{
-username:username,
-password:password,
-nombre:username,
-email:"",
-telefono:"",
-pais:"",
-sponsor:ref,
-whatsapp:"",
-status:"activo"
-}]);
+users[u]={user:u,pass:p};
+saveUsers();
 
-alert("Usuario creado correctamente");
-openDash(username);
+alert("Cuenta creada correctamente");
+openDashboard(u);
 }
 
-autoRegister();
+/* DASHBOARD */
+function openDashboard(name){
+loginPage.classList.add("hidden");
+landingPage.classList.add("hidden");
+dashboard.classList.remove("hidden");
 
-window.onload=()=>{
-let u=localStorage.getItem("vekUser");
-if(u)openDash(u);
+dashName.innerText=name.toUpperCase();
+myLink.innerText=location.origin+"/?ref="+name;
 }
+
+function logout(){
+location.href=location.origin;
+}
+
+function copyLink(){
+navigator.clipboard.writeText(myLink.innerText);
+alert("Enlace copiado");
+}
+
+/* CARGA INICIAL */
+function loadPage(){
+let ref=new URLSearchParams(location.search).get("ref");
+
+if(ref){
+landingPage.classList.remove("hidden");
+loginPage.classList.add("hidden");
+dashboard.classList.add("hidden");
+}else{
+loginPage.classList.remove("hidden");
+landingPage.classList.add("hidden");
+dashboard.classList.add("hidden");
+}
+}
+
+/* TIMER */
+function runClock(){
+setInterval(()=>{
+let now=new Date();
+let end=new Date();
+end.setHours(23,59,59,999);
+
+let diff=end-now;
+if(diff<0)diff=0;
+
+let d=Math.floor(diff/86400000);
+let h=Math.floor(diff/3600000)%24;
+let m=Math.floor(diff/60000)%60;
+let s=Math.floor(diff/1000)%60;
+
+clock.innerText=
+String(d).padStart(2,"0")+" : "+
+String(h).padStart(2,"0")+" : "+
+String(m).padStart(2,"0")+" : "+
+String(s).padStart(2,"0");
+
+},1000);
+}
+
+saveUsers();
+loadPage();
+runClock();
 </script>
 
 </body>
