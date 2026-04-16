@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VEK APP - ENTREGA 2A ESTABLE</title>
+<title>VEK APP - ENTREGA 2A FINAL ESTABLE</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
@@ -30,6 +32,7 @@ box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
 h1{text-align:center;margin-bottom:20px;color:#173fcf}
+
 input{
 width:100%;
 padding:15px;
@@ -38,6 +41,7 @@ border-radius:14px;
 margin-bottom:14px;
 font-size:18px;
 }
+
 button{
 width:100%;
 padding:15px;
@@ -48,6 +52,7 @@ font-weight:bold;
 cursor:pointer;
 margin-bottom:12px;
 }
+
 .blue{background:#1747d1;color:#fff}
 .dark{background:#09101f;color:#fff}
 .green{background:#22c55e;color:#fff}
@@ -73,12 +78,14 @@ font-size:42px;
 color:#57ff19;
 font-weight:900;
 margin-top:10px;
+text-align:center;
 }
 
 .labels{
 font-size:14px;
 margin-top:6px;
 letter-spacing:1px;
+text-align:center;
 }
 
 .wrap{
@@ -104,6 +111,7 @@ font-weight:900;
 line-height:1.08;
 margin-bottom:18px;
 }
+
 .blueText{color:#173fcf}
 
 .txt{
@@ -136,6 +144,7 @@ max-width:760px;
 margin:18px auto;
 border-radius:18px;
 display:block;
+object-fit:cover;
 }
 
 .subTitle{
@@ -185,7 +194,7 @@ font-size:26px;
 margin-top:30px;
 }
 
-/* FLOAT WHATS */
+/* FLOAT */
 .floatW{
 position:fixed;
 right:18px;
@@ -194,6 +203,7 @@ width:74px;
 height:74px;
 z-index:9999;
 }
+
 .floatW img{
 width:100%;
 height:100%;
@@ -201,7 +211,6 @@ border-radius:50%;
 box-shadow:0 8px 18px rgba(0,0,0,.22);
 }
 
-/* responsive */
 @media(max-width:768px){
 .title{font-size:34px}
 .txt{font-size:18px}
@@ -218,6 +227,7 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
 <!-- LOGIN -->
 <section id="loginPage">
 <div class="card">
+
 <h1>🚀 VEK Login</h1>
 
 <input id="user" placeholder="Usuario">
@@ -227,6 +237,7 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
 <button class="dark" onclick="loginAdmin()">Admin</button>
 
 <div class="small">Usuario demo: demo123 / 1234</div>
+
 </div>
 </section>
 
@@ -257,7 +268,7 @@ Tu registro es 100% gratuito y sin riesgos.
 
 <div class="txt"><i>Ingresos residuales desde casa. Empieza hoy mismo.</i></div>
 
-<img class="heroImg" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200">
+<img class="heroImg" src="https://i.postimg.cc/44xqL7FQ/espaldas.jpg">
 
 <div class="badge">🌎 Impacto Global &nbsp; 🛡️ Operación Segura</div>
 
@@ -267,7 +278,7 @@ Tu registro es 100% gratuito y sin riesgos.
 Dos pilares fundamentales que transforman tus gastos cotidianos en una fuente de crecimiento empresarial.
 </div>
 
-<img class="heroImg" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200">
+<img class="heroImg" src="https://i.postimg.cc/J4W4H6n6/rojo.jpg">
 
 <div class="subTitle">Consumo Inteligente</div>
 
@@ -277,7 +288,7 @@ No solo reducimos los costes, sino que transformamos esos consumos obligatorios,
 en el motor financiero de tu nuevo negocio.
 </div>
 
-<img class="heroImg" src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=1200">
+<img class="heroImg" src="https://i.postimg.cc/W4S9yt2M/llave.jpg">
 
 <div class="subTitle">Sistema Llave en Mano</div>
 
@@ -288,7 +299,9 @@ permitiéndote escalar tu negocio de forma global sin preocuparte por la logíst
 </div>
 
 <div class="box">
-<div class="title blueText" style="font-size:38px">La autoridad digital que respalda tu futuro</div>
+<div class="title blueText" style="font-size:38px">
+La autoridad digital que respalda tu futuro
+</div>
 
 <div class="txt">
 No solo ofrecemos una plataforma, ofrecemos un ecosistema de crecimiento validado por miles de profesionales.
@@ -312,7 +325,7 @@ No solo ofrecemos una plataforma, ofrecemos un ecosistema de crecimiento validad
 <div class="subTitle" style="font-size:26px;font-style:normal">Elena Rivas</div>
 </div>
 
-<img class="heroImg" src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1200">
+<img class="heroImg" src="https://i.postimg.cc/yY4Pbfj4/cohete.jpg">
 
 <div class="title">¿Listo para liderar la nueva economía?</div>
 
@@ -328,6 +341,7 @@ Whatsapp<br>
 <span style="font-size:16px">Solicita más información aquí</span>
 </a>
 
+<!-- REGISTRO -->
 <div id="registro" class="formCard">
 
 <div class="title" style="font-size:34px">🚀 Regístrate Gratis Ahora</div>
@@ -375,7 +389,13 @@ Whatsapp<br>
 </section>
 
 <script>
-/* BASE LOCAL SEGURA */
+/* SUPABASE */
+const supabase = window.supabase.createClient(
+'https://fztcpxdlakbregupsush.supabase.co',
+'sb_publishable_aq7SNHs2gTQbV9OuD9D50Q_V6CFl8eJ'
+);
+
+/* BASE LOCAL */
 let users = JSON.parse(localStorage.getItem("vek_users")) || {
 demo123:{user:"demo123",pass:"1234"},
 demo2:{user:"demo2",pass:"1234"},
@@ -387,19 +407,34 @@ function saveUsers(){
 localStorage.setItem("vek_users",JSON.stringify(users));
 }
 
-/* LOGIN USER */
-function loginUser(){
-let u=document.getElementById("user").value.trim().toLowerCase();
-let p=document.getElementById("pass").value.trim();
+/* LOGIN */
+async function loginUser(){
+
+let u=user.value.trim().toLowerCase();
+let p=pass.value.trim();
 
 if(users[u] && users[u].pass===p){
+openDashboard(u);
+return;
+}
+
+const {data,error}=await supabase
+.from("users")
+.select("*")
+.eq("username",u)
+.eq("password",p)
+.maybeSingle();
+
+if(data){
+users[u]={user:u,pass:p};
+saveUsers();
 openDashboard(u);
 }else{
 alert("Datos incorrectos");
 }
 }
 
-/* LOGIN ADMIN REAL */
+/* ADMIN */
 function loginAdmin(){
 let u=prompt("Usuario admin:");
 if(u===null)return;
@@ -415,7 +450,8 @@ alert("Admin incorrecto");
 }
 
 /* REGISTRO */
-function registerUser(){
+async function registerUser(){
+
 let u=ruser.value.trim().toLowerCase();
 let p=rpass.value.trim();
 
@@ -429,6 +465,42 @@ alert("Usuario ya existe");
 return;
 }
 
+/* revisar si existe en supabase */
+const {data:exists}=await supabase
+.from("users")
+.select("username")
+.eq("username",u);
+
+if(exists && exists.length>0){
+alert("Usuario ya existe");
+return;
+}
+
+/* sponsor */
+let sponsor=new URLSearchParams(location.search).get("ref") || "";
+
+/* guardar en supabase */
+const {error}=await supabase
+.from("users")
+.insert([{
+username:u,
+password:p,
+nombre:rname.value || u,
+email:remail.value || "",
+telefono:rphone.value || "",
+pais:rcountry.value || "",
+sponsor:sponsor,
+whatsapp:rphone.value || "",
+status:"activo"
+}]);
+
+if(error){
+console.log(error);
+alert("No se pudo registrar");
+return;
+}
+
+/* guardar local */
 users[u]={user:u,pass:p};
 saveUsers();
 
@@ -455,7 +527,7 @@ navigator.clipboard.writeText(myLink.innerText);
 alert("Enlace copiado");
 }
 
-/* CARGA INICIAL */
+/* LOAD */
 function loadPage(){
 let ref=new URLSearchParams(location.search).get("ref");
 
@@ -473,6 +545,7 @@ dashboard.classList.add("hidden");
 /* TIMER */
 function runClock(){
 setInterval(()=>{
+
 let now=new Date();
 let end=new Date();
 end.setHours(23,59,59,999);
