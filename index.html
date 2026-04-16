@@ -1,380 +1,160 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>VEK APP FINAL 100%</title>
+<!-- CAMBIOS DEFINITIVOS -->
 
+<!-- 1. REEMPLAZA TODAS LAS IMÁGENES DE LA LANDING POR ESTAS RUTAS EXACTAS -->
+<!-- FOTO 1 -->
+<img class="hero" src="./mujer laptop resolucion.jpg" alt="Mujer laptop">
+
+<!-- FOTO 2 -->
+<img class="hero" src="./mujer comprando resolucion.jpg" alt="Mujer comprando">
+
+<!-- FOTO 3 -->
+<img class="hero" src="./llave en mano resolucion.jpg" alt="Llave digital">
+
+<!-- FOTO 4 -->
+<img class="hero" src="./cohete resolucion.jpg" alt="Cohete startup">
+
+
+
+<!-- 2. AGREGA ESTE CSS PARA ASEGURAR QUE SIEMPRE SE VEAN -->
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-body{background:#dfe6ef;color:#111}
-.hidden{display:none!important}
-img{max-width:100%;display:block}
-a{text-decoration:none}
-
-/* LOGIN */
-#loginPage,#dashboard{
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:20px;
-}
-.card,.panel{
-background:#fff;
+.hero{
 width:100%;
-max-width:430px;
-padding:35px;
-border-radius:24px;
-box-shadow:0 10px 30px rgba(0,0,0,.08);
+max-width:760px;
+display:block;
+margin:20px auto;
+border-radius:18px;
+object-fit:cover;
+height:auto;
+min-height:220px;
+background:#ffffff;
 }
-h1{text-align:center;margin-bottom:18px;color:#1b44d1}
-input{
-width:100%;
-padding:15px;
-border:1px solid #ccc;
-border-radius:14px;
-margin-bottom:14px;
-font-size:18px;
-}
-button{
-width:100%;
-padding:15px;
-border:none;
-border-radius:14px;
-font-size:22px;
-font-weight:bold;
-cursor:pointer;
-margin-bottom:12px;
-}
-.blue{background:#1747d1;color:#fff}
-.dark{background:#08111f;color:#fff}
-.green{background:#22c55e;color:#fff}
-.small{text-align:center;color:#666;font-size:15px}
-
-/* LANDING */
-#landingPage{background:#dfe6ef}
-.wrap{max-width:820px;margin:auto;padding:20px 16px;text-align:center}
 
 .timer{
 position:sticky;
 top:0;
-z-index:999;
+z-index:9999;
 background:#132335;
 color:#fff;
 padding:18px 10px;
-font-weight:bold;
+text-align:center;   /* CENTRADO */
 }
+
 .clock{
 font-size:42px;
 color:#57ff19;
 font-weight:900;
-margin:10px 0 6px;
-}
-.labels{font-size:14px}
-
-.badge{
-display:inline-block;
-background:#c8d0ff;
-padding:14px 22px;
-border-radius:18px;
-font-size:22px;
-font-weight:bold;
-margin:22px 0;
-}
-
-.title{
-font-size:58px;
-line-height:1.05;
-font-weight:900;
-margin-bottom:18px;
-}
-.blueText{color:#1b44d1}
-.txt{
-font-size:27px;
-line-height:1.45;
-margin-bottom:20px;
-}
-.sub{
-font-size:42px;
-font-weight:900;
-font-style:italic;
-color:#1b44d1;
-margin:20px 0;
-}
-
-.btn{
-display:block;
-max-width:760px;
-margin:24px auto;
-padding:18px;
-border-radius:16px;
-font-size:28px;
-font-weight:bold;
-color:#fff;
-background:#0c84e3;
-box-shadow:0 6px 0 #0a5a96;
-}
-
-.btnW{
-background:#22c55e;
-box-shadow:0 6px 0 #157c39;
-}
-
-.hero{
-width:100%;
-max-width:760px;
-margin:20px auto;
-border-radius:18px;
-}
-
-.box{
-background:#c8d0ff;
-padding:28px;
-border-radius:18px;
-margin:25px 0;
-}
-
-.testi{
-background:#fff;
-padding:24px;
-border-radius:18px;
-margin:20px 0;
-box-shadow:0 6px 16px rgba(0,0,0,.06);
-}
-.avatar{
-width:120px;height:120px;border-radius:50%;
-object-fit:cover;margin:16px auto;
-}
-
-.formCard{
-background:#fff;
-padding:28px;
-border-radius:20px;
-margin-top:30px;
-}
-
-footer{
-background:#8f8f8f;
-color:#fff;
-padding:40px 20px;
+margin:10px auto 6px auto;
 text-align:center;
-font-size:26px;
-margin-top:30px;
-}
-
-/* whatsapp */
-.floatW{
-position:fixed;
-right:18px;
-bottom:18px;
-width:74px;
-height:74px;
-z-index:9999;
-}
-.floatW img{
+display:block;
 width:100%;
-height:100%;
-border-radius:50%;
-box-shadow:0 8px 18px rgba(0,0,0,.22);
 }
 
-@media(max-width:768px){
-.title{font-size:34px}
-.txt{font-size:18px}
-.sub{font-size:28px}
-.btn{font-size:22px}
-.clock{font-size:28px}
-.badge{font-size:18px}
+.labels{
+text-align:center;
+display:block;
+width:100%;
 }
 </style>
-</head>
 
-<body>
 
-<!-- LOGIN -->
-<section id="loginPage">
-<div class="card">
-<h1>🚀 VEK Login</h1>
 
-<input id="user" placeholder="Usuario">
-<input id="pass" type="password" placeholder="Contraseña">
-
-<button class="blue" onclick="loginUser()">Ingresar</button>
-<button class="dark" onclick="loginAdmin()">Admin</button>
-
-<div class="small">Usuario demo: demo123 / 1234</div>
-</div>
-</section>
-
-<!-- LANDING -->
-<section id="landingPage" class="hidden">
-
-<div class="timer">
-Obtén registro TOTALMENTE GRATIS antes de que termine el tiempo
-<div class="clock" id="clock">00 : 00 : 00 : 00</div>
-<div class="labels">DÍAS &nbsp; HORAS &nbsp; MINUTOS &nbsp; SEGUNDOS</div>
-</div>
-
-<div class="wrap">
-
-<div class="badge">🟢 REGISTRO ABIERTO Y GRATUITO</div>
-
-<div class="title">
-Monetiza tu consumo,<br>
-lidera la <span class="blueText">economía colaborativa</span>
-</div>
-
-<div class="txt">
-Únete al sistema <b>VEK</b> como emprendedor digital.<br>
-Tu registro es 100% gratuito y sin riesgos.
-</div>
-
-<a href="#registro" class="btn">QUIERO ACCEDER GRATIS</a>
-
-<div class="txt"><i>Ingresos residuales desde casa. Empieza hoy mismo.</i></div>
-
-<!-- FOTO 1 CORRECTA -->
-<img class="hero" src="mujer laptop resolucion.jpg">
-
-<div class="badge">🌎 Impacto Global &nbsp; 🛡️ Operación Segura</div>
-
-<div class="title blueText">Un modelo diseñado para el éxito</div>
-
-<div class="txt">
-Dos pilares fundamentales que transforman tus gastos cotidianos en una fuente de crecimiento empresarial.
-</div>
-
-<!-- FOTO 2 CORRECTA -->
-<img class="hero" src="mujer comprando resolucion.jpg">
-
-<div class="sub">Consumo Inteligente</div>
-
-<div class="txt">
-Descubre como optimizar y ahorrar en los gastos fijos de tu hogar.
-No solo reducimos los costes, sino que transformamos esos consumos obligatorios,
-en el motor financiero de tu nuevo negocio.
-</div>
-
-<!-- FOTO 3 CORRECTA -->
-<img class="hero" src="llave en mano resolucion.jpg">
-
-<div class="sub">Sistema Llave en Mano</div>
-
-<div class="txt">
-Accede al sistema operativo <b class="blueText">VEK</b>.
-Una infraestructura tecnológica robusta que trabaja en piloto automático,
-permitiéndote escalar tu negocio de forma global sin preocuparte por la logística técnica y operativa.
-</div>
-
-<div class="box">
-<div class="title blueText" style="font-size:40px">La autoridad digital que respalda el futuro</div>
-
-<div class="txt">✅ Capacitación de élite</div>
-<div class="txt">✅ Dashboard en tiempo real</div>
-<div class="txt">✅ Operación internacional</div>
-</div>
-
-<div class="title" style="font-size:42px">Testimonios</div>
-
-<div class="testi">
-<div class="txt">VEK cambió mi economía personal.</div>
-<img class="avatar" src="https://randomuser.me/api/portraits/women/44.jpg">
-<div class="sub" style="font-size:24px;font-style:normal">Carolina Méndez</div>
-</div>
-
-<div class="testi">
-<div class="txt">Sistema simple y rentable desde casa.</div>
-<img class="avatar" src="https://randomuser.me/api/portraits/women/65.jpg">
-<div class="sub" style="font-size:24px;font-style:normal">Elena Rivas</div>
-</div>
-
-<!-- FOTO 4 CORRECTA -->
-<img class="hero" src="cohete resolucion.jpg">
-
-<div class="title">¿Listo para liderar la nueva economía?</div>
-
-<a href="#registro" class="btn">Regístrate Gratis Ahora</a>
-
-<a href="https://wa.me/529981112233" class="btn btnW">WhatsApp</a>
-
-<div id="registro" class="formCard">
-
-<div class="title" style="font-size:34px">🚀 Regístrate Gratis Ahora</div>
-
-<input id="ruser" placeholder="Usuario">
-<input id="rname" placeholder="Nombre">
-<input id="remail" placeholder="Email">
-<input id="rphone" placeholder="Teléfono">
-<input id="rcountry" placeholder="País">
-<input id="rpass" type="password" placeholder="Contraseña">
-
-<button class="blue" onclick="registerUser()">CREAR CUENTA GRATIS</button>
-
-</div>
-
-</div>
-
-<footer>
-<b>Sistema VEK</b><br>
-© 2026
-</footer>
-
-<a class="floatW" href="https://wa.me/529981112233">
-<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
-</a>
-
-</section>
-
-<!-- DASHBOARD -->
-<section id="dashboard" class="hidden">
-<div class="panel">
-
-<h1>Bienvenido</h1>
-<h1 id="dashName" style="font-size:38px;color:#111"></h1>
-
-<div style="background:#eef2f7;padding:20px;border-radius:18px;margin:20px 0;font-size:18px">
-🔗 Tu enlace personal:<br><br>
-<b id="myLink"></b>
-</div>
-
-<button class="green" onclick="copyLink()">Copiar enlace</button>
-<button class="blue" onclick="logout()">Cerrar sesión</button>
-
-</div>
-</section>
+<!-- 3. REGISTRO REAL EN SUPABASE -->
+<!-- REEMPLAZA TU SCRIPT registerUser() POR ESTE -->
 
 <script>
-/* ===== BASE LOCAL + LISTA VISIBLE ===== */
-let users = JSON.parse(localStorage.getItem("vek_users")) || {
-demo123:{user:"demo123",pass:"1234"},
-demo2:{user:"demo2",pass:"1234"},
-demo3:{user:"demo3",pass:"1234"}
-};
+const SUPABASE_URL = "https://fztcpxdlakbregupsush.supabase.co";
+const SUPABASE_KEY = "TU_ANON_KEY_AQUI"; 
 
-function saveUsers(){
-localStorage.setItem("vek_users",JSON.stringify(users));
-console.log("Usuarios guardados:",users);
+async function registerUser(){
+
+let u = document.getElementById("ruser").value.trim().toLowerCase();
+let p = document.getElementById("rpass").value.trim();
+let n = document.getElementById("rname").value.trim();
+
+if(!u || !p){
+alert("Completa usuario y contraseña");
+return;
 }
 
-/* LOGIN USER */
-function loginUser(){
-let u=user.value.trim().toLowerCase();
-let p=pass.value.trim();
+/* verificar si existe */
+let check = await fetch(SUPABASE_URL + "/rest/v1/users?username=eq."+u,{
+headers:{
+apikey:SUPABASE_KEY,
+Authorization:"Bearer "+SUPABASE_KEY
+}
+});
 
-if(users[u] && users[u].pass===p){
+let exists = await check.json();
+
+if(exists.length>0){
+alert("Usuario ya existe");
+return;
+}
+
+/* insertar real */
+let save = await fetch(SUPABASE_URL + "/rest/v1/users",{
+method:"POST",
+headers:{
+apikey:SUPABASE_KEY,
+Authorization:"Bearer "+SUPABASE_KEY,
+"Content-Type":"application/json",
+Prefer:"return=representation"
+},
+body:JSON.stringify([{
+username:u,
+password:p,
+nombre:n || u
+}])
+});
+
+if(save.ok){
+alert("Cuenta creada correctamente");
+openDashboard(u);
+}else{
+alert("Error al guardar usuario");
+}
+}
+</script>
+
+
+
+<!-- 4. LOGIN REAL DESDE BASE DE DATOS -->
+<script>
+async function loginUser(){
+
+let u = document.getElementById("user").value.trim().toLowerCase();
+let p = document.getElementById("pass").value.trim();
+
+let r = await fetch(
+SUPABASE_URL+
+"/rest/v1/users?username=eq."+u+"&password=eq."+p,{
+headers:{
+apikey:SUPABASE_KEY,
+Authorization:"Bearer "+SUPABASE_KEY
+}
+});
+
+let data = await r.json();
+
+if(data.length>0){
 openDashboard(u);
 }else{
 alert("Datos incorrectos");
 }
 }
+</script>
 
-/* ADMIN */
+
+
+<!-- 5. ADMIN REAL -->
+<script>
 function loginAdmin(){
-let u=prompt("Usuario admin:");
-if(u===null)return;
-let p=prompt("Contraseña admin:");
-if(p===null)return;
+
+let u = prompt("Usuario admin:");
+if(!u)return;
+
+let p = prompt("Contraseña admin:");
+if(!p)return;
 
 if(u==="admin" && p==="admin123"){
 openDashboard("ADMIN");
@@ -382,89 +162,4 @@ openDashboard("ADMIN");
 alert("Admin incorrecto");
 }
 }
-
-/* REGISTRO REAL */
-function registerUser(){
-let u=ruser.value.trim().toLowerCase();
-let p=rpass.value.trim();
-
-if(!u || !p){
-alert("Completa usuario y contraseña");
-return;
-}
-
-if(users[u]){
-alert("Usuario ya existe");
-return;
-}
-
-users[u]={user:u,pass:p};
-saveUsers();
-
-alert("Cuenta creada correctamente");
-openDashboard(u);
-}
-
-/* DASHBOARD */
-function openDashboard(name){
-loginPage.classList.add("hidden");
-landingPage.classList.add("hidden");
-dashboard.classList.remove("hidden");
-
-dashName.innerText=name.toUpperCase();
-myLink.innerText=location.origin+"/?ref="+name;
-}
-
-function logout(){
-location.href=location.origin;
-}
-
-function copyLink(){
-navigator.clipboard.writeText(myLink.innerText);
-alert("Enlace copiado");
-}
-
-/* TIMER */
-function runClock(){
-setInterval(()=>{
-let now=new Date();
-let end=new Date();
-end.setHours(23,59,59,999);
-
-let diff=end-now;
-if(diff<0)diff=0;
-
-let d=Math.floor(diff/86400000);
-let h=Math.floor(diff/3600000)%24;
-let m=Math.floor(diff/60000)%60;
-let s=Math.floor(diff/1000)%60;
-
-clock.innerText=
-String(d).padStart(2,"0")+" : "+
-String(h).padStart(2,"0")+" : "+
-String(m).padStart(2,"0")+" : "+
-String(s).padStart(2,"0");
-
-},1000);
-}
-
-/* LOAD */
-function init(){
-let ref=new URLSearchParams(location.search).get("ref");
-
-if(ref){
-landingPage.classList.remove("hidden");
-loginPage.classList.add("hidden");
-}else{
-loginPage.classList.remove("hidden");
-landingPage.classList.add("hidden");
-}
-
-saveUsers();
-runClock();
-}
-init();
 </script>
-
-</body>
-</html>
