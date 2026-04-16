@@ -3,205 +3,133 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VEK App - Entrega 2A Final</title>
+<title>VEK App - Entrega 2A Ajustada</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 body{background:#eef2f7;color:#111}
 .hidden{display:none!important}
+img{max-width:100%;display:block;border-radius:18px}
 
 /* LOGIN */
 #loginPage{
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:20px;
-background:#e9edf3;
+min-height:100vh;display:flex;justify-content:center;align-items:center;
+padding:20px;background:#e9edf3;
 }
 .card{
-background:#fff;
-padding:35px;
-border-radius:18px;
-max-width:430px;
-width:100%;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
+background:#fff;padding:35px;border-radius:20px;max-width:430px;width:100%;
+box-shadow:0 10px 25px rgba(0,0,0,.08)
 }
-.card h1{
-text-align:center;
-margin-bottom:25px;
-font-size:34px;
-color:#173fcf;
-}
-input,select{
-width:100%;
-padding:15px;
-border-radius:12px;
-border:1px solid #ccc;
-margin-bottom:14px;
-font-size:16px;
+.card h1{text-align:center;color:#173fcf;font-size:34px;margin-bottom:25px}
+input{
+width:100%;padding:15px;border-radius:12px;border:1px solid #ccc;
+margin-bottom:14px;font-size:16px
 }
 button{
-width:100%;
-padding:15px;
-border:none;
-border-radius:12px;
-font-size:18px;
-font-weight:bold;
-cursor:pointer;
-margin-bottom:12px;
+width:100%;padding:15px;border:none;border-radius:12px;
+font-size:18px;font-weight:bold;cursor:pointer;margin-bottom:12px
 }
 .btnBlue{background:#1747d1;color:#fff}
-.btnGreen{background:#22c55e;color:#fff}
 .btnDark{background:#111827;color:#fff}
-.small{text-align:center;font-size:14px;color:#666;margin-top:10px}
+.btnGreen{background:#22c55e;color:#fff}
+.small{text-align:center;color:#666;font-size:14px}
 
 /* LANDING */
 #landingPage{background:#dce8f7}
 .topTimer{
-position:sticky;
-top:0;
-z-index:999;
-background:#172433;
-color:#fff;
-text-align:center;
-padding:18px 10px;
-font-size:22px;
-font-weight:bold;
+position:sticky;top:0;z-index:999;
+background:#172433;color:#fff;text-align:center;
+padding:18px 8px;font-size:20px;font-weight:bold
 }
-.timerNum{color:#53ff18}
-.section{
-padding:30px 18px;
-text-align:center;
+.timer{
+margin-top:12px;
+font-size:46px;
+letter-spacing:2px;
+font-weight:900;
+color:#53ff18;
 }
+.labels{
+font-size:16px;
+margin-top:8px;
+letter-spacing:1px;
+}
+.section{padding:28px 18px;text-align:center}
 .badge{
-display:inline-block;
-background:#b8c7ff;
-padding:12px 18px;
-border-radius:14px;
-font-weight:bold;
-margin-bottom:18px;
+display:inline-block;background:#b8c7ff;
+padding:12px 18px;border-radius:14px;
+font-weight:bold;margin-bottom:18px
 }
 h2{
-font-size:46px;
-line-height:1.15;
-margin-bottom:20px;
-font-weight:900;
+font-size:46px;line-height:1.15;
+font-weight:900;margin-bottom:20px
 }
 .blue{color:#173fcf}
 p{
-font-size:22px;
-line-height:1.45;
-margin-bottom:20px;
+font-size:22px;line-height:1.45;
+margin-bottom:20px
 }
 .bigBtn{
-display:block;
-background:#0b84e3;
-color:#fff;
-text-decoration:none;
-padding:18px;
-border-radius:14px;
-font-size:24px;
-font-weight:bold;
-max-width:760px;
-margin:20px auto;
-box-shadow:0 5px 0 #045f9f;
-}
-img{
-max-width:100%;
-border-radius:18px;
-margin:20px auto;
-display:block;
+display:block;background:#0b84e3;color:#fff;
+text-decoration:none;padding:18px;border-radius:14px;
+font-size:24px;font-weight:bold;
+max-width:760px;margin:20px auto;
+box-shadow:0 5px 0 #045f9f
 }
 .titleBlue{
-font-size:34px;
-font-style:italic;
-font-weight:900;
-color:#173fcf;
-margin-top:15px;
-margin-bottom:15px;
+font-size:34px;font-style:italic;
+font-weight:900;color:#173fcf;
+margin:18px 0
 }
 .boxLav{
-background:#bfcaf9;
-padding:28px;
-margin:20px;
-font-size:22px;
-line-height:1.5;
+background:#bcc8ff;padding:28px;
+margin:20px;border-radius:8px;
+font-size:22px;line-height:1.5
 }
 .testi{
-background:#fff;
-padding:25px;
-margin:25px auto;
-max-width:780px;
-box-shadow:0 3px 10px rgba(0,0,0,.08);
+background:#fff;padding:25px;
+margin:25px auto;max-width:780px;
+box-shadow:0 3px 10px rgba(0,0,0,.08)
 }
 .avatar{
-width:170px;
-height:170px;
-border-radius:50%;
-object-fit:cover;
-margin-top:18px;
+width:160px;height:160px;border-radius:50%;
+object-fit:cover;margin:20px auto
 }
 .formWrap{
-background:#fff;
-max-width:800px;
-margin:30px auto;
-padding:30px;
-border-radius:20px;
+background:#fff;max-width:800px;
+margin:30px auto;padding:30px;
+border-radius:20px
 }
 .whatsFloat{
-position:fixed;
-bottom:22px;
-right:20px;
-background:#22c55e;
-width:72px;
-height:72px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:34px;
-color:#fff;
-text-decoration:none;
-z-index:999;
-box-shadow:0 8px 18px rgba(0,0,0,.2)
+position:fixed;bottom:20px;right:18px;
+width:72px;height:72px;border-radius:50%;
+background:#25D366;color:#fff;
+display:flex;justify-content:center;align-items:center;
+font-size:38px;text-decoration:none;
+z-index:999;box-shadow:0 8px 18px rgba(0,0,0,.25)
 }
 footer{
-background:#8f8f8f;
-color:#fff;
-text-align:center;
-padding:45px 20px;
-font-size:22px;
-margin-top:0;
+background:#8e8e8e;color:#fff;
+text-align:center;padding:45px 20px;
+font-size:22px
 }
 
-/* BACKOFFICE */
-#dashboard{
-min-height:100vh;
-padding:30px;
-background:#eef2f7;
-}
+/* DASHBOARD */
+#dashboard{padding:30px;background:#eef2f7;min-height:100vh}
 .panel{
-background:#fff;
-padding:30px;
-border-radius:20px;
-max-width:850px;
-margin:auto;
+max-width:850px;margin:auto;background:#fff;
+padding:30px;border-radius:20px
 }
 .linkbox{
-background:#eef2f7;
-padding:18px;
-border-radius:12px;
-word-break:break-all;
-font-size:20px;
-margin:20px 0;
+background:#eef2f7;padding:18px;border-radius:12px;
+font-size:20px;word-break:break-all;margin:20px 0
 }
 
 @media(max-width:768px){
 h2{font-size:30px}
 p{font-size:18px}
 .bigBtn{font-size:21px}
-.topTimer{font-size:16px}
+.timer{font-size:30px}
+.labels{font-size:12px}
 }
 </style>
 </head>
@@ -217,7 +145,7 @@ p{font-size:18px}
 <input id="pass" type="password" placeholder="Contraseña">
 
 <button class="btnBlue" onclick="login()">Ingresar</button>
-<button class="btnDark" onclick="adminLogin()">Admin</button>
+<button class="btnDark" onclick="adminModal()">Admin</button>
 
 <div class="small">Usuario demo: demo123 / 1234</div>
 </div>
@@ -227,42 +155,60 @@ p{font-size:18px}
 <section id="landingPage" class="hidden">
 
 <div class="topTimer">
-Obtén registro TOTALMENTE GRATIS antes de que termine el tiempo<br><br>
-<span class="timerNum" id="clock">00 : 00 : 00 : 00</span><br>
-DÍAS &nbsp;&nbsp; HORAS &nbsp;&nbsp; MINUTOS &nbsp;&nbsp; SEGUNDOS
+Obtén registro TOTALMENTE GRATIS antes de que termine el tiempo
+<div class="timer" id="clock">00 : 00 : 00 : 00</div>
+<div class="labels">DÍAS &nbsp;&nbsp; HORAS &nbsp;&nbsp; MINUTOS &nbsp;&nbsp; SEGUNDOS</div>
 </div>
 
 <div class="section">
+
 <div class="badge">🟢 REGISTRO ABIERTO Y GRATUITO</div>
+
 <h2>Monetiza tu consumo,<br>lidera la <span class="blue">economía colaborativa</span></h2>
+
 <p>Únete al sistema <b>VEK</b> como emprendedor digital. Tu registro es 100% gratuito y sin riesgos.</p>
 
 <a href="#registro" class="bigBtn">QUIERO ACCEDER GRATIS</a>
 
 <p><i>Ingresos residuales desde casa. Empieza hoy mismo.</i></p>
 
-<img src="foto 1 chica laptop.jpg">
+<img src="mujer laptop resolucion.jpg">
 
 <div class="badge">🌎 Impacto Global &nbsp; 🛡️ Operación Segura</div>
 
 <h2 class="blue">Un modelo diseñado para el éxito</h2>
+
 <p>Dos pilares fundamentales que transforman tus gastos cotidianos en una fuente de crecimiento empresarial.</p>
 
-<img src="foto 2 mujer de compras.jpg">
-<div class="titleBlue">Consumo Inteligente</div>
-<p>Descubre como optimizar y ahorrar en los gastos fijos de tu hogar.</p>
+<img src="mujer comprando resolucion.jpg">
 
-<img src="Foto 3 llave en mano.jpg">
+<div class="titleBlue">Consumo Inteligente</div>
+
+<p>
+Descubre como optimizar y ahorrar en los gastos fijos de tu hogar.
+No solo reducimos los costes, sino que transformamos esos consumos obligatorios,
+en el motor financiero de tu nuevo negocio.
+</p>
+
+<img src="llave en mano resolucion.jpg">
+
 <div class="titleBlue">Sistema Llave en Mano</div>
-<p>Accede al sistema operativo <b>VEK</b>. Infraestructura tecnológica robusta trabajando en piloto automático.</p>
+
+<p>
+Accede al sistema operativo <b class="blue">VEK</b>.
+Una infraestructura tecnológica robusta que trabaja en piloto automático,
+permitiéndote escalar tu negocio de forma global sin preocuparte por la logística técnica y operativa.
+</p>
 
 <div class="boxLav">
-<b>La autoridad digital que respalda tu futuro</b><br><br>
-No solo ofrecemos una plataforma, ofrecemos un ecosistema de crecimiento validado por miles.
-<br><br>
-✅ Capacitación de Élite<br>
+<h2 class="blue" style="font-size:34px">La autoridad digital que respalda tu futuro</h2>
+
+No solo ofrecemos una plataforma, ofrecemos un ecosistema de crecimiento validado por miles de profesionales.<br><br>
+
+✅ <b>Capacitación de Élite</b><br>
 Programas de formación continua.<br><br>
-✅ Dashboard en tiempo real<br>
+
+✅ <b>Dashboard en tiempo real</b><br>
 Control total de tus ingresos residuales y métricas.
 </div>
 
@@ -282,7 +228,7 @@ Control total de tus ingresos residuales y métricas.
 <p>Fundadora de una empresa</p>
 </div>
 
-<img src="Foto 6 Cohete start up.jpg">
+<img src="cohete resolucion.jpg">
 
 <h2>¿Listo para liderar la nueva economía?</h2>
 
@@ -290,7 +236,9 @@ Control total de tus ingresos residuales y métricas.
 
 <p>Sin cuotas de mantenimiento.<br>Sin permanencia obligatoria.</p>
 
-<a href="https://wa.me/529981112233" class="bigBtn" style="background:#22c55e;box-shadow:0 5px 0 #168a40">Whatsapp<br><span style="font-size:16px">Solicita más información aquí</span></a>
+<a href="https://wa.me/529981112233" class="bigBtn" style="background:#22c55e;box-shadow:0 5px 0 #168a40">
+Whatsapp<br><span style="font-size:16px">Solicita más información aquí</span>
+</a>
 
 <!-- FORM -->
 <div id="registro" class="formWrap">
@@ -313,14 +261,15 @@ Control total de tus ingresos residuales y métricas.
 © 2026 Systeme VEK
 </footer>
 
-<a class="whatsFloat" href="https://wa.me/529981112233">☎</a>
+<a href="https://wa.me/529981112233" class="whatsFloat">🟢</a>
 
 </section>
 
 <!-- DASHBOARD -->
 <section id="dashboard" class="hidden">
 <div class="panel">
-<h1 style="color:#1747d1;font-size:50px;text-align:center">Bienvenido</h1>
+
+<h1 style="color:#1747d1;text-align:center;font-size:50px">Bienvenido</h1>
 <h2 id="dashUser" style="text-align:center;font-size:42px"></h2>
 
 <div class="linkbox">
@@ -330,6 +279,7 @@ Control total de tus ingresos residuales y métricas.
 
 <button class="btnGreen" onclick="copyLink()">Copiar enlace</button>
 <button class="btnBlue" onclick="logout()">Cerrar sesión</button>
+
 </div>
 </section>
 
@@ -343,8 +293,8 @@ localStorage.setItem("vekUsers",JSON.stringify(users));
 }
 
 function login(){
-let u=document.getElementById("user").value.trim();
-let p=document.getElementById("pass").value.trim();
+let u=user.value.trim();
+let p=pass.value.trim();
 
 if(users[u] && users[u].pass===p){
 openDashboard(u);
@@ -353,9 +303,12 @@ alert("Datos incorrectos");
 }
 }
 
-function adminLogin(){
-let u=document.getElementById("user").value.trim();
-let p=document.getElementById("pass").value.trim();
+function adminModal(){
+let u=prompt("Usuario admin:");
+if(u===null)return;
+
+let p=prompt("Contraseña admin:");
+if(p===null)return;
 
 if(u==="admin" && p==="admin123"){
 alert("Acceso Admin correcto");
@@ -368,16 +321,12 @@ function register(){
 let u=ruser.value.trim();
 if(!u)return alert("Ingresa usuario");
 
-if(users[u]) return alert("Usuario ya existe");
+if(users[u])return alert("Usuario ya existe");
 
-users[u]={
-user:u,
-pass:rpass.value,
-name:rname.value
-};
-
+users[u]={user:u,pass:rpass.value,name:rname.value};
 saveUsers();
-alert("Cuenta creada");
+
+alert("Cuenta creada correctamente");
 openDashboard(u);
 }
 
@@ -385,6 +334,7 @@ function openDashboard(u){
 loginPage.classList.add("hidden");
 landingPage.classList.add("hidden");
 dashboard.classList.remove("hidden");
+
 dashUser.innerText=u;
 myLink.innerText=location.origin+"/?ref="+u;
 }
@@ -414,22 +364,25 @@ dashboard.classList.add("hidden");
 }
 
 function timer(){
-let end=new Date();
-end.setHours(23,59,59);
-
 setInterval(()=>{
 let now=new Date();
+let end=new Date();
+end.setHours(23,59,59,999);
+
 let diff=end-now;
 if(diff<0) diff=0;
 
-let h=Math.floor(diff/1000/60/60);
+let d=Math.floor(diff/1000/60/60/24);
+let h=Math.floor(diff/1000/60/60)%24;
 let m=Math.floor(diff/1000/60)%60;
 let s=Math.floor(diff/1000)%60;
 
 clock.innerText=
-"00 : "+String(h).padStart(2,"0")+" : "+
+String(d).padStart(2,"0")+" : "+
+String(h).padStart(2,"0")+" : "+
 String(m).padStart(2,"0")+" : "+
 String(s).padStart(2,"0");
+
 },1000);
 }
 
