@@ -376,7 +376,19 @@ Whatsapp<br>
 </div>
 </section>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+/* =========================================
+   CONFIG SUPABASE
+========================================= */
+const SUPABASE_URL = "https://fztcpxdlakbregupsush.supabase.co";
+const SUPABASE_KEY = "sb_publishable_aq7SNHs2gTQbV9OuD9D50Q_V6CFl8eJ";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* =========================================
+   RESPALDO LOCAL
+========================================= */
 let users = JSON.parse(localStorage.getItem("vek_users")) || {
 demo123:{user:"demo123",pass:"1234"},
 demo2:{user:"demo2",pass:"1234"},
@@ -385,25 +397,57 @@ demo4:{user:"demo4",pass:"1234"}
 };
 
 function saveUsers(){
-localStorage.setItem("vek_users",JSON.stringify(users));
+localStorage.setItem("vek_users", JSON.stringify(users));
 }
 
-function loginUser(){
-let u=document.getElementById("user").value.trim().toLowerCase();
-let p=document.getElementById("pass").value.trim();
+/* =========================================
+   LOGIN USER
+========================================= */
+async function loginUser(){
 
-if(users[u] && users[u].pass===p){
+let u = document.getElementById("user").value.trim().toLowerCase();
+let p = document.getElementById("pass").value.trim();
+
+if(!u || !p){
+alert("Ingresa usuario y contraseña");
+return;
+}
+
+/* Buscar en Supabase */
+try{
+
+const { data, error } = await sb
+.from("users")
+.select("*")
+.eq("username", u)
+.eq("password", p)
+.limit(1);
+
+if(!error && data && data.length > 0){
 openDashboard(u);
-}else{
+return;
+}
+
+}catch(e){}
+
+/* Respaldo local */
+if(users[u] && users[u].pass === p){
+openDashboard(u);
+return;
+}
+
 alert("Datos incorrectos");
 }
-}
 
+/* =========================================
+   LOGIN ADMIN
+========================================= */
 function loginAdmin(){
-let u=prompt("Usuario admin:");
+
+let u = prompt("Usuario admin:");
 if(u===null)return;
 
-let p=prompt("Contraseña admin:");
+let p = prompt("Contraseña admin:");
 if(p===null)return;
 
 if(u==="admin" && p==="admin123"){
@@ -413,38 +457,102 @@ alert("Admin incorrecto");
 }
 }
 
-function registerUser(){
-let u=ruser.value.trim().toLowerCase();
-let p=rpass.value.trim();
+/* =========================================
+   REGISTER USER
+========================================= */
+async function registerUser(){
 
-if(!u || !p){
-alert("Completa usuario y contraseña");
+let username = ruser.value.trim().toLowerCase();
+let nombre   = rname.value.trim();
+let email    = remail.value.trim();
+let telefono = rphone.value.trim();
+let pais     = rcountry.value.trim();
+let password = rpass.value.trim();
+
+if(!username || !nombre || !password){
+alert("Completa usuario, nombre y contraseña");
 return;
 }
 
-if(users[u]){
-alert("Usuario ya existe");
+/* Existe local */
+if(users[username]){
+alert("Ese usuario ya existe");
 return;
 }
 
-users[u]={user:u,pass:p};
+/* Sponsor automático */
+let sponsor = new URLSearchParams(location.search).get("ref");
+if(!sponsor) sponsor = "ROOT";
+
+/* Validar en BD */
+try{
+
+const { data: existe } = await sb
+.from("users")
+.select("username")
+.eq("username", username)
+.limit(1);
+
+if(existe && existe.length > 0){
+alert("Ese usuario ya existe");
+return;
+}
+
+}catch(e){}
+
+/* Insertar */
+const { error } = await sb
+.from("users")
+.insert([{
+username: username,
+password: password,
+nombre: nombre,
+email: email,
+telefono: telefono,
+pais: pais,
+sponsor: sponsor,
+whatsapp: telefono,
+status: "Activo",
+created_at: new Date().toISOString()
+}]);
+
+if(error){
+alert("Error al registrar: " + error.message);
+return;
+}
+
+/* Guardar local respaldo */
+users[username] = {
+user: username,
+pass: password
+};
+
 saveUsers();
 
 alert("Cuenta creada correctamente");
-openDashboard(u);
+
+/* Volver al login */
+location.href = location.origin;
 }
 
+/* =========================================
+   DASHBOARD
+========================================= */
 function openDashboard(name){
+
 loginPage.classList.add("hidden");
 landingPage.classList.add("hidden");
 dashboard.classList.remove("hidden");
 
-dashName.innerText=name.toUpperCase();
-myLink.innerText=location.origin+"/?ref="+name;
+dashName.innerText = name.toUpperCase();
+myLink.innerText = location.origin + "/?ref=" + name;
 }
 
+/* =========================================
+   UTILIDADES
+========================================= */
 function logout(){
-location.href=location.origin;
+location.href = location.origin;
 }
 
 function copyLink(){
@@ -452,35 +560,45 @@ navigator.clipboard.writeText(myLink.innerText);
 alert("Enlace copiado");
 }
 
+/* =========================================
+   LOAD PAGE
+========================================= */
 function loadPage(){
-let ref=new URLSearchParams(location.search).get("ref");
+
+let ref = new URLSearchParams(location.search).get("ref");
 
 if(ref){
 landingPage.classList.remove("hidden");
 loginPage.classList.add("hidden");
 dashboard.classList.add("hidden");
-}else{
+return;
+}
+
 loginPage.classList.remove("hidden");
 landingPage.classList.add("hidden");
 dashboard.classList.add("hidden");
 }
-}
 
+/* =========================================
+   CLOCK
+========================================= */
 function runClock(){
+
 setInterval(()=>{
-let now=new Date();
-let end=new Date();
+
+let now = new Date();
+let end = new Date();
 end.setHours(23,59,59,999);
 
-let diff=end-now;
-if(diff<0)diff=0;
+let diff = end-now;
+if(diff<0) diff=0;
 
 let d=Math.floor(diff/86400000);
 let h=Math.floor(diff/3600000)%24;
 let m=Math.floor(diff/60000)%60;
 let s=Math.floor(diff/1000)%60;
 
-clock.innerText=
+clock.innerText =
 String(d).padStart(2,"0")+" : "+
 String(h).padStart(2,"0")+" : "+
 String(m).padStart(2,"0")+" : "+
@@ -489,10 +607,11 @@ String(s).padStart(2,"0");
 },1000);
 }
 
+/* ========================================= */
 saveUsers();
 loadPage();
 runClock();
+/* ========================================= */
 </script>
-
 </body>
 </html>
