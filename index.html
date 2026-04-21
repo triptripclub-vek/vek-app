@@ -209,6 +209,9 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
 .badge{font-size:18px}
 }
 </style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -523,11 +526,46 @@ font-weight:bold;
 cursor:pointer;
 }
 
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.45);
+z-index:998;
+display:none;
+}
+
+.overlay.show{
+display:block;
+}
+
 @media(max-width:900px){
-.vekLayout{flex-direction:column}
-.vekSidebar{width:100%}
+
+.vekMain{
+padding:15px;
+}
+
+.vekSidebar{
+position:fixed;
+left:-280px;
+top:0;
+height:100vh;
+z-index:999;
+width:260px;
+transition:.3s;
+}
+
+.vekSidebar.show{
+left:0;
+}
+
+.vekLayout{
+display:block;
+}
+
 }
 </style>
+
+<div class="overlay" onclick="closeSidebar()" id="overlay"></div>
 
 <div class="vekLayout">
 
@@ -544,20 +582,30 @@ height:42px;
 border-radius:10px;
 font-size:22px;
 cursor:pointer;
+position:relative;
+z-index:1000;
 ">
-☰
+<i class="fas fa-bars"></i>
 </button>
 </div>
 
-<button class="menuBtn">📊 <span class="menuText">Dashboard</span></button>
-<button class="menuBtn">📝 <span class="menuText">Actividad diaria</span></button>
-<button class="menuBtn">👥 <span class="menuText">Mis patrocinados</span></button>
-<button class="menuBtn">📈 <span class="menuText">Volumen</span></button>
-<button class="menuBtn">🌐 <span class="menuText">Landing Center</span></button>
-<button class="menuBtn">🧾 <span class="menuText">Completar registro</span></button>
-<button class="menuBtn">🎓 <span class="menuText">Capacitación</span></button>
-<button class="menuBtn">👤 <span class="menuText">Editar perfil</span></button>
-<button class="menuBtn logoutBtn" onclick="logout()">🚪 <span class="menuText">Cerrar sesión</span></button></aside>
+<button class="menuBtn"><i class="fas fa-chart-line"></i> <span class="menuText"> Dashboard</span></button>
+
+<button class="menuBtn"><i class="fas fa-pencil-alt"></i> <span class="menuText"> Actividad diaria</span></button>
+
+<button class="menuBtn"><i class="fas fa-users"></i> <span class="menuText"> Mis patrocinados</span></button>
+
+<button class="menuBtn"><i class="fas fa-chart-bar"></i> <span class="menuText"> Volumen</span></button>
+
+<button class="menuBtn"><i class="fas fa-globe"></i> <span class="menuText"> Landing Center</span></button>
+
+<button class="menuBtn"><i class="fas fa-file-alt"></i> <span class="menuText"> Completar registro</span></button>
+
+<button class="menuBtn"><i class="fas fa-graduation-cap"></i> <span class="menuText"> Capacitación</span></button>
+
+<button class="menuBtn"><i class="fas fa-user"></i> <span class="menuText"> Editar perfil</span></button>
+
+<button class="menuBtn logoutBtn" onclick="logout()"><i class="fas fa-right-from-bracket"></i> <span class="menuText"> Cerrar sesión</span></button></aside>
 
 <main class="vekMain">
 
@@ -789,7 +837,21 @@ alert("Enlace copiado");
 }
 
 function toggleSidebar(){
-document.querySelector(".vekSidebar").classList.toggle("collapsed");
+
+let side = document.querySelector(".vekSidebar");
+
+if(window.innerWidth <= 900){
+side.classList.toggle("show");
+overlay.classList.toggle("show");
+}else{
+side.classList.toggle("collapsed");
+}
+
+}
+
+function closeSidebar(){
+document.querySelector(".vekSidebar").classList.remove("show");
+overlay.classList.remove("show");
 }
 
 /* =========================================
