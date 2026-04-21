@@ -358,24 +358,220 @@ Whatsapp<br>
 
 </section>
 
-<!-- DASHBOARD -->
 <section id="dashboard" class="hidden">
-<div class="panel">
 
-<h1>Bienvenido</h1>
-<h1 id="dashName" style="font-size:38px;color:#111"></h1>
+<style>
+:root{
+--sidebar:#0f172a;
+--sidebar2:#111827;
+--primary:#2563eb;
+--bg:#f1f5f9;
+--card:#ffffff;
+--text:#0f172a;
+}
 
-<div style="background:#eef2f7;padding:20px;border-radius:18px;margin:20px 0;font-size:18px">
-🔗 Tu enlace personal:<br><br>
-<b id="myLink"></b>
+#dashboard{
+min-height:100vh;
+background:var(--bg);
+font-family:Arial,Helvetica,sans-serif;
+}
+
+.vekLayout{
+display:flex;
+min-height:100vh;
+}
+
+.vekSidebar{
+width:260px;
+background:linear-gradient(180deg,var(--sidebar),var(--sidebar2));
+color:#fff;
+padding:24px 18px;
+}
+
+.logo{
+font-size:28px;
+font-weight:900;
+margin-bottom:30px;
+}
+
+.menuBtn{
+display:block;
+width:100%;
+padding:14px;
+margin-bottom:10px;
+border:none;
+border-radius:14px;
+background:rgba(255,255,255,.08);
+color:#fff;
+text-align:left;
+font-size:16px;
+cursor:pointer;
+}
+
+.menuBtn:hover{
+background:rgba(255,255,255,.16);
+}
+
+.logoutBtn{
+background:#ef4444;
+margin-top:14px;
+}
+
+.vekMain{
+flex:1;
+padding:25px;
+}
+
+.topbar{
+background:#fff;
+padding:20px;
+border-radius:18px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:22px;
+}
+
+.welcome{
+font-size:28px;
+font-weight:900;
+}
+
+.status{
+color:#16a34a;
+font-weight:bold;
+margin-top:5px;
+}
+
+.avatar{
+width:52px;
+height:52px;
+border-radius:50%;
+background:#2563eb;
+color:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+font-size:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:18px;
+margin-bottom:22px;
+}
+
+.cardKpi{
+background:#fff;
+padding:20px;
+border-radius:18px;
+}
+
+.cardKpi h4{
+font-size:14px;
+color:#64748b;
+margin-bottom:10px;
+}
+
+.num{
+font-size:34px;
+font-weight:900;
+}
+
+.linkCard{
+background:#fff;
+padding:22px;
+border-radius:18px;
+}
+
+.linkBox{
+background:#f8fafc;
+padding:12px;
+border-radius:12px;
+margin:12px 0;
+word-break:break-all;
+}
+
+.copyBtn{
+padding:12px 18px;
+border:none;
+border-radius:12px;
+background:#2563eb;
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+}
+
+@media(max-width:900px){
+.vekLayout{flex-direction:column}
+.vekSidebar{width:100%}
+}
+</style>
+
+<div class="vekLayout">
+
+<aside class="vekSidebar">
+<div class="logo">VEK PANEL</div>
+
+<button class="menuBtn">📊 Dashboard</button>
+<button class="menuBtn">📝 Actividad diaria</button>
+<button class="menuBtn">👥 Mis patrocinados</button>
+<button class="menuBtn">📈 Volumen</button>
+<button class="menuBtn">🌐 Landing Center</button>
+<button class="menuBtn">🧾 Completar registro</button>
+<button class="menuBtn">🎓 Capacitación</button>
+<button class="menuBtn">👤 Editar perfil</button>
+
+<button class="menuBtn logoutBtn" onclick="logout()">🚪 Cerrar sesión</button>
+</aside>
+
+<main class="vekMain">
+
+<div class="topbar">
+<div>
+<div class="welcome">Hola, <span id="dashName">USUARIO</span></div>
+<div class="status">● Estado Activo</div>
 </div>
 
-<button class="green" onclick="copyLink()">Copiar enlace</button>
-<button class="blue" onclick="logout()">Cerrar sesión</button>
+<div class="avatar">V</div>
+</div>
+
+<div class="grid">
+
+<div class="cardKpi">
+<h4>Publicaciones</h4>
+<div class="num">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>Prospectos</h4>
+<div class="num">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>Registros</h4>
+<div class="num">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>VP</h4>
+<div class="num">0</div>
+</div>
 
 </div>
+
+<div class="linkCard">
+<h3>🔗 Tu enlace personal</h3>
+<div class="linkBox" id="myLink"></div>
+<button class="copyBtn" onclick="copyLink()">Copiar enlace</button>
+</div>
+
+</main>
+</div>
+
 </section>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
