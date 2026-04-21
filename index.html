@@ -541,7 +541,8 @@ display:block;
 @media(max-width:900px){
 
 .vekMain{
-padding:15px;
+padding:18px;
+padding-top:22px;
 }
 
 .vekSidebar{
@@ -570,23 +571,8 @@ display:block;
 <div class="vekLayout">
 
 <aside class="vekSidebar">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;">
+<div style="margin-bottom:22px;">
 <div class="logo" style="margin:0;">VEK PANEL</div>
-
-<button onclick="toggleSidebar()" style="
-background:#2563eb;
-color:#fff;
-border:none;
-width:42px;
-height:42px;
-border-radius:10px;
-font-size:22px;
-cursor:pointer;
-position:relative;
-z-index:1000;
-">
-<i class="fas fa-bars"></i>
-</button>
 </div>
 
 <button class="menuBtn"><i class="fas fa-chart-line"></i> <span class="menuText"> Dashboard</span></button>
@@ -608,6 +594,24 @@ z-index:1000;
 <button class="menuBtn logoutBtn" onclick="logout()"><i class="fas fa-right-from-bracket"></i> <span class="menuText"> Cerrar sesión</span></button></aside>
 
 <main class="vekMain">
+
+<div style="margin-bottom:18px;">
+
+<button onclick="toggleSidebar()" style="
+background:#2563eb;
+color:#fff;
+border:none;
+width:48px;
+height:48px;
+border-radius:12px;
+font-size:22px;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(0,0,0,.15);
+">
+<i class="fas fa-bars"></i>
+</button>
+
+</div>
 
 <div class="topbar">
 <div>
