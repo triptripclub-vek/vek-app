@@ -386,6 +386,25 @@ width:260px;
 background:linear-gradient(180deg,var(--sidebar),var(--sidebar2));
 color:#fff;
 padding:24px 18px;
+transition:.3s;
+overflow:hidden;
+}
+
+.vekSidebar.collapsed{
+width:78px;
+}
+
+.vekSidebar.collapsed .menuText{
+display:none;
+}
+
+.vekSidebar.collapsed .logo{
+font-size:18px;
+}
+
+.vekSidebar.collapsed .menuBtn{
+text-align:center;
+padding:14px 8px;
 }
 
 .logo{
@@ -513,19 +532,32 @@ cursor:pointer;
 <div class="vekLayout">
 
 <aside class="vekSidebar">
-<div class="logo">VEK PANEL</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;">
+<div class="logo" style="margin:0;">VEK PANEL</div>
 
-<button class="menuBtn">📊 Dashboard</button>
-<button class="menuBtn">📝 Actividad diaria</button>
-<button class="menuBtn">👥 Mis patrocinados</button>
-<button class="menuBtn">📈 Volumen</button>
-<button class="menuBtn">🌐 Landing Center</button>
-<button class="menuBtn">🧾 Completar registro</button>
-<button class="menuBtn">🎓 Capacitación</button>
-<button class="menuBtn">👤 Editar perfil</button>
+<button onclick="toggleSidebar()" style="
+background:#2563eb;
+color:#fff;
+border:none;
+width:42px;
+height:42px;
+border-radius:10px;
+font-size:22px;
+cursor:pointer;
+">
+☰
+</button>
+</div>
 
-<button class="menuBtn logoutBtn" onclick="logout()">🚪 Cerrar sesión</button>
-</aside>
+<button class="menuBtn">📊 <span class="menuText">Dashboard</span></button>
+<button class="menuBtn">📝 <span class="menuText">Actividad diaria</span></button>
+<button class="menuBtn">👥 <span class="menuText">Mis patrocinados</span></button>
+<button class="menuBtn">📈 <span class="menuText">Volumen</span></button>
+<button class="menuBtn">🌐 <span class="menuText">Landing Center</span></button>
+<button class="menuBtn">🧾 <span class="menuText">Completar registro</span></button>
+<button class="menuBtn">🎓 <span class="menuText">Capacitación</span></button>
+<button class="menuBtn">👤 <span class="menuText">Editar perfil</span></button>
+<button class="menuBtn logoutBtn" onclick="logout()">🚪 <span class="menuText">Cerrar sesión</span></button></aside>
 
 <main class="vekMain">
 
@@ -754,6 +786,10 @@ location.href = location.origin;
 function copyLink(){
 navigator.clipboard.writeText(myLink.innerText);
 alert("Enlace copiado");
+}
+
+function toggleSidebar(){
+document.querySelector(".vekSidebar").classList.toggle("collapsed");
 }
 
 /* =========================================
