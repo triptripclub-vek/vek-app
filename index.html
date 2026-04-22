@@ -854,6 +854,8 @@ loginPage.classList.add("hidden");
 landingPage.classList.add("hidden");
 dashboard.classList.remove("hidden");
 
+window.currentUser = name.toLowerCase();
+
 dashName.innerText = name.toUpperCase();
 myLink.innerText = location.origin + "/?ref=" + name;
 }
@@ -945,8 +947,50 @@ act_fecha.value = new Date().toISOString().split("T")[0];
 
 }
 
-function saveActivityTemp(){
-alert("Actividad lista para conectar a Supabase en 3B.2");
+async function saveActivityTemp(){
+
+try{
+
+const { error } = await sb
+.from("activity")
+.insert([{
+
+username: window.currentUser || "demo",
+
+fecha: act_fecha.value,
+
+publicaciones: Number(act_publicaciones.value || 0),
+prospectos: Number(act_prospectos.value || 0),
+conversaciones: Number(act_conversaciones.value || 0),
+calificados: Number(act_calificados.value || 0),
+videos: Number(act_videos.value || 0),
+formularios: Number(act_formularios.value || 0),
+registros: Number(act_registros.value || 0),
+vp: Number(act_vp.value || 0),
+
+notas: act_notas.value,
+
+created_at: new Date().toISOString()
+
+}]);
+
+if(error){
+alert("Error: " + error.message);
+return;
+}
+
+alert("Actividad guardada correctamente");
+
+activityModule.querySelectorAll("input").forEach(x=>{
+if(x.type!="date") x.value="";
+});
+
+act_notas.value="";
+
+}catch(e){
+alert("Error general");
+}
+
 }
 saveUsers();
 loadPage();
@@ -954,6 +998,5 @@ runClock();
 /* ========================================= */
 </script>
 </body>
-</html>
-
-
+   </html>
+   
