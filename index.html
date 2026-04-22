@@ -1125,28 +1125,33 @@ let now = new Date();
 let year = now.getFullYear();
 let month = String(now.getMonth()+1).padStart(2,"0");
 
-let start = year + "-" + month + "-01";
-let end = year + "-" + month + "-31";
+let prefix = year + "-" + month;
 
 const { data, error } = await sb
 .from("activity")
 .select("*")
-.ilike("username", user)
-.gte("fecha", start)
-.lte("fecha", end);
+.ilike("username", user);
 
-if(error || !data){ return; }
+if(error || !data){
+return;
+}
 
-let publicaciones=0;
-let prospectos=0;
-let registros=0;
-let vp=0;
+let publicaciones = 0;
+let prospectos = 0;
+let registros = 0;
+let vp = 0;
 
 data.forEach(r=>{
-publicaciones += Number(r.publicaciones||0);
-prospectos += Number(r.prospectos||0);
-registros += Number(r.registros||0);
-vp += Number(r.vp||0);
+
+if(String(r.fecha).startsWith(prefix)){
+
+publicaciones += Number(r.publicaciones || 0);
+prospectos += Number(r.prospectos || 0);
+registros += Number(r.registros || 0);
+vp += Number(r.vp || 0);
+
+}
+
 });
 
 kpi_publicaciones.innerText = publicaciones;
