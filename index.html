@@ -626,22 +626,22 @@ box-shadow:0 8px 20px rgba(0,0,0,.15);
 
 <div class="cardKpi">
 <h4>Publicaciones</h4>
-<div class="num">0</div>
+<div class="num" id="kpi_publicaciones">0</div>
 </div>
 
 <div class="cardKpi">
 <h4>Prospectos</h4>
-<div class="num">0</div>
+<div class="num" id="kpi_prospectos">0</div>
 </div>
 
 <div class="cardKpi">
 <h4>Registros</h4>
-<div class="num">0</div>
+<div class="num" id="kpi_registros">0</div>
 </div>
 
 <div class="cardKpi">
 <h4>VP</h4>
-<div class="num">0</div>
+<div class="num" id="kpi_vp">0</div>
 </div>
 
 </div>
@@ -862,7 +862,7 @@ dashboard.classList.remove("hidden");
 window.currentUser = name.toLowerCase();
 
 dashName.innerText = name.toUpperCase();
-myLink.innerText = location.origin + "/?ref=" + name;
+myLink.innerText = location.origin + "/?ref=" + name;loadKpisMonth();
 }
 
 /* =========================================
@@ -1002,7 +1002,7 @@ function showDashboard(){
 
 activityModule.classList.add("hidden");
 historyModule.classList.add("hidden");
-dashboardCards.classList.remove("hidden");
+dashboardCards.classList.remove("hidden");loadKpisMonth();
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -1072,6 +1072,46 @@ closeSidebar();
 }
 
 }
+
+async function loadKpisMonth(){
+
+let now = new Date();
+let year = now.getFullYear();
+let month = String(now.getMonth()+1).padStart(2,"0");
+
+let start = year + "-" + month + "-01";
+let end = year + "-" + month + "-31";
+
+const { data, error } = await sb
+.from("activity")
+.select("*")
+.eq("username", window.currentUser)
+.gte("fecha", start)
+.lte("fecha", end);
+
+if(error || !data){
+return;
+}
+
+let publicaciones = 0;
+let prospectos = 0;
+let registros = 0;
+let vp = 0;
+
+data.forEach(row=>{
+publicaciones += Number(row.publicaciones || 0);
+prospectos += Number(row.prospectos || 0);
+registros += Number(row.registros || 0);
+vp += Number(row.vp || 0);
+});
+
+kpi_publicaciones.innerText = publicaciones;
+kpi_prospectos.innerText = prospectos;
+kpi_registros.innerText = registros;
+kpi_vp.innerText = vp;
+
+}
+
 saveUsers();
 loadPage();
 runClock();
