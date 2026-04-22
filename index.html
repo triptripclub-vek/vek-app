@@ -1004,9 +1004,18 @@ activityModule.classList.add("hidden");
 historyModule.classList.add("hidden");
 dashboardCards.classList.remove("hidden");
 
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
 }
 
 function openAcademy(){
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
 window.open("https://triptripclub.systeme.io/31529e03","_blank");
 }
 
@@ -1047,6 +1056,7 @@ VP: ${row.vp}
 
 }
 
+
 const oldShowActivity = showActivity;
 
 showActivity = function(){
@@ -1056,6 +1066,10 @@ oldShowActivity();
 historyModule.classList.remove("hidden");
 
 loadHistory();
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
 
 }
 saveUsers();
