@@ -577,7 +577,7 @@ display:block;
 
 <button class="menuBtn"><i class="fas fa-chart-line"></i> <span class="menuText"> Dashboard</span></button>
 
-<button class="menuBtn"><i class="fas fa-pencil-alt"></i> <span class="menuText"> Actividad diaria</span></button>
+<button class="menuBtn" onclick="showActivity()"><i class="fas fa-pencil-alt"></i> <span class="menuText"> Actividad diaria</span></button>
 
 <button class="menuBtn"><i class="fas fa-users"></i> <span class="menuText"> Mis patrocinados</span></button>
 
@@ -622,7 +622,7 @@ box-shadow:0 8px 20px rgba(0,0,0,.15);
 <div class="avatar">V</div>
 </div>
 
-<div class="grid">
+<div class="grid" id="dashboardCards">
 
 <div class="cardKpi">
 <h4>Publicaciones</h4>
@@ -646,8 +646,38 @@ box-shadow:0 8px 20px rgba(0,0,0,.15);
 
 </div>
 
+<div id="activityModule" class="linkCard hidden">
+
+<h3 style="margin-bottom:18px;">📋 Actividad Diaria</h3>
+
+<input id="act_fecha" type="date" style="margin-bottom:12px;">
+
+<input id="act_publicaciones" placeholder="Publicaciones">
+<input id="act_prospectos" placeholder="Prospectos">
+<input id="act_conversaciones" placeholder="Conversaciones">
+<input id="act_calificados" placeholder="Calificados">
+<input id="act_videos" placeholder="Videos enviados">
+<input id="act_formularios" placeholder="Formularios">
+<input id="act_registros" placeholder="Registros">
+<input id="act_vp" placeholder="VP generado">
+
+<textarea id="act_notas" placeholder="Notas" style="
+width:100%;
+padding:14px;
+border:1px solid #ccc;
+border-radius:12px;
+min-height:120px;
+margin-bottom:14px;
+font-family:Arial;
+"></textarea>
+
+<button class="copyBtn" onclick="saveActivityTemp()">Guardar Actividad</button>
+
+</div>
+
 <div class="linkCard">
 <h3>🔗 Tu enlace personal</h3>
+
 <div class="linkBox" id="myLink"></div>
 <button class="copyBtn" onclick="copyLink()">Copiar enlace</button>
 </div>
@@ -906,6 +936,18 @@ String(s).padStart(2,"0");
 }
 
 /* ========================================= */
+function showActivity(){
+
+dashboardCards.classList.add("hidden");
+activityModule.classList.remove("hidden");
+
+act_fecha.value = new Date().toISOString().split("T")[0];
+
+}
+
+function saveActivityTemp(){
+alert("Actividad lista para conectar a Supabase en 3B.2");
+}
 saveUsers();
 loadPage();
 runClock();
@@ -913,3 +955,5 @@ runClock();
 </script>
 </body>
 </html>
+
+
