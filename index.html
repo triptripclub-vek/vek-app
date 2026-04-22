@@ -862,9 +862,11 @@ dashboard.classList.remove("hidden");
 window.currentUser = name.toLowerCase();
 
 dashName.innerText = name.toUpperCase();
-myLink.innerText = location.origin + "/?ref=" + name;loadKpisMonth();
-}
 
+myLink.innerText = location.origin + "/?ref=" + name;
+loadKpisMonth();
+
+}
 /* =========================================
    UTILIDADES
 ========================================= */
@@ -986,6 +988,9 @@ return;
 
 alert("Actividad guardada correctamente");
 
+loadKpisMonth();
+loadHistory();
+
 activityModule.querySelectorAll("input").forEach(x=>{
 if(x.type!="date") x.value="";
 });
@@ -1002,7 +1007,7 @@ function showDashboard(){
 
 activityModule.classList.add("hidden");
 historyModule.classList.add("hidden");
-dashboardCards.classList.remove("hidden");loadKpisMonth();
+dashboardCards.classList.remove("hidden"); loadKpisMonth();
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -1021,12 +1026,20 @@ window.open("https://triptripclub.systeme.io/31529e03","_blank");
 
 async function loadHistory(){
 
+const user = (window.currentUser || "").toLowerCase().trim();
+
+let now = new Date();
+let year = now.getFullYear();
+let month = String(now.getMonth()+1).padStart(2,"0");
+
+let start = year + "-" + month + "-01";
+let end = year + "-" + month + "-31";
+
 const { data, error } = await sb
 .from("activity")
 .select("*")
-.eq("username", window.currentUser)
-.order("created_at",{ascending:false})
-.limit(5);
+.ilike("username", user)
+.order("created_at",{ascending:false});
 
 if(error || !data){
 historyList.innerHTML = "Sin datos";
@@ -1034,27 +1047,58 @@ return;
 }
 
 if(data.length===0){
-historyList.innerHTML = "Aún no tienes actividad registrada";
+historyList.innerHTML = "Sin actividad";
 return;
 }
 
-historyList.innerHTML = "";
+let last = data[0];
 
-data.forEach(row=>{
+let pub=0, pros=0, conv=0, cal=0, vid=0, form=0, reg=0, vp=0;
 
-historyList.innerHTML += `
-<div style="padding:12px;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:10px;">
-<b>${row.fecha}</b><br>
-Pub: ${row.publicaciones} |
-Pros: ${row.prospectos} |
-Reg: ${row.registros} |
-VP: ${row.vp}
-</div>
-`;
-
+data.forEach(r=>{
+if(r.fecha >= start && r.fecha <= end){
+pub += Number(r.publicaciones||0);
+pros += Number(r.prospectos||0);
+conv += Number(r.conversaciones||0);
+cal += Number(r.calificados||0);
+vid += Number(r.videos||0);
+form += Number(r.formularios||0);
+reg += Number(r.registros||0);
+vp += Number(r.vp||0);
+}
 });
 
+historyList.innerHTML = `
+
+<div style="padding:12px;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:10px;">
+<b>${last.fecha}</b><br>
+Pub:${last.publicaciones} |
+Pros:${last.prospectos} |
+Conv:${last.conversaciones} |
+Cal:${last.calificados} |
+Vid:${last.videos} |
+Form:${last.formularios} |
+Reg:${last.registros} |
+VP:${last.vp}
+</div>
+
+<div style="padding:12px;border:1px solid #e5e7eb;border-radius:12px;">
+<b>Acumulados del Periodo</b><br>
+Pub:${pub} |
+Pros:${pros} |
+Conv:${conv} |
+Cal:${cal} |
+Vid:${vid} |
+Form:${form} |
+Reg:${reg} |
+VP:${vp}
+</div>
+
+`;
+
 }
+
+
 
 
 const oldShowActivity = showActivity;
@@ -1075,6 +1119,8 @@ closeSidebar();
 
 async function loadKpisMonth(){
 
+const user = (window.currentUser || "").toLowerCase().trim();
+
 let now = new Date();
 let year = now.getFullYear();
 let month = String(now.getMonth()+1).padStart(2,"0");
@@ -1085,24 +1131,22 @@ let end = year + "-" + month + "-31";
 const { data, error } = await sb
 .from("activity")
 .select("*")
-.eq("username", window.currentUser)
+.ilike("username", user)
 .gte("fecha", start)
 .lte("fecha", end);
 
-if(error || !data){
-return;
-}
+if(error || !data){ return; }
 
-let publicaciones = 0;
-let prospectos = 0;
-let registros = 0;
-let vp = 0;
+let publicaciones=0;
+let prospectos=0;
+let registros=0;
+let vp=0;
 
-data.forEach(row=>{
-publicaciones += Number(row.publicaciones || 0);
-prospectos += Number(row.prospectos || 0);
-registros += Number(row.registros || 0);
-vp += Number(row.vp || 0);
+data.forEach(r=>{
+publicaciones += Number(r.publicaciones||0);
+prospectos += Number(r.prospectos||0);
+registros += Number(r.registros||0);
+vp += Number(r.vp||0);
 });
 
 kpi_publicaciones.innerText = publicaciones;
@@ -1111,6 +1155,7 @@ kpi_registros.innerText = registros;
 kpi_vp.innerText = vp;
 
 }
+
 
 saveUsers();
 loadPage();
