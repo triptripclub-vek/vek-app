@@ -589,6 +589,8 @@ display:block;
 
 <button class="menuBtn" onclick="openAcademy()"><i class="fas fa-graduation-cap"></i> <span class="menuText">VEK Network Academy</span></button>
 
+<button class="menuBtn hidden" id="btnKpiManager" onclick="showKpiManager()"><i class="fas fa-bullseye"></i> <span class="menuText"> KPI Manager</span></button>
+
 <button class="menuBtn"><i class="fas fa-user"></i> <span class="menuText"> Editar perfil</span></button>
 
 <button class="menuBtn logoutBtn" onclick="logout()"><i class="fas fa-right-from-bracket"></i> <span class="menuText"> Cerrar sesión</span></button></aside>
@@ -678,6 +680,29 @@ font-family:Arial;
 <div id="historyModule" class="linkCard hidden" style="margin-bottom:22px;">
 <h3 style="margin-bottom:18px;">📈 Mis últimos registros</h3>
 <div id="historyList">Cargando...</div>
+</div>
+
+<div id="kpiModule" class="linkCard hidden">
+
+<h3 style="margin-bottom:18px;">🎯 KPI Manager</h3>
+
+<input id="meta_publicaciones" placeholder="Meta publicaciones">
+<input id="meta_prospectos" placeholder="Meta prospectos">
+<input id="meta_conversaciones" placeholder="Meta conversaciones">
+<input id="meta_calificados" placeholder="Meta calificados">
+<input id="meta_videos" placeholder="Meta videos">
+<input id="meta_formularios" placeholder="Meta formularios">
+<input id="meta_registros" placeholder="Meta registros">
+<input id="meta_vp" placeholder="Meta VP">
+
+<select id="meta_periodo" style="width:100%;padding:14px;border-radius:12px;margin-bottom:14px;">
+<option value="mensual">Mensual</option>
+<option value="semanal">Semanal</option>
+<option value="quincenal">Quincenal</option>
+</select>
+
+<button class="copyBtn" onclick="saveKpiManager()">Guardar Metas</button>
+
 </div>
 
 <div class="linkCard">
@@ -866,6 +891,12 @@ dashName.innerText = name.toUpperCase();
 myLink.innerText = location.origin + "/?ref=" + name;
 loadKpisMonth();
 
+btnKpiManager.classList.add("hidden");
+
+if(name.toLowerCase()=="admin"){
+btnKpiManager.classList.remove("hidden");
+}
+
 }
 /* =========================================
    UTILIDADES
@@ -948,6 +979,8 @@ String(s).padStart(2,"0");
 function showActivity(){
 
 dashboardCards.classList.add("hidden");
+kpiModule.classList.add("hidden");
+
 activityModule.classList.remove("hidden");
 
 act_fecha.value = new Date().toISOString().split("T")[0];
@@ -1007,7 +1040,10 @@ function showDashboard(){
 
 activityModule.classList.add("hidden");
 historyModule.classList.add("hidden");
-dashboardCards.classList.remove("hidden"); loadKpisMonth();
+kpiModule.classList.add("hidden");
+
+dashboardCards.classList.remove("hidden");
+loadKpisMonth();
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -1161,6 +1197,46 @@ kpi_vp.innerText = vp;
 
 }
 
+function showKpiManager(){
+
+dashboardCards.classList.add("hidden");
+activityModule.classList.add("hidden");
+historyModule.classList.add("hidden");
+kpiModule.classList.remove("hidden");
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
+}
+
+async function saveKpiManager(){
+
+const payload = {
+periodo: meta_periodo.value,
+publicaciones: Number(meta_publicaciones.value||0),
+prospectos: Number(meta_prospectos.value||0),
+conversaciones: Number(meta_conversaciones.value||0),
+calificados: Number(meta_calificados.value||0),
+videos: Number(meta_videos.value||0),
+formularios: Number(meta_formularios.value||0),
+registros: Number(meta_registros.value||0),
+vp: Number(meta_vp.value||0),
+updated_at: new Date().toISOString()
+};
+
+const { error } = await sb
+.from("kpi_manager")
+.insert([payload]);
+
+if(error){
+alert("Error: " + error.message);
+return;
+}
+
+alert("Metas guardadas correctamente");
+
+}
 
 saveUsers();
 loadPage();
