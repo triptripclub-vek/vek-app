@@ -575,7 +575,7 @@ display:block;
 <div class="logo" style="margin:0;">VEK PANEL</div>
 </div>
 
-<button class="menuBtn"><i class="fas fa-chart-line"></i> <span class="menuText"> Dashboard</span></button>
+<button class="menuBtn" onclick="showDashboard()"><i class="fas fa-chart-line"></i> <span class="menuText"> Dashboard</span></button>
 
 <button class="menuBtn" onclick="showActivity()"><i class="fas fa-pencil-alt"></i> <span class="menuText"> Actividad diaria</span></button>
 
@@ -587,7 +587,7 @@ display:block;
 
 <button class="menuBtn"><i class="fas fa-file-alt"></i> <span class="menuText"> Completar registro</span></button>
 
-<button class="menuBtn"><i class="fas fa-graduation-cap"></i> <span class="menuText"> VEK Network Academy</span></button>
+<button class="menuBtn" onclick="openAcademy()"><i class="fas fa-graduation-cap"></i> <span class="menuText">VEK Network Academy</span></button>
 
 <button class="menuBtn"><i class="fas fa-user"></i> <span class="menuText"> Editar perfil</span></button>
 
@@ -673,6 +673,11 @@ font-family:Arial;
 
 <button class="copyBtn" onclick="saveActivityTemp()">Guardar Actividad</button>
 
+</div>
+
+<div id="historyModule" class="linkCard hidden" style="margin-bottom:22px;">
+<h3 style="margin-bottom:18px;">📈 Mis últimos registros</h3>
+<div id="historyList">Cargando...</div>
 </div>
 
 <div class="linkCard">
@@ -990,6 +995,67 @@ act_notas.value="";
 }catch(e){
 alert("Error general");
 }
+
+}
+
+function showDashboard(){
+
+activityModule.classList.add("hidden");
+historyModule.classList.add("hidden");
+dashboardCards.classList.remove("hidden");
+
+}
+
+function openAcademy(){
+window.open("https://triptripclub.systeme.io/31529e03","_blank");
+}
+
+async function loadHistory(){
+
+const { data, error } = await sb
+.from("activity")
+.select("*")
+.eq("username", window.currentUser)
+.order("created_at",{ascending:false})
+.limit(5);
+
+if(error || !data){
+historyList.innerHTML = "Sin datos";
+return;
+}
+
+if(data.length===0){
+historyList.innerHTML = "Aún no tienes actividad registrada";
+return;
+}
+
+historyList.innerHTML = "";
+
+data.forEach(row=>{
+
+historyList.innerHTML += `
+<div style="padding:12px;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:10px;">
+<b>${row.fecha}</b><br>
+Pub: ${row.publicaciones} |
+Pros: ${row.prospectos} |
+Reg: ${row.registros} |
+VP: ${row.vp}
+</div>
+`;
+
+});
+
+}
+
+const oldShowActivity = showActivity;
+
+showActivity = function(){
+
+oldShowActivity();
+
+historyModule.classList.remove("hidden");
+
+loadHistory();
 
 }
 saveUsers();
