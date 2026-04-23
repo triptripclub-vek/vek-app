@@ -581,10 +581,41 @@ left:0;
 }
 
 .vekLayout{
-display:block;
+display:block;}
 }
 
+.progressWrap{
+margin-top:12px;
 }
+
+.progressBar{
+height:8px;
+background:#e5e7eb;
+border-radius:20px;
+overflow:hidden;
+}
+
+.progressFill{
+height:100%;
+width:0%;
+background:#22c55e;
+border-radius:20px;
+transition:1s;
+}
+
+.kpiMeta{
+font-size:12px;
+margin-top:8px;
+color:#64748b;
+font-weight:700;
+}
+
+.kpiState{
+font-size:12px;
+margin-top:4px;
+font-weight:800;
+}
+
 </style>
 
 <div class="overlay" onclick="closeSidebar()" id="overlay"></div>
@@ -1229,72 +1260,104 @@ closeSidebar();
 async function loadKpisMonth(){
 
 const user = (window.currentUser || "").toLowerCase().trim();
+if(!user)return;
 
-let now = new Date();
-let year = now.getFullYear();
-let month = String(now.getMonth()+1).padStart(2,"0");
+const now = new Date();
+const prefix =
+now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
 
-let prefix = year + "-" + month;
-
-const { data, error } = await sb
+const { data } = await sb
 .from("activity")
 .select("*")
-.ilike("username", user);
+.ilike("username",user);
 
-if(error || !data){
-return;
-}
+let total = {
+publicaciones:0,
+prospectos:0,
+conversaciones:0,
+calificados:0,
+videos:0,
+formularios:0,
+registros:0,
+vp:0
+};
 
-let publicaciones=0;
-let prospectos=0;
-let conversaciones=0;
-let calificados=0;
-let videos=0;
-let formularios=0;
-let registros=0;
-let vp=0;
-
-data.forEach(r=>{
+(data||[]).forEach(r=>{
 
 if(String(r.fecha).startsWith(prefix)){
 
-publicaciones += Number(r.publicaciones || 0);
-prospectos += Number(r.prospectos || 0);
-conversaciones += Number(r.conversaciones || 0);
-calificados += Number(r.calificados || 0);
-videos += Number(r.videos || 0);
-formularios += Number(r.formularios || 0);
-registros += Number(r.registros || 0);
-vp += Number(r.vp || 0);
+total.publicaciones += Number(r.publicaciones||0);
+total.prospectos += Number(r.prospectos||0);
+total.conversaciones += Number(r.conversaciones||0);
+total.calificados += Number(r.calificados||0);
+total.videos += Number(r.videos||0);
+total.formularios += Number(r.formularios||0);
+total.registros += Number(r.registros||0);
+total.vp += Number(r.vp||0);
 
 }
 
 });
 
-
-kpi_publicaciones.innerText = publicaciones;
-kpi_prospectos.innerText = prospectos;
-kpi_conversaciones.innerText = conversaciones;
-kpi_calificados.innerText = calificados;
-kpi_videos.innerText = videos;
-kpi_formularios.innerText = formularios;
-kpi_registros.innerText = registros;
-kpi_vp.innerText = vp;
+paintCard("publicaciones", total.publicaciones);
+paintCard("prospectos", total.prospectos);
+paintCard("conversaciones", total.conversaciones);
+paintCard("calificados", total.calificados);
+paintCard("videos", total.videos);
+paintCard("formularios", total.formularios);
+paintCard("registros", total.registros);
+paintCard("vp", total.vp);
 
 }
 
-function showKpiManager(){
+async function paintCard(kpi,val){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
+const card = document.getElementById("kpi_"+kpi).closest(".cardKpi");
 
-kpiModule.classList.remove("hidden");
+const { data } = await sb
+.from("kpi_manager")
+.select("*")
+.order("updated_at",{ascending:false})
+.limit(1);
 
-if(window.innerWidth <= 900){
-closeSidebar();
+let meta = 10;
+
+if(data && data.length && data[0][kpi] != null){
+meta = Number(data[0][kpi] || 10);
 }
+
+let pct = Math.round((val/meta)*100);
+if(!isFinite(pct)) pct = 0;
+
+card.classList.remove("red","yellow","green");
+
+let state = "Bajo meta";
+let fill = "#ef4444";
+
+if(pct >= 100){
+card.classList.add("green");
+state = "Meta lograda";
+fill = "#22c55e";
+}
+else if(pct >= 60){
+card.classList.add("yellow");
+state = "En progreso";
+fill = "#f59e0b";
+}
+else{
+card.classList.add("red");
+}
+
+document.getElementById("kpi_"+kpi).innerHTML = `
+${val}
+<div class="progressWrap">
+<div class="progressBar">
+<div class="progressFill" style="width:${Math.min(pct,100)}%;background:${fill};"></div>
+</div>
+<div class="kpiMeta">${pct}% de ${meta}</div>
+<div class="kpiState">${state}</div>
+</div>
+`;
 
 }
 
