@@ -1472,6 +1472,21 @@ alert("Semáforos guardados correctamente");
 
 }
 
+function showKpiManager(){
+
+dashboardCards.classList.add("hidden");
+activityModule.classList.add("hidden");
+historyModule.classList.add("hidden");
+semaforoModule.classList.add("hidden");
+
+kpiModule.classList.remove("hidden");
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
+}
+
 saveUsers();
 loadPage();
 runClock();
