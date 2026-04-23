@@ -1334,18 +1334,51 @@ card.classList.remove("red","yellow","green");
 let state = "Bajo meta";
 let fill = "#ef4444";
 
-if(pct >= 100){
-card.classList.add("green");
-state = "Meta lograda";
-fill = "#22c55e";
+let rojo = 59;
+let amarillo = 99;
+let verde = 100;
+
+const { data: sem } = await sb
+.from("semaforo_manager")
+.select("*")
+.eq("kpi",kpi)
+.limit(1);
+
+if(sem && sem.length){
+
+rojo = Number(sem[0].rojo || 59);
+amarillo = Number(sem[0].amarillo || 99);
+verde = Number(sem[0].verde || 100);
+
 }
-else if(pct >= 60){
+
+if(pct >= verde){
+
+card.classList.add("green");
+state = "Excelente";
+fill = "#22c55e";
+
+}
+else if(pct >= amarillo){
+
 card.classList.add("yellow");
 state = "En progreso";
 fill = "#f59e0b";
+
+}
+else if(pct <= rojo){
+
+card.classList.add("red");
+state = "Bajo meta";
+fill = "#ef4444";
+
 }
 else{
-card.classList.add("red");
+
+card.classList.add("yellow");
+state = "Avance medio";
+fill = "#f59e0b";
+
 }
 
 document.getElementById("kpi_"+kpi).innerHTML = `
