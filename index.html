@@ -488,7 +488,28 @@ margin-bottom:22px;
 .cardKpi{
 background:#fff;
 padding:20px;
-border-radius:18px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+transition:.25s;
+position:relative;
+overflow:hidden;
+border:1px solid #eef2f7;
+}
+
+.cardKpi:hover{
+transform:translateY(-3px);
+}
+
+.cardKpi.red{
+border-left:8px solid #ef4444;
+}
+
+.cardKpi.yellow{
+border-left:8px solid #f59e0b;
+}
+
+.cardKpi.green{
+border-left:8px solid #22c55e;
 }
 
 .cardKpi h4{
