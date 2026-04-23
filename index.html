@@ -629,27 +629,24 @@ box-shadow:0 8px 20px rgba(0,0,0,.15);
 
 <div class="grid" id="dashboardCards">
 
-<div class="cardKpi">
-<h4>Publicaciones</h4>
-<div class="num" id="kpi_publicaciones">0</div>
-</div>
+<div class="cardKpi"><h4>Publicaciones</h4><div class="num" id="kpi_publicaciones">0</div></div>
 
-<div class="cardKpi">
-<h4>Prospectos</h4>
-<div class="num" id="kpi_prospectos">0</div>
-</div>
+<div class="cardKpi"><h4>Prospectos</h4><div class="num" id="kpi_prospectos">0</div></div>
 
-<div class="cardKpi">
-<h4>Registros</h4>
-<div class="num" id="kpi_registros">0</div>
-</div>
+<div class="cardKpi"><h4>Conversaciones</h4><div class="num" id="kpi_conversaciones">0</div></div>
 
-<div class="cardKpi">
-<h4>VP</h4>
-<div class="num" id="kpi_vp">0</div>
-</div>
+<div class="cardKpi"><h4>Calificados</h4><div class="num" id="kpi_calificados">0</div></div>
+
+<div class="cardKpi"><h4>PVD</h4><div class="num" id="kpi_videos">0</div></div>
+
+<div class="cardKpi"><h4>PVI</h4><div class="num" id="kpi_formularios">0</div></div>
+
+<div class="cardKpi"><h4>Registros</h4><div class="num" id="kpi_registros">0</div></div>
+
+<div class="cardKpi"><h4>PVP</h4><div class="num" id="kpi_vp">0</div></div>
 
 </div>
+
 
 <div id="activityModule" class="linkCard hidden">
 
@@ -661,10 +658,10 @@ box-shadow:0 8px 20px rgba(0,0,0,.15);
 <input id="act_prospectos" placeholder="Prospectos">
 <input id="act_conversaciones" placeholder="Conversaciones">
 <input id="act_calificados" placeholder="Calificados">
-<input id="act_videos" placeholder="Videos enviados">
-<input id="act_formularios" placeholder="Formularios">
+<input id="act_videos" placeholder="PVD">
+<input id="act_formularios" placeholder="PVI">
 <input id="act_registros" placeholder="Registros">
-<input id="act_vp" placeholder="VP generado">
+<input id="act_vp" placeholder="PVP">
 
 <textarea id="act_notas" placeholder="Notas" style="
 width:100%;
@@ -693,10 +690,10 @@ font-family:Arial;
 <input id="meta_prospectos" placeholder="Meta prospectos">
 <input id="meta_conversaciones" placeholder="Meta conversaciones">
 <input id="meta_calificados" placeholder="Meta calificados">
-<input id="meta_videos" placeholder="Meta videos">
-<input id="meta_formularios" placeholder="Meta formularios">
+<input id="meta_videos" placeholder="Meta PVD">
+<input id="meta_formularios" placeholder="Meta PVI">
 <input id="meta_registros" placeholder="Meta registros">
-<input id="meta_vp" placeholder="Meta VP">
+<input id="meta_vp" placeholder="Meta PVP">
 
 <select id="meta_periodo" style="width:100%;padding:14px;border-radius:12px;margin-bottom:14px;">
 <option value="mensual">Mensual</option>
@@ -712,17 +709,42 @@ font-family:Arial;
 
 <h3 style="margin-bottom:18px;">🚦 Semáforo Manager</h3>
 
+<h4>Publicaciones</h4>
+<input id="pub_rojo" placeholder="Rojo hasta %">
+<input id="pub_amarillo" placeholder="Amarillo hasta %">
+<input id="pub_verde" placeholder="Verde desde %">
+
 <h4>Prospectos</h4>
 <input id="pros_rojo" placeholder="Rojo hasta %">
 <input id="pros_amarillo" placeholder="Amarillo hasta %">
 <input id="pros_verde" placeholder="Verde desde %">
+
+<h4>Conversaciones</h4>
+<input id="conv_rojo" placeholder="Rojo hasta %">
+<input id="conv_amarillo" placeholder="Amarillo hasta %">
+<input id="conv_verde" placeholder="Verde desde %">
+
+<h4>Calificados</h4>
+<input id="cal_rojo" placeholder="Rojo hasta %">
+<input id="cal_amarillo" placeholder="Amarillo hasta %">
+<input id="cal_verde" placeholder="Verde desde %">
+
+<h4>PVD</h4>
+<input id="vid_rojo" placeholder="Rojo hasta %">
+<input id="vid_amarillo" placeholder="Amarillo hasta %">
+<input id="vid_verde" placeholder="Verde desde %">
+
+<h4>PVI</h4>
+<input id="form_rojo" placeholder="Rojo hasta %">
+<input id="form_amarillo" placeholder="Amarillo hasta %">
+<input id="form_verde" placeholder="Verde desde %">
 
 <h4>Registros</h4>
 <input id="reg_rojo" placeholder="Rojo hasta %">
 <input id="reg_amarillo" placeholder="Amarillo hasta %">
 <input id="reg_verde" placeholder="Verde desde %">
 
-<h4>VP</h4>
+<h4>PVP</h4>
 <input id="vp_rojo" placeholder="Rojo hasta %">
 <input id="vp_amarillo" placeholder="Amarillo hasta %">
 <input id="vp_verde" placeholder="Verde desde %">
@@ -1202,10 +1224,14 @@ if(error || !data){
 return;
 }
 
-let publicaciones = 0;
-let prospectos = 0;
-let registros = 0;
-let vp = 0;
+let publicaciones=0;
+let prospectos=0;
+let conversaciones=0;
+let calificados=0;
+let videos=0;
+let formularios=0;
+let registros=0;
+let vp=0;
 
 data.forEach(r=>{
 
@@ -1213,6 +1239,10 @@ if(String(r.fecha).startsWith(prefix)){
 
 publicaciones += Number(r.publicaciones || 0);
 prospectos += Number(r.prospectos || 0);
+conversaciones += Number(r.conversaciones || 0);
+calificados += Number(r.calificados || 0);
+videos += Number(r.videos || 0);
+formularios += Number(r.formularios || 0);
 registros += Number(r.registros || 0);
 vp += Number(r.vp || 0);
 
@@ -1220,8 +1250,13 @@ vp += Number(r.vp || 0);
 
 });
 
+
 kpi_publicaciones.innerText = publicaciones;
 kpi_prospectos.innerText = prospectos;
+kpi_conversaciones.innerText = conversaciones;
+kpi_calificados.innerText = calificados;
+kpi_videos.innerText = videos;
+kpi_formularios.innerText = formularios;
 kpi_registros.innerText = registros;
 kpi_vp.innerText = vp;
 
@@ -1289,7 +1324,17 @@ async function saveSemaforo(){
 
 const rows = [
 
+{ kpi:"publicaciones", rojo:Number(pub_rojo.value||0), amarillo:Number(pub_amarillo.value||0), verde:Number(pub_verde.value||0) },
+
 { kpi:"prospectos", rojo:Number(pros_rojo.value||0), amarillo:Number(pros_amarillo.value||0), verde:Number(pros_verde.value||0) },
+
+{ kpi:"conversaciones", rojo:Number(conv_rojo.value||0), amarillo:Number(conv_amarillo.value||0), verde:Number(conv_verde.value||0) },
+
+{ kpi:"calificados", rojo:Number(cal_rojo.value||0), amarillo:Number(cal_amarillo.value||0), verde:Number(cal_verde.value||0) },
+
+{ kpi:"videos", rojo:Number(vid_rojo.value||0), amarillo:Number(vid_amarillo.value||0), verde:Number(vid_verde.value||0) },
+
+{ kpi:"formularios", rojo:Number(form_rojo.value||0), amarillo:Number(form_amarillo.value||0), verde:Number(form_verde.value||0) },
 
 { kpi:"registros", rojo:Number(reg_rojo.value||0), amarillo:Number(reg_amarillo.value||0), verde:Number(reg_verde.value||0) },
 
