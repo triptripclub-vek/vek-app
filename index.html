@@ -1082,6 +1082,7 @@ function showActivity(){
 
 dashboardCards.classList.add("hidden");
 kpiModule.classList.add("hidden");
+semaforoModule.classList.add("hidden");
 
 activityModule.classList.remove("hidden");
 
@@ -1216,10 +1217,10 @@ Pub:${last.publicaciones} |
 Pros:${last.prospectos} |
 Conv:${last.conversaciones} |
 Cal:${last.calificados} |
-Vid:${last.videos} |
-Form:${last.formularios} |
+PVD:${last.videos} |
+PVI:${last.formularios} |
 Reg:${last.registros} |
-VP:${last.vp}
+PVP:${last.vp}
 </div>
 
 <div style="padding:12px;border:1px solid #e5e7eb;border-radius:12px;">
@@ -1228,10 +1229,10 @@ Pub:${pub} |
 Pros:${pros} |
 Conv:${conv} |
 Cal:${cal} |
-Vid:${vid} |
-Form:${form} |
+PVD:${vid} |
+PVI:${form} |
 Reg:${reg} |
-VP:${vp}
+PVP:${vp}
 </div>
 
 `;
@@ -1342,6 +1343,7 @@ const { data: sem } = await sb
 .from("semaforo_manager")
 .select("*")
 .eq("kpi",kpi)
+.order("id",{ascending:false})
 .limit(1);
 
 if(sem && sem.length){
@@ -1422,7 +1424,7 @@ alert("Metas guardadas correctamente");
 
 }
 
-function showSemaforoManager(){
+async function showSemaforoManager(){
 
 dashboardCards.classList.add("hidden");
 activityModule.classList.add("hidden");
@@ -1431,9 +1433,42 @@ kpiModule.classList.add("hidden");
 
 semaforoModule.classList.remove("hidden");
 
+await loadSemaforoActual();
+
 if(window.innerWidth <= 900){
 closeSidebar();
 }
+
+}
+
+async function loadSemaforoActual(){
+
+const { data } = await sb
+.from("semaforo_manager")
+.select("*")
+.order("id",{ascending:false});
+
+if(!data)return;
+
+function setVals(kpi,p1,p2,p3){
+
+const row = data.find(x=>x.kpi===kpi);
+if(!row)return;
+
+document.getElementById(p1).value = row.rojo || 0;
+document.getElementById(p2).value = row.amarillo || 0;
+document.getElementById(p3).value = row.verde || 0;
+
+}
+
+setVals("publicaciones","pub_rojo","pub_amarillo","pub_verde");
+setVals("prospectos","pros_rojo","pros_amarillo","pros_verde");
+setVals("conversaciones","conv_rojo","conv_amarillo","conv_verde");
+setVals("calificados","cal_rojo","cal_amarillo","cal_verde");
+setVals("videos","vid_rojo","vid_amarillo","vid_verde");
+setVals("formularios","form_rojo","form_amarillo","form_verde");
+setVals("registros","reg_rojo","reg_amarillo","reg_verde");
+setVals("vp","vp_rojo","vp_amarillo","vp_verde");
 
 }
 
@@ -1461,7 +1496,7 @@ const rows = [
 
 const { error } = await sb
 .from("semaforo_manager")
-.insert(rows);
+.upsert(rows,{ onConflict:"kpi" });
 
 if(error){
 alert("Error: " + error.message);
