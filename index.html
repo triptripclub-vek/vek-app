@@ -591,6 +591,9 @@ display:block;
 
 <button class="menuBtn hidden" id="btnKpiManager" onclick="showKpiManager()"><i class="fas fa-bullseye"></i> <span class="menuText"> KPI Manager</span></button>
 
+<button class="menuBtn hidden" id="btnSemaforo" onclick="showSemaforoManager()"><i class="fas fa-traffic-light"></i> <span class="menuText"> Semáforo Manager</span></button>
+
+
 <button class="menuBtn"><i class="fas fa-user"></i> <span class="menuText"> Editar perfil</span></button>
 
 <button class="menuBtn logoutBtn" onclick="logout()"><i class="fas fa-right-from-bracket"></i> <span class="menuText"> Cerrar sesión</span></button></aside>
@@ -702,6 +705,29 @@ font-family:Arial;
 </select>
 
 <button class="copyBtn" onclick="saveKpiManager()">Guardar Metas</button>
+
+</div>
+
+<div id="semaforoModule" class="linkCard hidden">
+
+<h3 style="margin-bottom:18px;">🚦 Semáforo Manager</h3>
+
+<h4>Prospectos</h4>
+<input id="pros_rojo" placeholder="Rojo hasta %">
+<input id="pros_amarillo" placeholder="Amarillo hasta %">
+<input id="pros_verde" placeholder="Verde desde %">
+
+<h4>Registros</h4>
+<input id="reg_rojo" placeholder="Rojo hasta %">
+<input id="reg_amarillo" placeholder="Amarillo hasta %">
+<input id="reg_verde" placeholder="Verde desde %">
+
+<h4>VP</h4>
+<input id="vp_rojo" placeholder="Rojo hasta %">
+<input id="vp_amarillo" placeholder="Amarillo hasta %">
+<input id="vp_verde" placeholder="Verde desde %">
+
+<button class="copyBtn" onclick="saveSemaforo()">Guardar Semáforos</button>
 
 </div>
 
@@ -892,9 +918,11 @@ myLink.innerText = location.origin + "/?ref=" + name;
 loadKpisMonth();
 
 btnKpiManager.classList.add("hidden");
+btnSemaforo.classList.add("hidden");
 
 if(name.toLowerCase()=="admin"){
 btnKpiManager.classList.remove("hidden");
+btnSemaforo.classList.remove("hidden");
 }
 
 }
@@ -1044,6 +1072,8 @@ kpiModule.classList.add("hidden");
 
 dashboardCards.classList.remove("hidden");
 loadKpisMonth();
+
+semaforoModule.classList.add("hidden");
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -1202,6 +1232,8 @@ function showKpiManager(){
 dashboardCards.classList.add("hidden");
 activityModule.classList.add("hidden");
 historyModule.classList.add("hidden");
+semaforoModule.classList.add("hidden");
+
 kpiModule.classList.remove("hidden");
 
 if(window.innerWidth <= 900){
@@ -1235,6 +1267,46 @@ return;
 }
 
 alert("Metas guardadas correctamente");
+
+}
+
+function showSemaforoManager(){
+
+dashboardCards.classList.add("hidden");
+activityModule.classList.add("hidden");
+historyModule.classList.add("hidden");
+kpiModule.classList.add("hidden");
+
+semaforoModule.classList.remove("hidden");
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
+}
+
+async function saveSemaforo(){
+
+const rows = [
+
+{ kpi:"prospectos", rojo:Number(pros_rojo.value||0), amarillo:Number(pros_amarillo.value||0), verde:Number(pros_verde.value||0) },
+
+{ kpi:"registros", rojo:Number(reg_rojo.value||0), amarillo:Number(reg_amarillo.value||0), verde:Number(reg_verde.value||0) },
+
+{ kpi:"vp", rojo:Number(vp_rojo.value||0), amarillo:Number(vp_amarillo.value||0), verde:Number(vp_verde.value||0) }
+
+];
+
+const { error } = await sb
+.from("semaforo_manager")
+.insert(rows);
+
+if(error){
+alert("Error: " + error.message);
+return;
+}
+
+alert("Semáforos guardados correctamente");
 
 }
 
