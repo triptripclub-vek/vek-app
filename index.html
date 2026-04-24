@@ -616,6 +616,43 @@ margin-top:4px;
 font-weight:800;
 }
 
+.kpiState{
+font-size:12px;
+margin-top:4px;
+font-weight:800;
+}
+
+.gaugeWrap{
+width:140px;
+height:140px;
+margin:auto;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:900;
+background:conic-gradient(#22c55e 0deg,#e5e7eb 0deg);
+position:relative;
+}
+
+.gaugeWrap::after{
+content:"";
+width:98px;
+height:98px;
+background:#fff;
+border-radius:50%;
+position:absolute;
+}
+
+.gaugeNum{
+position:relative;
+z-index:2;
+font-size:26px;
+font-weight:900;
+}
+
+
 </style>
 
 <div class="overlay" onclick="closeSidebar()" id="overlay"></div>
@@ -633,7 +670,7 @@ font-weight:800;
 
 <button class="menuBtn"><i class="fas fa-users"></i> <span class="menuText"> Mis patrocinados</span></button>
 
-<button class="menuBtn"><i class="fas fa-chart-bar"></i> <span class="menuText"> Volumen</span></button>
+<button class="menuBtn" onclick="showGaugeModule()"><i class="fas fa-gauge-high"></i> <span class="menuText"> KPIs</span></button>
 
 <button class="menuBtn"><i class="fas fa-globe"></i> <span class="menuText"> Landing Center</span></button>
 
@@ -804,6 +841,25 @@ font-family:Arial;
 <button class="copyBtn" onclick="saveSemaforo()">Guardar Semáforos</button>
 
 </div>
+
+<div id="gaugeModule" class="linkCard hidden">
+
+<h3 style="margin-bottom:18px;">📊 KPIs Premium</h3>
+
+<div class="grid" id="gaugeGrid">
+
+<div class="cardKpi"><h4>Publicaciones</h4><div id="g_publicaciones"></div></div>
+<div class="cardKpi"><h4>Prospectos</h4><div id="g_prospectos"></div></div>
+<div class="cardKpi"><h4>Conversaciones</h4><div id="g_conversaciones"></div></div>
+<div class="cardKpi"><h4>Calificados</h4><div id="g_calificados"></div></div>
+<div class="cardKpi"><h4>PVD</h4><div id="g_videos"></div></div>
+<div class="cardKpi"><h4>PVI</h4><div id="g_formularios"></div></div>
+<div class="cardKpi"><h4>Registros</h4><div id="g_registros"></div></div>
+<div class="cardKpi"><h4>PVP</h4><div id="g_vp"></div></div>
+
+</div>
+</div>
+
 
 <div class="linkCard">
 <h3>🔗 Tu enlace personal</h3>
@@ -1083,6 +1139,8 @@ function showActivity(){
 dashboardCards.classList.add("hidden");
 kpiModule.classList.add("hidden");
 semaforoModule.classList.add("hidden");
+gaugeModule.classList.add("hidden");
+historyModule.classList.add("hidden");
 
 activityModule.classList.remove("hidden");
 
@@ -1149,6 +1207,8 @@ dashboardCards.classList.remove("hidden");
 loadKpisMonth();
 
 semaforoModule.classList.add("hidden");
+
+gaugeModule.classList.add("hidden");
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -1519,6 +1579,123 @@ kpiModule.classList.remove("hidden");
 if(window.innerWidth <= 900){
 closeSidebar();
 }
+
+}
+
+function showGaugeModule(){
+
+dashboardCards.classList.add("hidden");
+activityModule.classList.add("hidden");
+historyModule.classList.add("hidden");
+kpiModule.classList.add("hidden");
+semaforoModule.classList.add("hidden");
+
+gaugeModule.classList.remove("hidden");
+
+loadGaugeKpis();
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
+}
+
+async function loadGaugeKpis(){
+
+const user = (window.currentUser || "").toLowerCase().trim();
+if(!user)return;
+
+const now = new Date();
+const prefix =
+now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
+
+const { data } = await sb
+.from("activity")
+.select("*")
+.ilike("username",user);
+
+let total = {
+publicaciones:0,
+prospectos:0,
+conversaciones:0,
+calificados:0,
+videos:0,
+formularios:0,
+registros:0,
+vp:0
+};
+
+(data||[]).forEach(r=>{
+
+if(String(r.fecha).startsWith(prefix)){
+
+total.publicaciones += Number(r.publicaciones||0);
+total.prospectos += Number(r.prospectos||0);
+total.conversaciones += Number(r.conversaciones||0);
+total.calificados += Number(r.calificados||0);
+total.videos += Number(r.videos||0);
+total.formularios += Number(r.formularios||0);
+total.registros += Number(r.registros||0);
+total.vp += Number(r.vp||0);
+
+}
+
+});
+
+for(let kpi in total){
+await paintGauge(kpi,total[kpi]);
+}
+
+}
+
+async function paintGauge(kpi,val){
+
+const { data } = await sb
+.from("kpi_manager")
+.select("*")
+.order("updated_at",{ascending:false})
+.limit(1);
+
+let meta = 10;
+
+if(data && data.length && data[0][kpi] != null){
+meta = Number(data[0][kpi] || 10);
+}
+
+let pct = Math.round((val/meta)*100);
+if(!isFinite(pct)) pct = 0;
+
+let color = "#ef4444";
+
+const { data: sem } = await sb
+.from("semaforo_manager")
+.select("*")
+.eq("kpi",kpi)
+.order("id",{ascending:false})
+.limit(1);
+
+if(sem && sem.length){
+
+let amarillo = Number(sem[0].amarillo || 60);
+let verde = Number(sem[0].verde || 100);
+
+if(pct >= verde){
+color = "#22c55e";
+}
+else if(pct >= amarillo){
+color = "#f59e0b";
+}
+
+}
+
+let deg = Math.min(pct,100) * 3.6;
+
+document.getElementById("g_"+kpi).innerHTML = `
+<div class="gaugeWrap"
+style="background:conic-gradient(${color} ${deg}deg,#e5e7eb ${deg}deg);">
+<div class="gaugeNum">${pct}%</div>
+</div>
+`;
 
 }
 
