@@ -1690,10 +1690,32 @@ color = "#f59e0b";
 
 let deg = Math.min(pct,100) * 3.6;
 
+let restante = meta - val;
+let texto = "";
+
+if(restante > 0){
+texto = `${val} hechas de ${meta}<br>Por hacer: ${restante}`;
+}else if(restante === 0){
+texto = `${val} hechas de ${meta}<br>Meta cumplida`;
+}else{
+texto = `${val} hechas de ${meta}<br>Superada +${Math.abs(restante)}`;
+}
+
 document.getElementById("g_"+kpi).innerHTML = `
 <div class="gaugeWrap"
 style="background:conic-gradient(${color} ${deg}deg,#e5e7eb ${deg}deg);">
 <div class="gaugeNum">${pct}%</div>
+</div>
+
+<div style="
+margin-top:10px;
+font-size:13px;
+font-weight:700;
+color:#334155;
+line-height:1.4;
+text-align:center;
+">
+${texto}
 </div>
 `;
 
