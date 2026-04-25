@@ -328,7 +328,7 @@ Sin cuotas de mantenimiento.<br>
 Sin permanencia obligatoria.
 </div>
 
-<a class="btnMain btnWhatsapp" href="https://wa.me/529981112233">
+<a class="btnMain btnWhatsapp" id="waBtnMain" href="#">
 Whatsapp<br>
 <span style="font-size:16px">Solicita más información aquí</span>
 </a>
@@ -355,7 +355,7 @@ Whatsapp<br>
 © 2026 Systeme VEK
 </footer>
 
-<a href="https://wa.me/529981112233" class="floatW">
+<a href="#" class="floatW" id="waBtnFloat">
 <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
 </a>
 
@@ -672,7 +672,10 @@ font-weight:900;
 
 <button class="menuBtn" onclick="showGaugeModule()"><i class="fas fa-gauge-high"></i> <span class="menuText"> KPIs</span></button>
 
-<button class="menuBtn"><i class="fas fa-globe"></i> <span class="menuText"> Landing Center</span></button>
+<button class="menuBtn" onclick="showLandingCenter()">
+<i class="fas fa-globe"></i>
+<span class="menuText"> Landing Center</span>
+</button>
 
 <button class="menuBtn"><i class="fas fa-file-alt"></i> <span class="menuText"> Completar mi Registro</span></button>
 
@@ -739,6 +742,38 @@ box-shadow:0 8px 20px rgba(0,0,0,.15);
 <div class="cardKpi"><h4>Registros</h4><div class="num" id="kpi_registros">0</div></div>
 
 <div class="cardKpi"><h4>PVP</h4><div class="num" id="kpi_vp">0</div></div>
+
+</div>
+
+<div id="landingModule" class="linkCard hidden">
+
+<h3 style="margin-bottom:18px;">🌐 Landing Center</h3>
+
+<p style="
+font-size:14px;
+line-height:1.5;
+color:#475569;
+margin-bottom:14px;
+">
+Ingresa tu número de WhatsApp con clave país y sin espacios.<br>
+Ejemplo México:<br>
+5219981234567
+</p>
+
+<input
+id="landing_phone"
+placeholder="5219981234567"
+style="
+width:100%;
+padding:14px;
+border-radius:12px;
+border:1px solid #ddd;
+margin-bottom:14px;
+">
+
+<button class="copyBtn" onclick="saveLandingPhone()">
+Guardar Número
+</button>
 
 </div>
 
@@ -1100,9 +1135,13 @@ function loadPage(){
 let ref = new URLSearchParams(location.search).get("ref");
 
 if(ref){
+
 landingPage.classList.remove("hidden");
 loginPage.classList.add("hidden");
 dashboard.classList.add("hidden");
+
+loadLandingWhatsapp(ref);
+
 return;
 }
 
@@ -1140,6 +1179,84 @@ String(s).padStart(2,"0");
 }
 
 /* ========================================= */
+function showLandingCenter(){
+
+dashboardCards.classList.add("hidden");
+activityModule.classList.add("hidden");
+historyModule.classList.add("hidden");
+kpiModule.classList.add("hidden");
+semaforoModule.classList.add("hidden");
+gaugeModule.classList.add("hidden");
+
+landingModule.classList.remove("hidden");
+
+loadLandingPhone();
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
+}
+
+async function loadLandingPhone(){
+
+const user = window.currentUser;
+
+const { data } = await sb
+.from("users")
+.select("telefono")
+.eq("username",user)
+.limit(1);
+
+if(data && data.length){
+landing_phone.value = data[0].telefono || "";
+}
+
+}
+
+async function saveLandingPhone(){
+
+const phone = landing_phone.value.replace(/\D/g,"").trim();
+const user = window.currentUser;
+
+if(!phone){
+alert("Ingresa número");
+return;
+}
+
+const { error } = await sb
+.from("users")
+.update({ telefono: phone })
+.eq("username",user);
+
+if(error){
+alert("Error guardando");
+return;
+}
+
+alert("Número guardado correctamente");
+
+}
+
+async function loadLandingWhatsapp(ref){
+
+const { data } = await sb
+.from("users")
+.select("telefono")
+.eq("username",ref.toLowerCase())
+.limit(1);
+
+let phone = "529981112233";
+
+if(data && data.length && data[0].telefono){
+phone = data[0].telefono;
+}
+
+waBtnMain.href = "https://wa.me/" + phone;
+waBtnFloat.href = "https://wa.me/" + phone;
+
+}
+
 function showActivity(){
 
 dashboardCards.classList.add("hidden");
@@ -1215,6 +1332,8 @@ loadKpisMonth();
 semaforoModule.classList.add("hidden");
 
 gaugeModule.classList.add("hidden");
+
+landingModule.classList.add("hidden");
 
 if(window.innerWidth <= 900){
 closeSidebar();
