@@ -672,6 +672,12 @@ font-weight:900;
 
 <button class="menuBtn" onclick="showGaugeModule()"><i class="fas fa-gauge-high"></i> <span class="menuText"> KPIs</span></button>
 
+<button class="menuBtn" onclick="showSocialTracker()">
+<i class="fas fa-bullhorn"></i>
+<span class="menuText"> Social Tracker</span>
+</button>
+
+
 <button class="menuBtn" onclick="showLandingCenter()">
 <i class="fas fa-globe"></i>
 <span class="menuText"> Landing Center</span>
@@ -744,6 +750,48 @@ box-shadow:0 8px 20px rgba(0,0,0,.15);
 <div class="cardKpi"><h4>PVP</h4><div class="num" id="kpi_vp">0</div></div>
 
 </div>
+
+<div id="socialModule" class="linkCard hidden">
+
+<h3 style="margin-bottom:18px;">📣 Social Tracker PRO</h3>
+
+<select id="social_network" style="margin-bottom:12px;">
+<option value="facebook">Facebook</option>
+<option value="instagram">Instagram</option>
+<option value="tiktok">TikTok</option>
+<option value="whatsapp">WhatsApp</option>
+<option value="youtube">YouTube</option>
+<option value="x">X</option>
+</select>
+
+<select id="social_type" style="margin-bottom:12px;">
+<option value="organic">Orgánico</option>
+<option value="paid">Pagado</option>
+</select>
+
+<input id="social_campaign" placeholder="Nombre campaña">
+
+<select id="social_template" style="margin-bottom:12px;"></select>
+
+<select id="social_asset" style="margin-bottom:12px;"></select>
+
+<textarea id="social_result" style="
+width:100%;
+min-height:180px;
+padding:12px;
+border-radius:12px;
+border:1px solid #ddd;
+margin-bottom:12px;
+"></textarea>
+
+<button class="copyBtn" onclick="generateSocialPost()">Generar Publicación</button>
+
+<button class="copyBtn" onclick="copySocialPost()">Copiar Texto + Link</button>
+
+<div id="social_download" style="margin-top:14px;"></div>
+
+</div>
+
 
 <div id="landingModule" class="linkCard hidden">
 
@@ -1257,6 +1305,88 @@ waBtnFloat.href = "https://wa.me/" + phone;
 
 }
 
+function showSocialTracker(){
+
+dashboardCards.classList.add("hidden");
+activityModule.classList.add("hidden");
+historyModule.classList.add("hidden");
+kpiModule.classList.add("hidden");
+semaforoModule.classList.add("hidden");
+gaugeModule.classList.add("hidden");
+landingModule.classList.add("hidden");
+
+socialModule.classList.remove("hidden");
+
+loadSocialTemplates();
+loadSocialAssets();
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
+}
+
+async function loadSocialTemplates(){
+
+social_template.innerHTML = `
+<option value="1">¿Buscas ingresos extra desde casa?</option>
+<option value="2">Conoce una oportunidad gratuita</option>
+<option value="3">Convierte tu consumo en negocio</option>
+`;
+
+}
+
+async function loadSocialAssets(){
+
+social_asset.innerHTML = `
+<option value="">Selecciona creativo</option>
+<option value="https://res.cloudinary.com/demo/image/upload/sample.jpg">Imagen Facebook</option>
+<option value="https://res.cloudinary.com/demo/video/upload/dog.mp4">Video Reel</option>
+`;
+
+}
+
+function generateSocialPost(){
+
+const net = social_network.value;
+const type = social_type.value;
+const camp = social_campaign.value.trim() || "general";
+const user = window.currentUser || "demo";
+
+let txt = social_template.options[social_template.selectedIndex].text;
+
+let link =
+location.origin +
+"/?ref=" + user +
+"&utm_source=" + net +
+"&utm_medium=" + type +
+"&utm_campaign=" + camp;
+
+social_result.value =
+txt + "\n\n" + link;
+
+if(social_asset.value){
+
+social_download.innerHTML = `
+<a href="${social_asset.value}" target="_blank" class="copyBtn" style="display:block;text-align:center;">
+Descargar Contenido
+</a>
+`;
+
+}else{
+social_download.innerHTML = "";
+}
+
+}
+
+function copySocialPost(){
+
+navigator.clipboard.writeText(social_result.value);
+alert("Publicación copiada");
+
+}
+
+
 function showActivity(){
 
 dashboardCards.classList.add("hidden");
@@ -1334,6 +1464,8 @@ semaforoModule.classList.add("hidden");
 gaugeModule.classList.add("hidden");
 
 landingModule.classList.add("hidden");
+
+socialModule.classList.add("hidden");
 
 if(window.innerWidth <= 900){
 closeSidebar();
