@@ -30,6 +30,7 @@ box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
 h1{text-align:center;margin-bottom:20px;color:#173fcf}
+
 input{
 width:100%;
 padding:15px;
@@ -38,6 +39,17 @@ border-radius:14px;
 margin-bottom:14px;
 font-size:18px;
 }
+
+select{
+width:100%;
+padding:14px;
+border:1px solid #ccc;
+border-radius:12px;
+margin-bottom:12px;
+font-size:16px;
+background:#fff;
+}
+
 button{
 width:100%;
 padding:15px;
@@ -48,6 +60,7 @@ font-weight:bold;
 cursor:pointer;
 margin-bottom:12px;
 }
+
 .blue{background:#1747d1;color:#fff}
 .dark{background:#09101f;color:#fff}
 .green{background:#22c55e;color:#fff}
@@ -1274,7 +1287,10 @@ return;
 
 const { error } = await sb
 .from("users")
-.update({ telefono: phone })
+.update({
+telefono: phone,
+whatsapp: phone
+})
 .eq("username",user);
 
 if(error){
@@ -1394,6 +1410,9 @@ kpiModule.classList.add("hidden");
 semaforoModule.classList.add("hidden");
 gaugeModule.classList.add("hidden");
 historyModule.classList.add("hidden");
+
+socialModule.classList.add("hidden");
+landingModule.classList.add("hidden");
 
 activityModule.classList.remove("hidden");
 
@@ -1750,6 +1769,10 @@ kpiModule.classList.add("hidden");
 
 semaforoModule.classList.remove("hidden");
 
+socialModule.classList.add("hidden");
+landingModule.classList.add("hidden");
+gaugeModule.classList.add("hidden");
+
 await loadSemaforoActual();
 
 if(window.innerWidth <= 900){
@@ -1833,6 +1856,10 @@ semaforoModule.classList.add("hidden");
 
 kpiModule.classList.remove("hidden");
 
+socialModule.classList.add("hidden");
+landingModule.classList.add("hidden");
+gaugeModule.classList.add("hidden");
+
 if(window.innerWidth <= 900){
 closeSidebar();
 }
@@ -1848,6 +1875,9 @@ kpiModule.classList.add("hidden");
 semaforoModule.classList.add("hidden");
 
 gaugeModule.classList.remove("hidden");
+
+socialModule.classList.add("hidden");
+landingModule.classList.add("hidden");
 
 loadGaugeKpis();
 
