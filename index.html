@@ -629,12 +629,6 @@ margin-top:4px;
 font-weight:800;
 }
 
-.kpiState{
-font-size:12px;
-margin-top:4px;
-font-weight:800;
-}
-
 .gaugeWrap{
 width:140px;
 height:140px;
@@ -679,7 +673,7 @@ font-weight:900;
 
 <button class="menuBtn" onclick="showDashboard()"><i class="fas fa-chart-line"></i> <span class="menuText"> Dashboard</span></button>
 
-<button class="menuBtn" onclick="showActivity()"><i class="fas fa-pencil-alt"></i> <span class="menuText"> Actividad diaria</span></button>
+<button class="menuBtn hidden" onclick="showActivity()"><i class="fas fa-pencil-alt"></i> <span class="menuText"> Actividad diaria</span></button>
 
 <button class="menuBtn"><i class="fas fa-users"></i> <span class="menuText"> Mis patrocinados</span></button>
 
@@ -1193,9 +1187,30 @@ overlay.classList.remove("show");
 ========================================= */
 function loadPage(){
 
-let ref = new URLSearchParams(location.search).get("ref");
+const params = new URLSearchParams(location.search);
+
+let ref = params.get("ref");
+
+const utm_source = params.get("utm_source") || "direct";
+const utm_medium = params.get("utm_medium") || "personal";
+const utm_campaign = params.get("utm_campaign") || "mainlink";
+const utm_post = params.get("utm_post") || "";
 
 if(ref){
+
+saveAttributionClick(
+ref,
+utm_source,
+utm_medium,
+utm_campaign,
+utm_post
+);
+
+localStorage.setItem("vek_ref", ref);
+localStorage.setItem("vek_source", utm_source);
+localStorage.setItem("vek_medium", utm_medium);
+localStorage.setItem("vek_campaign", utm_campaign);
+localStorage.setItem("vek_post", utm_post);
 
 landingPage.classList.remove("hidden");
 loginPage.classList.add("hidden");
@@ -1209,6 +1224,38 @@ return;
 loginPage.classList.remove("hidden");
 landingPage.classList.add("hidden");
 dashboard.classList.add("hidden");
+
+}
+
+async function saveAttributionClick(
+user,
+source,
+medium,
+campaign,
+post
+){
+
+try{
+
+let device = /Mobi|Android/i.test(navigator.userAgent)
+? "mobile"
+: "desktop";
+
+await sb
+.from("social_clicks")
+.insert([{
+username: user.toLowerCase(),
+source: source,
+medium: medium,
+campaign: campaign,
+post: post,
+device: device
+}]);
+
+}catch(e){
+console.log("click attribution error");
+}
+
 }
 
 /* =========================================
@@ -1250,6 +1297,7 @@ semaforoModule.classList.add("hidden");
 gaugeModule.classList.add("hidden");
 
 landingModule.classList.remove("hidden");
+socialModule.classList.add("hidden");
 
 loadLandingPhone();
 
