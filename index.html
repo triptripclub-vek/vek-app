@@ -1052,6 +1052,49 @@ alert("Admin incorrecto");
 /* =========================================
    REGISTER USER
 ========================================= */
+async function saveAttributedRegistration(newUser){
+
+try{
+
+const owner =
+localStorage.getItem("vek_ref") || "ROOT";
+
+const source =
+localStorage.getItem("vek_source") || "direct";
+
+const medium =
+localStorage.getItem("vek_medium") || "personal";
+
+const campaign =
+localStorage.getItem("vek_campaign") || "mainlink";
+
+const post =
+localStorage.getItem("vek_post") || "";
+
+await sb
+.from("attributed_registrations")
+.insert([{
+username_owner: owner.toLowerCase(),
+new_user: newUser.toLowerCase(),
+source: source,
+medium: medium,
+campaign: campaign,
+post: post
+}]);
+
+localStorage.removeItem("vek_ref");
+localStorage.removeItem("vek_source");
+localStorage.removeItem("vek_medium");
+localStorage.removeItem("vek_campaign");
+localStorage.removeItem("vek_post");
+
+}catch(e){
+console.log("registration attribution error");
+}
+
+}
+
+
 async function registerUser(){
 
 let username = ruser.value.trim().toLowerCase();
@@ -1073,9 +1116,15 @@ return;
 }
 
 /* Sponsor automático */
-let sponsor = new URLSearchParams(location.search).get("ref");
-if(!sponsor) sponsor = "ROOT";
+let sponsor = localStorage.getItem("vek_ref");
 
+if(!sponsor){
+sponsor = new URLSearchParams(location.search).get("ref");
+}
+
+if(!sponsor){
+sponsor = "ROOT";
+}
 /* Validar en BD */
 try{
 
@@ -1121,6 +1170,8 @@ pass: password
 
 saveUsers();
 
+await saveAttributedRegistration(username);
+
 alert("Cuenta creada correctamente");
 
 /* Volver al login */
@@ -1140,7 +1191,10 @@ window.currentUser = name.toLowerCase();
 
 dashName.innerText = name.toUpperCase();
 
-myLink.innerText = location.origin + "/?ref=" + name;
+myLink.innerText =
+location.origin +
+"/?ref=" + name +
+"&utm_source=direct&utm_medium=personal&utm_campaign=mainlink";
 loadKpisMonth();
 
 btnKpiManager.classList.add("hidden");
