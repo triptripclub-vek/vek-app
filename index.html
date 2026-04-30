@@ -868,25 +868,42 @@ font-family:Arial;
 </div>
 
 <div id="kpiModule" class="linkCard hidden">
+<h2 style="margin-bottom:14px;">KPIs Marketing</h2>
 
-<h3 style="margin-bottom:18px;">🎯 KPI Manager</h3>
+<div class="cardsGrid">
 
-<input id="meta_publicaciones" placeholder="Meta publicaciones">
-<input id="meta_prospectos" placeholder="Meta prospectos">
-<input id="meta_conversaciones" placeholder="Meta conversaciones">
-<input id="meta_calificados" placeholder="Meta calificados">
-<input id="meta_videos" placeholder="Meta PVD">
-<input id="meta_formularios" placeholder="Meta PVI">
-<input id="meta_registros" placeholder="Meta registros">
-<input id="meta_vp" placeholder="Meta PVP">
+<div class="cardBox">
+<div class="cardTitle">Registros</div>
+<div class="cardNum" id="mk_registros">0</div>
+<div class="kpiState" id="mk_registros_state">0%</div>
+</div>
 
-<select id="meta_periodo" style="width:100%;padding:14px;border-radius:12px;margin-bottom:14px;">
-<option value="mensual">Mensual</option>
-<option value="semanal">Semanal</option>
-<option value="quincenal">Quincenal</option>
-</select>
+<div class="cardBox">
+<div class="cardTitle">Clicks</div>
+<div class="cardNum" id="mk_clicks">0</div>
+</div>
 
-<button class="copyBtn" onclick="saveKpiManager()">Guardar Metas</button>
+<div class="cardBox">
+<div class="cardTitle">Conversión</div>
+<div class="cardNum" id="mk_conv">0%</div>
+</div>
+
+<div class="cardBox">
+<div class="cardTitle">Top Red</div>
+<div class="cardNum" id="mk_red">-</div>
+</div>
+
+<div class="cardBox">
+<div class="cardTitle">Top Campaña</div>
+<div class="cardNum" id="mk_camp">-</div>
+</div>
+
+<div class="cardBox">
+<div class="cardTitle">Top Publicación</div>
+<div class="cardNum" id="mk_post">-</div>
+</div>
+
+</div>
 
 </div>
 
@@ -1341,6 +1358,7 @@ String(s).padStart(2,"0");
 }
 
 /* ========================================= */
+
 function showLandingCenter(){
 
 dashboardCards.classList.add("hidden");
@@ -1973,19 +1991,91 @@ function showGaugeModule(){
 dashboardCards.classList.add("hidden");
 activityModule.classList.add("hidden");
 historyModule.classList.add("hidden");
-kpiModule.classList.add("hidden");
 semaforoModule.classList.add("hidden");
+gaugeModule.classList.add("hidden");
 
-gaugeModule.classList.remove("hidden");
+kpiModule.classList.remove("hidden");
 
 socialModule.classList.add("hidden");
 landingModule.classList.add("hidden");
 
-loadGaugeKpis();
+loadMarketingKpis();
 
 if(window.innerWidth <= 900){
 closeSidebar();
 }
+
+}
+
+async function loadMarketingKpis(){
+
+const user = (window.currentUser || "").toLowerCase().trim();
+if(!user)return;
+
+let meta = 10;
+let periodo = "mensual";
+
+const { data:kpi } = await sb
+.from("kpi_manager")
+.select("*")
+.order("updated_at",{ascending:false})
+.limit(1);
+
+if(kpi && kpi.length){
+meta = Number(kpi[0].registros || 10);
+periodo = kpi[0].periodo || "mensual";
+}
+
+let desde = new Date();
+
+if(periodo=="semanal"){
+desde.setDate(desde.getDate()-7);
+}
+else if(periodo=="quincenal"){
+desde.setDate(desde.getDate()-15);
+}
+else{
+desde = new Date(desde.getFullYear(),desde.getMonth(),1);
+}
+
+const iso = desde.toISOString();
+
+const { data:regs } = await sb
+.from("attributed_registrations")
+.select("*")
+.eq("username_owner",user)
+.gte("created_at",iso);
+
+const { data:clicks } = await sb
+.from("social_clicks")
+.select("*")
+.eq("username",user)
+.gte("created_at",iso);
+
+let totalRegs = (regs||[]).length;
+let totalClicks = (clicks||[]).length;
+
+let conv = 0;
+if(totalClicks>0){
+conv = ((totalRegs/totalClicks)*100).toFixed(1);
+}
+
+mk_registros.innerText = totalRegs;
+mk_clicks.innerText = totalClicks;
+mk_conv.innerText = conv + "%";
+
+let pct = Math.round((totalRegs/meta)*100);
+if(!isFinite(pct)) pct = 0;
+
+let color = "🔴";
+
+if(pct>=80) color="🟢";
+else if(pct>=50) color="🟡";
+
+mk_registros_state.innerText =
+totalRegs + "/" + meta + " (" + pct + "%) " + color;
+
+loadTopMarketing(regs,clicks);
 
 }
 
