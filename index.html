@@ -2043,14 +2043,12 @@ const iso = desde.toISOString();
 const { data:regs } = await sb
 .from("attributed_registrations")
 .select("*")
-.eq("username_owner",user)
-.gte("created_at",iso);
+.eq("username_owner",user);
 
 const { data:clicks } = await sb
 .from("social_clicks")
 .select("*")
-.eq("username",user)
-.gte("created_at",iso);
+.eq("username",user);
 
 let totalRegs = (regs||[]).length;
 let totalClicks = (clicks||[]).length;
@@ -2076,6 +2074,37 @@ mk_registros_state.innerText =
 totalRegs + "/" + meta + " (" + pct + "%) " + color;
 
 loadTopMarketing(regs,clicks);
+
+}
+
+function loadTopMarketing(regs){
+
+let red = {};
+let camp = {};
+let post = {};
+
+(regs||[]).forEach(r=>{
+
+red[r.source] = (red[r.source]||0)+1;
+camp[r.campaign] = (camp[r.campaign]||0)+1;
+post[r.post] = (post[r.post]||0)+1;
+
+});
+
+function top(obj){
+let max=0, name="-";
+for(let k in obj){
+if(obj[k]>max){
+max=obj[k];
+name=k;
+}
+}
+return name;
+}
+
+mk_red.innerText = top(red);
+mk_camp.innerText = top(camp);
+mk_post.innerText = top(post);
 
 }
 
