@@ -937,7 +937,12 @@ Guardar KPIs
 
 <div id="semaforoModule" class="linkCard hidden">
 
-<h3>🚦 Semáforo Marketing</h3>
+<h2>🚦 Semáforo Manager</h2>
+
+<h3>📊 Marketing</h3>
+
+<label>Registros — Rojo (%)</label>
+<input id="sem_reg_rojo">
 
 <label>Registros — Amarillo (%)</label>
 <input id="sem_reg_amarillo">
@@ -945,11 +950,19 @@ Guardar KPIs
 <label>Registros — Verde (%)</label>
 <input id="sem_reg_verde">
 
+
+<label>Clicks — Rojo (%)</label>
+<input id="sem_click_rojo">
+
 <label>Clicks — Amarillo (%)</label>
 <input id="sem_click_amarillo">
 
 <label>Clicks — Verde (%)</label>
 <input id="sem_click_verde">
+
+
+<label>Conversión — Rojo (%)</label>
+<input id="sem_conv_rojo">
 
 <label>Conversión — Amarillo (%)</label>
 <input id="sem_conv_amarillo">
@@ -958,7 +971,10 @@ Guardar KPIs
 <input id="sem_conv_verde">
 
 
-<h3 style="margin-top:20px;">🌐 Semáforo Red Atomy</h3>
+<h3 style="margin-top:20px;">🌐 Red Atomy</h3>
+
+<label>PVP — Rojo</label>
+<input id="sem_pvp_rojo">
 
 <label>PVP — Amarillo</label>
 <input id="sem_pvp_amarillo">
@@ -966,11 +982,19 @@ Guardar KPIs
 <label>PVP — Verde</label>
 <input id="sem_pvp_verde">
 
+
+<label>PVI — Rojo</label>
+<input id="sem_pvi_rojo">
+
 <label>PVI — Amarillo</label>
 <input id="sem_pvi_amarillo">
 
 <label>PVI — Verde</label>
 <input id="sem_pvi_verde">
+
+
+<label>PVD — Rojo</label>
+<input id="sem_pvd_rojo">
 
 <label>PVD — Amarillo</label>
 <input id="sem_pvd_amarillo">
@@ -978,19 +1002,28 @@ Guardar KPIs
 <label>PVD — Verde</label>
 <input id="sem_pvd_verde">
 
-<label>Activos Izquierda — Amarillo</label>
+
+<label>Activos Izq — Rojo</label>
+<input id="sem_act_izq_rojo">
+
+<label>Activos Izq — Amarillo</label>
 <input id="sem_act_izq_amarillo">
 
-<label>Activos Izquierda — Verde</label>
+<label>Activos Izq — Verde</label>
 <input id="sem_act_izq_verde">
 
-<label>Activos Derecha — Amarillo</label>
+
+<label>Activos Der — Rojo</label>
+<input id="sem_act_der_rojo">
+
+<label>Activos Der — Amarillo</label>
 <input id="sem_act_der_amarillo">
 
-<label>Activos Derecha — Verde</label>
+<label>Activos Der — Verde</label>
 <input id="sem_act_der_verde">
 
-<button class="copyBtn" onclick="saveSemaforoNew()">
+
+<button class="copyBtn" onclick="saveSemaforoFull()">
 Guardar Semáforo
 </button>
 
@@ -1611,31 +1644,39 @@ alert("Publicación copiada");
 
 }
 
-async function saveSemaforoNew(){
+async function saveSemaforoFull(){
 
 const data = {
 
+reg_rojo: Number(sem_reg_rojo.value||0),
 reg_amarillo: Number(sem_reg_amarillo.value||0),
 reg_verde: Number(sem_reg_verde.value||0),
 
+click_rojo: Number(sem_click_rojo.value||0),
 click_amarillo: Number(sem_click_amarillo.value||0),
 click_verde: Number(sem_click_verde.value||0),
 
+conv_rojo: Number(sem_conv_rojo.value||0),
 conv_amarillo: Number(sem_conv_amarillo.value||0),
 conv_verde: Number(sem_conv_verde.value||0),
 
+pvp_rojo: Number(sem_pvp_rojo.value||0),
 pvp_amarillo: Number(sem_pvp_amarillo.value||0),
 pvp_verde: Number(sem_pvp_verde.value||0),
 
+pvi_rojo: Number(sem_pvi_rojo.value||0),
 pvi_amarillo: Number(sem_pvi_amarillo.value||0),
 pvi_verde: Number(sem_pvi_verde.value||0),
 
+pvd_rojo: Number(sem_pvd_rojo.value||0),
 pvd_amarillo: Number(sem_pvd_amarillo.value||0),
 pvd_verde: Number(sem_pvd_verde.value||0),
 
+act_izq_rojo: Number(sem_act_izq_rojo.value||0),
 act_izq_amarillo: Number(sem_act_izq_amarillo.value||0),
 act_izq_verde: Number(sem_act_izq_verde.value||0),
 
+act_der_rojo: Number(sem_act_der_rojo.value||0),
 act_der_amarillo: Number(sem_act_der_amarillo.value||0),
 act_der_verde: Number(sem_act_der_verde.value||0),
 
@@ -1652,10 +1693,9 @@ alert(error.message);
 return;
 }
 
-alert("Semáforo actualizado");
+alert("Semáforo guardado correctamente");
 
 }
-
 
 function showActivity(){
 
@@ -2034,34 +2074,14 @@ const { data } = await sb
 
 if(!data || !data.length) return;
 
-const row = data[0];
+const r = data[0];
 
-sem_reg_amarillo.value = row.reg_amarillo || 0;
-sem_reg_verde.value = row.reg_verde || 0;
-
-sem_click_amarillo.value = row.click_amarillo || 0;
-sem_click_verde.value = row.click_verde || 0;
-
-sem_conv_amarillo.value = row.conv_amarillo || 0;
-sem_conv_verde.value = row.conv_verde || 0;
-
-sem_pvp_amarillo.value = row.pvp_amarillo || 0;
-sem_pvp_verde.value = row.pvp_verde || 0;
-
-sem_pvi_amarillo.value = row.pvi_amarillo || 0;
-sem_pvi_verde.value = row.pvi_verde || 0;
-
-sem_pvd_amarillo.value = row.pvd_amarillo || 0;
-sem_pvd_verde.value = row.pvd_verde || 0;
-
-sem_act_izq_amarillo.value = row.act_izq_amarillo || 0;
-sem_act_izq_verde.value = row.act_izq_verde || 0;
-
-sem_act_der_amarillo.value = row.act_der_amarillo || 0;
-sem_act_der_verde.value = row.act_der_verde || 0;
-
+for(let key in r){
+let el = document.getElementById("sem_"+key);
+if(el) el.value = r[key] || 0;
 }
 
+}
 
 function showKpiManager(){
 
