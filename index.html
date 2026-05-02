@@ -677,7 +677,7 @@ font-weight:900;
 
 <button class="menuBtn"><i class="fas fa-users"></i> <span class="menuText"> Mis patrocinados</span></button>
 
-<button class="menuBtn" onclick="showGaugeModule()"><i class="fas fa-gauge-high"></i> <span class="menuText"> KPIs</span></button>
+<button class="menuBtn" onclick="showKpisUser()"><i class="fas fa-gauge-high"></i> <span class="menuText"> KPIs</span></button>
 
 <button class="menuBtn" onclick="showSocialTracker()">
 <i class="fas fa-bullhorn"></i>
@@ -904,6 +904,26 @@ font-family:Arial;
 </div>
 
 </div>
+
+</div>
+
+<div id="kpiManagerModule" class="linkCard hidden">
+
+<h3 style="margin-bottom:18px;">🎯 KPI Manager (Admin)</h3>
+
+<input id="meta_registros" placeholder="Meta Registros">
+<input id="meta_clicks" placeholder="Meta Clicks">
+<input id="meta_conversion" placeholder="Meta Conversión (%)">
+
+<select id="meta_periodo">
+<option value="semanal">Semanal</option>
+<option value="quincenal">Quincenal</option>
+<option value="mensual">Mensual</option>
+</select>
+
+<button class="copyBtn" onclick="saveKpiManagerNew()">
+Guardar KPIs
+</button>
 
 </div>
 
@@ -1226,6 +1246,54 @@ btnSemaforo.classList.remove("hidden");
 /* =========================================
    UTILIDADES
 ========================================= */
+async function saveKpiManagerNew(){
+
+const registros = Number(meta_registros.value || 0);
+const clicks = Number(meta_clicks.value || 0);
+const conversion = Number(meta_conversion.value || 0);
+const periodo = meta_periodo.value;
+
+const { error } = await sb
+.from("kpi_manager")
+.insert([{
+registros,
+clicks,
+conversion,
+periodo,
+updated_at: new Date().toISOString()
+}]);
+
+if(error){
+alert("Error: " + error.message);
+return;
+}
+
+alert("KPIs guardados correctamente");
+
+}
+
+function showKpisUser(){
+
+dashboardCards.classList.add("hidden");
+activityModule.classList.add("hidden");
+historyModule.classList.add("hidden");
+semaforoModule.classList.add("hidden");
+gaugeModule.classList.add("hidden");
+
+kpiModule.classList.remove("hidden");
+
+socialModule.classList.add("hidden");
+landingModule.classList.add("hidden");
+
+loadMarketingKpis();
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
+}
+
+
 function logout(){
 location.href = location.origin;
 }
@@ -1972,13 +2040,14 @@ function showKpiManager(){
 dashboardCards.classList.add("hidden");
 activityModule.classList.add("hidden");
 historyModule.classList.add("hidden");
+kpiModule.classList.add("hidden");
+gaugeModule.classList.add("hidden");
 semaforoModule.classList.add("hidden");
 
-kpiModule.classList.remove("hidden");
+kpiManagerModule.classList.remove("hidden");
 
 socialModule.classList.add("hidden");
 landingModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
 
 if(window.innerWidth <= 900){
 closeSidebar();
