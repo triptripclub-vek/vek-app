@@ -929,49 +929,35 @@ Guardar KPIs
 
 <div id="semaforoModule" class="linkCard hidden">
 
-<h3 style="margin-bottom:18px;">🚦 Semáforo Manager</h3>
+<h3>🚦 Semáforo Marketing</h3>
 
-<h4>Publicaciones</h4>
-<input id="pub_rojo" placeholder="Rojo hasta %">
-<input id="pub_amarillo" placeholder="Amarillo hasta %">
-<input id="pub_verde" placeholder="Verde desde %">
+<input id="sem_reg_amarillo" placeholder="Registros Amarillo (%)">
+<input id="sem_reg_verde" placeholder="Registros Verde (%)">
 
-<h4>Prospectos</h4>
-<input id="pros_rojo" placeholder="Rojo hasta %">
-<input id="pros_amarillo" placeholder="Amarillo hasta %">
-<input id="pros_verde" placeholder="Verde desde %">
+<input id="sem_click_amarillo" placeholder="Clicks Amarillo (%)">
+<input id="sem_click_verde" placeholder="Clicks Verde (%)">
 
-<h4>Conversaciones</h4>
-<input id="conv_rojo" placeholder="Rojo hasta %">
-<input id="conv_amarillo" placeholder="Amarillo hasta %">
-<input id="conv_verde" placeholder="Verde desde %">
+<input id="sem_conv_amarillo" placeholder="Conversión Amarillo (%)">
+<input id="sem_conv_verde" placeholder="Conversión Verde (%)">
 
-<h4>Calificados</h4>
-<input id="cal_rojo" placeholder="Rojo hasta %">
-<input id="cal_amarillo" placeholder="Amarillo hasta %">
-<input id="cal_verde" placeholder="Verde desde %">
+<h3 style="margin-top:20px;">🌐 Semáforo Red Atomy</h3>
 
-<h4>PVD</h4>
-<input id="vid_rojo" placeholder="Rojo hasta %">
-<input id="vid_amarillo" placeholder="Amarillo hasta %">
-<input id="vid_verde" placeholder="Verde desde %">
+<input id="sem_pvp_amarillo" placeholder="PVP Amarillo">
+<input id="sem_pvp_verde" placeholder="PVP Verde">
 
-<h4>PVI</h4>
-<input id="form_rojo" placeholder="Rojo hasta %">
-<input id="form_amarillo" placeholder="Amarillo hasta %">
-<input id="form_verde" placeholder="Verde desde %">
+<input id="sem_pvi_amarillo" placeholder="PVI Amarillo">
+<input id="sem_pvi_verde" placeholder="PVI Verde">
 
-<h4>Registros</h4>
-<input id="reg_rojo" placeholder="Rojo hasta %">
-<input id="reg_amarillo" placeholder="Amarillo hasta %">
-<input id="reg_verde" placeholder="Verde desde %">
+<input id="sem_pvd_amarillo" placeholder="PVD Amarillo">
+<input id="sem_pvd_verde" placeholder="PVD Verde">
 
-<h4>PVP</h4>
-<input id="vp_rojo" placeholder="Rojo hasta %">
-<input id="vp_amarillo" placeholder="Amarillo hasta %">
-<input id="vp_verde" placeholder="Verde desde %">
+<input id="sem_act_izq_amarillo" placeholder="Activos Izq Amarillo">
+<input id="sem_act_izq_verde" placeholder="Activos Izq Verde">
 
-<button class="copyBtn" onclick="saveSemaforo()">Guardar Semáforos</button>
+<input id="sem_act_der_amarillo" placeholder="Activos Der Amarillo">
+<input id="sem_act_der_verde" placeholder="Activos Der Verde">
+
+<button onclick="saveSemaforoNew()">Guardar Semáforo</button>
 
 </div>
 
@@ -1590,6 +1576,51 @@ alert("Publicación copiada");
 
 }
 
+async function saveSemaforoNew(){
+
+const data = {
+
+reg_amarillo: Number(sem_reg_amarillo.value||0),
+reg_verde: Number(sem_reg_verde.value||0),
+
+click_amarillo: Number(sem_click_amarillo.value||0),
+click_verde: Number(sem_click_verde.value||0),
+
+conv_amarillo: Number(sem_conv_amarillo.value||0),
+conv_verde: Number(sem_conv_verde.value||0),
+
+pvp_amarillo: Number(sem_pvp_amarillo.value||0),
+pvp_verde: Number(sem_pvp_verde.value||0),
+
+pvi_amarillo: Number(sem_pvi_amarillo.value||0),
+pvi_verde: Number(sem_pvi_verde.value||0),
+
+pvd_amarillo: Number(sem_pvd_amarillo.value||0),
+pvd_verde: Number(sem_pvd_verde.value||0),
+
+act_izq_amarillo: Number(sem_act_izq_amarillo.value||0),
+act_izq_verde: Number(sem_act_izq_verde.value||0),
+
+act_der_amarillo: Number(sem_act_der_amarillo.value||0),
+act_der_verde: Number(sem_act_der_verde.value||0),
+
+updated_at: new Date().toISOString()
+
+};
+
+const { error } = await sb
+.from("semaforo_manager")
+.insert([data]);
+
+if(error){
+alert(error.message);
+return;
+}
+
+alert("Semáforo actualizado");
+
+}
+
 
 function showActivity(){
 
@@ -1863,20 +1894,7 @@ let rojo = 59;
 let amarillo = 99;
 let verde = 100;
 
-const { data: sem } = await sb
-.from("semaforo_manager")
-.select("*")
-.eq("kpi",kpi)
-.order("id",{ascending:false})
-.limit(1);
-
-if(sem && sem.length){
-
-rojo = Number(sem[0].rojo || 59);
-amarillo = Number(sem[0].amarillo || 99);
-verde = Number(sem[0].verde || 100);
-
-}
+// 🔴 Semáforo desactivado temporal (FASE 3B lo reconecta correctamente)
 
 if(pct >= verde){
 
@@ -1976,66 +1994,39 @@ async function loadSemaforoActual(){
 const { data } = await sb
 .from("semaforo_manager")
 .select("*")
-.order("id",{ascending:false});
+.order("updated_at",{ascending:false})
+.limit(1);
 
-if(!data)return;
+if(!data || !data.length) return;
 
-function setVals(kpi,p1,p2,p3){
+const row = data[0];
 
-const row = data.find(x=>x.kpi===kpi);
-if(!row)return;
+sem_reg_amarillo.value = row.reg_amarillo || 0;
+sem_reg_verde.value = row.reg_verde || 0;
 
-document.getElementById(p1).value = row.rojo || 0;
-document.getElementById(p2).value = row.amarillo || 0;
-document.getElementById(p3).value = row.verde || 0;
+sem_click_amarillo.value = row.click_amarillo || 0;
+sem_click_verde.value = row.click_verde || 0;
 
-}
+sem_conv_amarillo.value = row.conv_amarillo || 0;
+sem_conv_verde.value = row.conv_verde || 0;
 
-setVals("publicaciones","pub_rojo","pub_amarillo","pub_verde");
-setVals("prospectos","pros_rojo","pros_amarillo","pros_verde");
-setVals("conversaciones","conv_rojo","conv_amarillo","conv_verde");
-setVals("calificados","cal_rojo","cal_amarillo","cal_verde");
-setVals("videos","vid_rojo","vid_amarillo","vid_verde");
-setVals("formularios","form_rojo","form_amarillo","form_verde");
-setVals("registros","reg_rojo","reg_amarillo","reg_verde");
-setVals("vp","vp_rojo","vp_amarillo","vp_verde");
+sem_pvp_amarillo.value = row.pvp_amarillo || 0;
+sem_pvp_verde.value = row.pvp_verde || 0;
 
-}
+sem_pvi_amarillo.value = row.pvi_amarillo || 0;
+sem_pvi_verde.value = row.pvi_verde || 0;
 
-async function saveSemaforo(){
+sem_pvd_amarillo.value = row.pvd_amarillo || 0;
+sem_pvd_verde.value = row.pvd_verde || 0;
 
-const rows = [
+sem_act_izq_amarillo.value = row.act_izq_amarillo || 0;
+sem_act_izq_verde.value = row.act_izq_verde || 0;
 
-{ kpi:"publicaciones", rojo:Number(pub_rojo.value||0), amarillo:Number(pub_amarillo.value||0), verde:Number(pub_verde.value||0) },
-
-{ kpi:"prospectos", rojo:Number(pros_rojo.value||0), amarillo:Number(pros_amarillo.value||0), verde:Number(pros_verde.value||0) },
-
-{ kpi:"conversaciones", rojo:Number(conv_rojo.value||0), amarillo:Number(conv_amarillo.value||0), verde:Number(conv_verde.value||0) },
-
-{ kpi:"calificados", rojo:Number(cal_rojo.value||0), amarillo:Number(cal_amarillo.value||0), verde:Number(cal_verde.value||0) },
-
-{ kpi:"videos", rojo:Number(vid_rojo.value||0), amarillo:Number(vid_amarillo.value||0), verde:Number(vid_verde.value||0) },
-
-{ kpi:"formularios", rojo:Number(form_rojo.value||0), amarillo:Number(form_amarillo.value||0), verde:Number(form_verde.value||0) },
-
-{ kpi:"registros", rojo:Number(reg_rojo.value||0), amarillo:Number(reg_amarillo.value||0), verde:Number(reg_verde.value||0) },
-
-{ kpi:"vp", rojo:Number(vp_rojo.value||0), amarillo:Number(vp_amarillo.value||0), verde:Number(vp_verde.value||0) }
-
-];
-
-const { error } = await sb
-.from("semaforo_manager")
-.upsert(rows,{ onConflict:"kpi" });
-
-if(error){
-alert("Error: " + error.message);
-return;
-}
-
-alert("Semáforos guardados correctamente");
+sem_act_der_amarillo.value = row.act_der_amarillo || 0;
+sem_act_der_verde.value = row.act_der_verde || 0;
 
 }
+
 
 function showKpiManager(){
 
@@ -2144,7 +2135,7 @@ else if(pct>=50) color="🟡";
 mk_registros_state.innerText =
 totalRegs + "/" + meta + " (" + pct + "%) " + color;
 
-loadTopMarketing(regs,clicks);
+loadTopMarketing(regs);
 
 }
 
@@ -2246,26 +2237,7 @@ if(!isFinite(pct)) pct = 0;
 
 let color = "#ef4444";
 
-const { data: sem } = await sb
-.from("semaforo_manager")
-.select("*")
-.eq("kpi",kpi)
-.order("id",{ascending:false})
-.limit(1);
-
-if(sem && sem.length){
-
-let amarillo = Number(sem[0].amarillo || 60);
-let verde = Number(sem[0].verde || 100);
-
-if(pct >= verde){
-color = "#22c55e";
-}
-else if(pct >= amarillo){
-color = "#f59e0b";
-}
-
-}
+// Semáforo temporal desactivado (se reconecta en FASE 3B)
 
 let deg = Math.min(pct,100) * 3.6;
 
