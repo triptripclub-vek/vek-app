@@ -248,7 +248,7 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
 <button class="blue" onclick="loginUser()">Ingresar</button>
 <button class="dark" onclick="loginAdmin()">Admin</button>
 
-<div class="small">Usuario demo: demo123 / 1234</div>
+
 </div>
 </section>
 
@@ -876,39 +876,51 @@ font-family:Arial;
 </div>
 
 <div id="kpiModule" class="linkCard hidden">
-<h2 style="margin-bottom:14px;">KPIs Marketing</h2>
 
-<div class="cardsGrid">
+<h2 style="margin-bottom:18px;">📊 KPI Dashboard PRO</h2>
 
-<div class="cardBox">
-<div class="cardTitle">Registros</div>
-<div class="cardNum" id="mk_registros">0</div>
-<div class="kpiState" id="mk_registros_state">0%</div>
+<!-- KPI PRINCIPAL -->
+<div class="cardKpi" id="card_total_registros" style="margin-bottom:20px;">
+<h2>Registros del periodo</h2>
+<div style="font-size:42px;font-weight:900" id="total_registros">0</div>
 </div>
 
-<div class="cardBox">
-<div class="cardTitle">Clicks</div>
-<div class="cardNum" id="mk_clicks">0</div>
+<!-- GAUGES -->
+<div class="grid">
+
+<div class="cardKpi">
+<h4>Registros</h4>
+<div id="gauge_registros"></div>
 </div>
 
-<div class="cardBox">
-<div class="cardTitle">Conversión</div>
-<div class="cardNum" id="mk_conv">0%</div>
+<div class="cardKpi">
+<h4>Clicks</h4>
+<div id="gauge_clicks"></div>
 </div>
 
-<div class="cardBox">
-<div class="cardTitle">Top Red</div>
-<div class="cardNum" id="mk_red">-</div>
+<div class="cardKpi">
+<h4>Conversión</h4>
+<div id="gauge_conversion"></div>
 </div>
 
-<div class="cardBox">
-<div class="cardTitle">Top Campaña</div>
-<div class="cardNum" id="mk_camp">-</div>
 </div>
 
-<div class="cardBox">
-<div class="cardTitle">Top Publicación</div>
-<div class="cardNum" id="mk_post">-</div>
+<!-- TOP KPIs -->
+<div class="grid" style="margin-top:20px;">
+
+<div class="cardKpi">
+<h4>Top Red</h4>
+<div class="num" id="mk_red">-</div>
+</div>
+
+<div class="cardKpi">
+<h4>Top Campaña</h4>
+<div class="num" id="mk_camp">-</div>
+</div>
+
+<div class="cardKpi">
+<h4>Top Publicación</h4>
+<div class="num" id="mk_post">-</div>
 </div>
 
 </div>
@@ -2129,8 +2141,11 @@ async function loadMarketingKpis(){
 const user = (window.currentUser || "").toLowerCase().trim();
 if(!user)return;
 
-let meta = 10;
-let periodo = "mensual";
+/* =====================
+   METAS
+===================== */
+let meta_reg = 10;
+let meta_click = 10;
 
 const { data:kpi } = await sb
 .from("kpi_manager")
@@ -2139,24 +2154,13 @@ const { data:kpi } = await sb
 .limit(1);
 
 if(kpi && kpi.length){
-meta = Number(kpi[0].registros || 10);
-periodo = kpi[0].periodo || "mensual";
+meta_reg = Number(kpi[0].registros || 10);
+meta_click = Number(kpi[0].clicks || 10);
 }
 
-let desde = new Date();
-
-if(periodo=="semanal"){
-desde.setDate(desde.getDate()-7);
-}
-else if(periodo=="quincenal"){
-desde.setDate(desde.getDate()-15);
-}
-else{
-desde = new Date(desde.getFullYear(),desde.getMonth(),1);
-}
-
-const iso = desde.toISOString();
-
+/* =====================
+   DATA REAL
+===================== */
 const { data:regs } = await sb
 .from("attributed_registrations")
 .select("*")
@@ -2172,24 +2176,56 @@ let totalClicks = (clicks||[]).length;
 
 let conv = 0;
 if(totalClicks>0){
-conv = ((totalRegs/totalClicks)*100).toFixed(1);
+conv = Number(((totalRegs/totalClicks)*100).toFixed(1));
 }
 
-mk_registros.innerText = totalRegs;
-mk_clicks.innerText = totalClicks;
-mk_conv.innerText = conv + "%";
+/* =====================
+   SEMAFORO
+===================== */
+const sem = await getSemaforo();
 
-let pct = Math.round((totalRegs/meta)*100);
-if(!isFinite(pct)) pct = 0;
+/* MAPEO */
+const sem_reg = sem ? {
+rojo: sem.reg_rojo,
+amarillo: sem.reg_amarillo,
+verde: sem.reg_verde
+} : null;
 
-let color = "🔴";
+const sem_click = sem ? {
+rojo: sem.click_rojo,
+amarillo: sem.click_amarillo,
+verde: sem.click_verde
+} : null;
 
-if(pct>=80) color="🟢";
-else if(pct>=50) color="🟡";
+const sem_conv = sem ? {
+rojo: sem.conv_rojo,
+amarillo: sem.conv_amarillo,
+verde: sem.conv_verde
+} : null;
 
-mk_registros_state.innerText =
-totalRegs + "/" + meta + " (" + pct + "%) " + color;
+/* =====================
+   RENDER
+===================== */
 
+total_registros.innerText = totalRegs;
+
+let pctMain = Math.round((totalRegs/meta_reg)*100);
+
+let card = document.getElementById("card_total_registros");
+card.classList.remove("red","yellow","green");
+
+if(sem_reg){
+    if(pctMain >= sem_reg.verde) card.classList.add("green");
+    else if(pctMain >= sem_reg.amarillo) card.classList.add("yellow");
+    else card.classList.add("red");
+}
+
+renderGauge("gauge_registros", totalRegs, meta_reg, sem_reg);
+renderGauge("gauge_clicks", totalClicks, meta_click, sem_click);
+renderGauge("gauge_conversion", conv, 100, sem_conv);
+/* =====================
+   TOPS
+===================== */
 loadTopMarketing(regs);
 
 }
@@ -2327,6 +2363,43 @@ ${texto}
 
 }
 
+async function getSemaforo(){
+
+const { data } = await sb
+.from("semaforo_manager")
+.select("*")
+.order("updated_at",{ascending:false})
+.limit(1);
+
+return data?.[0] || null;
+
+}
+
+function renderGauge(containerId, value, meta, sem){
+
+let pct = Math.round((value/meta)*100);
+if(!isFinite(pct)) pct = 0;
+
+let color = "#ef4444";
+
+if(sem && sem.verde != null && sem.amarillo != null){
+    if(pct >= sem.verde) color = "#22c55e";
+    else if(pct >= sem.amarillo) color = "#f59e0b";
+}
+
+let deg = Math.min(pct,100)*3.6;
+
+document.getElementById(containerId).innerHTML = `
+<div class="gaugeWrap"
+style="background:conic-gradient(${color} ${deg}deg,#e5e7eb ${deg}deg);">
+<div class="gaugeNum">${pct}%</div>
+</div>
+
+<div style="text-align:center;margin-top:10px;font-weight:700">
+${value} / ${meta}
+</div>
+`;
+}
 saveUsers();
 loadPage();
 runClock();
