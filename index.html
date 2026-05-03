@@ -876,12 +876,41 @@ font-family:Arial;
 </div>
 
 <div id="kpiModule" class="linkCard hidden">
-<h2 style="margin-bottom:14px;">KPIs Marketing</h2>
+<h2 style="margin-bottom:14px;">📊 KPIs Marketing</h2>
+<div class="grid">
 
-<div class="cardsGrid">
+<div class="cardKpi">
+<h4>Registros</h4>
+<div id="g_mk_registros"></div>
+</div>
 
-<div class="cardBox">
-<div class="cardTitle">Registros</div>
+<div class="cardKpi">
+<h4>Clicks</h4>
+<div id="g_mk_clicks"></div>
+</div>
+
+<div class="cardKpi">
+<h4>Conversión</h4>
+<div id="g_mk_conv"></div>
+</div>
+
+<div class="cardKpi">
+<h4>Top Red</h4>
+<div class="num" id="mk_red">-</div>
+</div>
+
+<div class="cardKpi">
+<h4>Top Campaña</h4>
+<div class="num" id="mk_camp">-</div>
+</div>
+
+<div class="cardKpi">
+<h4>Top Publicación</h4>
+<div class="num" id="mk_post">-</div>
+</div>
+
+</div>
+</div>
 <div class="cardNum" id="mk_registros">0</div>
 <div class="kpiState" id="mk_registros_state">0%</div>
 </div>
@@ -1259,7 +1288,34 @@ user: username,
 pass: password
 };
 
+
+function renderGauge(id,val,meta){
+
+let pct = (val/meta)*100;
+if(!isFinite(pct)) pct = 0;
+
+let color = "#ef4444";
+
+if(pct>=80){
+color = "#22c55e";
+}else if(pct>=50){
+color = "#f59e0b";
+}
+
+let deg = Math.min(pct,100)*3.6;
+
+document.getElementById(id).innerHTML = `
+<div class="gaugeWrap" style="background:conic-gradient(${color} ${deg}deg,#e5e7eb ${deg}deg);">
+<div class="gaugeNum">${Math.round(pct)}%</div>
+</div>
+<div style="margin-top:8px;text-align:center;font-weight:700;">
+${Math.round(val)} / ${meta}
+</div>
+`;
+
+}
 saveUsers();
+
 
 await saveAttributedRegistration(username);
 
@@ -2129,8 +2185,10 @@ async function loadMarketingKpis(){
 const user = (window.currentUser || "").toLowerCase().trim();
 if(!user)return;
 
-let meta = 10;
-let periodo = "mensual";
+/* KPI MANAGER */
+let meta_reg = 10;
+let meta_click = 10;
+let meta_conv = 10;
 
 const { data:kpi } = await sb
 .from("kpi_manager")
@@ -2139,8 +2197,35 @@ const { data:kpi } = await sb
 .limit(1);
 
 if(kpi && kpi.length){
-meta = Number(kpi[0].registros || 10);
-periodo = kpi[0].periodo || "mensual";
+meta_reg = Number(kpi[0].registros || 10);
+meta_click = Number(kpi[0].clicks || 10);
+meta_conv = Number(kpi[0].conversion || 10);
+}
+
+/* DATA */
+const { data:regs } = await sb
+.from("attributed_registrations")
+.select("*")
+.eq("username_owner",user);
+
+const { data:clicks } = await sb
+.from("social_clicks")
+.select("*")
+.eq("username",user);
+
+let totalRegs = (regs||[]).length;
+let totalClicks = (clicks||[]).length;
+
+let conv = totalClicks>0 ? (totalRegs/totalClicks)*100 : 0;
+
+/* GAUGES */
+renderGauge("g_mk_registros", totalRegs, meta_reg);
+renderGauge("g_mk_clicks", totalClicks, meta_click);
+renderGauge("g_mk_conv", conv, meta_conv);
+
+/* TOPS */
+loadTopMarketing(regs);
+
 }
 
 let desde = new Date();
@@ -2327,7 +2412,34 @@ ${texto}
 
 }
 
+
+function renderGauge(id,val,meta){
+
+let pct = (val/meta)*100;
+if(!isFinite(pct)) pct = 0;
+
+let color = "#ef4444";
+
+if(pct>=80){
+color = "#22c55e";
+}else if(pct>=50){
+color = "#f59e0b";
+}
+
+let deg = Math.min(pct,100)*3.6;
+
+document.getElementById(id).innerHTML = `
+<div class="gaugeWrap" style="background:conic-gradient(${color} ${deg}deg,#e5e7eb ${deg}deg);">
+<div class="gaugeNum">${Math.round(pct)}%</div>
+</div>
+<div style="margin-top:8px;text-align:center;font-weight:700;">
+${Math.round(val)} / ${meta}
+</div>
+`;
+
+}
 saveUsers();
+
 loadPage();
 runClock();
 /* ========================================= */
