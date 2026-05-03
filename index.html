@@ -712,6 +712,11 @@ font-weight:900;
 
 <button class="menuBtn hidden" id="btnSemaforo" onclick="showSemaforoManager()"><i class="fas fa-traffic-light"></i> <span class="menuText"> Semáforo Manager</span></button>
 
+<button class="menuBtn hidden" id="btnSocialManager" onclick="showSocialManager()">
+<i class="fas fa-bullhorn"></i>
+<span class="menuText"> Social Manager</span>
+</button>
+
 
 <button class="menuBtn"><i class="fas fa-user"></i> <span class="menuText"> Editar perfil</span></button>
 
@@ -784,26 +789,14 @@ box-shadow:0 8px 20px rgba(0,0,0,.15);
 <option value="paid">Pagado</option>
 </select>
 
-<input id="social_campaign" placeholder="Nombre campaña">
+<select id="social_campaign_select"></select>
 
-<select id="social_template" style="margin-bottom:12px;"></select>
-
-<select id="social_asset" style="margin-bottom:12px;"></select>
-
-<textarea id="social_result" style="
-width:100%;
-min-height:180px;
-padding:12px;
+<div id="social_preview" style="
+background:#f8fafc;
+padding:14px;
 border-radius:12px;
-border:1px solid #ddd;
 margin-bottom:12px;
-"></textarea>
-
-<button class="copyBtn" onclick="generateSocialPost()">Generar Publicación</button>
-
-<button class="copyBtn" onclick="copySocialPost()">Copiar Texto + Link</button>
-
-<div id="social_download" style="margin-top:14px;"></div>
+"></div>
 
 </div>
 
@@ -1038,6 +1031,33 @@ Guardar KPIs
 <button class="copyBtn" onclick="saveSemaforoFull()">
 Guardar Semáforo
 </button>
+
+</div>
+
+<div id="socialManagerModule" class="linkCard hidden">
+
+<h2>📢 Social Tracker Manager</h2>
+
+<input id="sm_nombre" placeholder="Nombre campaña">
+
+<textarea id="sm_texto" placeholder="Texto campaña" style="
+width:100%;
+min-height:120px;
+margin-bottom:12px;
+padding:12px;
+border-radius:12px;
+border:1px solid #ddd;
+"></textarea>
+
+<input id="sm_url" placeholder="URL imagen o video">
+
+<button class="copyBtn" onclick="saveCampaign()">
+Guardar campaña
+</button>
+
+<hr style="margin:20px 0">
+
+<div id="campaignList"></div>
 
 </div>
 
@@ -1302,10 +1322,12 @@ loadKpisMonth();
 
 btnKpiManager.classList.add("hidden");
 btnSemaforo.classList.add("hidden");
+btnSocialManager.classList.add("hidden");
 
 if(name.toLowerCase()=="admin"){
 btnKpiManager.classList.remove("hidden");
 btnSemaforo.classList.remove("hidden");
+btnSocialManager.classList.remove("hidden");
 }
 
 }
@@ -1587,8 +1609,7 @@ landingModule.classList.add("hidden");
 
 socialModule.classList.remove("hidden");
 
-loadSocialTemplates();
-loadSocialAssets();
+loadUserCampaigns();
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -2115,6 +2136,79 @@ closeSidebar();
 
 }
 
+async function loadUserCampaigns(){
+
+const { data } = await sb
+.from("social_campaigns")
+.select("*");
+
+if(!data || !data.length){
+social_campaign_select.innerHTML = "<option>No hay campañas</option>";
+return;
+}
+
+social_campaign_select.innerHTML = "";
+
+data.forEach(c=>{
+social_campaign_select.innerHTML += `
+<option value="${c.id}">
+${c.nombre}
+</option>
+`;
+});
+
+if(data && data.length){
+    document.getElementById("social_campaign_select")
+    ?.dispatchEvent(new Event("change"));
+}
+
+}
+
+document.getElementById("social_campaign_select")
+?.addEventListener("change", async function(){
+
+const id = this.value;
+
+const { data } = await sb
+.from("social_campaigns")
+.select("*")
+.eq("id",id)
+.limit(1);
+
+if(!data || !data.length) return;
+
+const c = data[0];
+
+const net = social_network.value;
+const type = social_type.value;
+const user = window.currentUser;
+
+let link =
+location.origin +
+"/?ref=" + user +
+"&utm_source=" + net +
+"&utm_medium=" + type +
+"&utm_campaign=" + c.nombre;
+
+social_preview.innerHTML = `
+<div style="margin-bottom:8px;">${c.texto}</div>
+<div style="font-size:12px;color:#64748b">${link}</div>
+<br>
+${c.contenido_url ? `<a href="${c.contenido_url}" target="_blank">Ver contenido</a>` : ""}
+`;
+
+});
+
+social_network.addEventListener("change", ()=>{
+document.getElementById("social_campaign_select")
+?.dispatchEvent(new Event("change"));
+});
+
+social_type.addEventListener("change", ()=>{
+document.getElementById("social_campaign_select")
+?.dispatchEvent(new Event("change"));
+});
+
 function showGaugeModule(){
 
 dashboardCards.classList.add("hidden");
@@ -2209,8 +2303,7 @@ verde: sem.conv_verde
 
 total_registros.innerText = totalRegs;
 
-let pctMain = Math.round((totalRegs/meta_reg)*100);
-
+let pctMain = meta_reg > 0 ? Math.round((totalRegs/meta_reg)*100) : 0;
 let card = document.getElementById("card_total_registros");
 card.classList.remove("red","yellow","green");
 
@@ -2275,6 +2368,8 @@ const { data } = await sb
 .select("*")
 .ilike("username",user);
 
+
+
 let total = {
 publicaciones:0,
 prospectos:0,
@@ -2317,13 +2412,14 @@ const { data } = await sb
 .order("updated_at",{ascending:false})
 .limit(1);
 
+
 let meta = 10;
 
 if(data && data.length && data[0][kpi] != null){
 meta = Number(data[0][kpi] || 10);
 }
 
-let pct = Math.round((val/meta)*100);
+let pct = meta > 0 ? Math.round((val/meta)*100) : 0;
 if(!isFinite(pct)) pct = 0;
 
 let color = "#ef4444";
@@ -2375,31 +2471,105 @@ return data?.[0] || null;
 
 }
 
-function renderGauge(containerId, value, meta, sem){
 
-let pct = Math.round((value/meta)*100);
-if(!isFinite(pct)) pct = 0;
+function showSocialManager(){
 
-let color = "#ef4444";
+dashboardCards.classList.add("hidden");
+activityModule.classList.add("hidden");
+historyModule.classList.add("hidden");
+kpiModule.classList.add("hidden");
+semaforoModule.classList.add("hidden");
+gaugeModule.classList.add("hidden");
+socialModule.classList.add("hidden");
+landingModule.classList.add("hidden");
 
-if(sem && sem.verde != null && sem.amarillo != null){
-    if(pct >= sem.verde) color = "#22c55e";
-    else if(pct >= sem.amarillo) color = "#f59e0b";
+socialManagerModule.classList.remove("hidden");
+
+loadCampaigns();
+
+if(window.innerWidth <= 900){
+closeSidebar();
 }
 
-let deg = Math.min(pct,100)*3.6;
+}
 
-document.getElementById(containerId).innerHTML = `
-<div class="gaugeWrap"
-style="background:conic-gradient(${color} ${deg}deg,#e5e7eb ${deg}deg);">
-<div class="gaugeNum">${pct}%</div>
-</div>
+async function saveCampaign(){
 
-<div style="text-align:center;margin-top:10px;font-weight:700">
-${value} / ${meta}
+const nombre = sm_nombre.value.trim();
+const texto = sm_texto.value.trim();
+const url = sm_url.value.trim();
+
+if(!nombre || !texto){
+alert("Completa nombre y texto");
+return;
+}
+
+const { error } = await sb
+.from("social_campaigns")
+.insert([{
+nombre,
+texto,
+contenido_url: url
+}]);
+
+if(error){
+alert(error.message);
+return;
+}
+
+alert("Campaña guardada");
+
+sm_nombre.value="";
+sm_texto.value="";
+sm_url.value="";
+
+loadCampaigns();
+
+}
+
+async function loadCampaigns(){
+
+const { data } = await sb
+.from("social_campaigns")
+.select("*")
+.order("created_at",{ascending:false});
+
+if(!data){
+campaignList.innerHTML = "Sin campañas";
+return;
+}
+
+campaignList.innerHTML = "";
+
+data.forEach(c=>{
+
+campaignList.innerHTML += `
+<div style="border:1px solid #ddd;padding:12px;border-radius:12px;margin-bottom:10px;">
+<b>${c.nombre}</b><br>
+${c.texto}<br>
+${c.contenido_url || ""}<br><br>
+
+<button onclick="deleteCampaign('${c.id}')">Eliminar</button>
 </div>
 `;
+
+});
+
 }
+
+async function deleteCampaign(id){
+
+if(!confirm("¿Eliminar campaña?")) return;
+
+await sb
+.from("social_campaigns")
+.delete()
+.eq("id",id);
+
+loadCampaigns();
+
+}
+
 saveUsers();
 loadPage();
 runClock();
