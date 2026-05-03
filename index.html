@@ -876,43 +876,12 @@ font-family:Arial;
 </div>
 
 <div id="kpiModule" class="linkCard hidden">
+<h2 style="margin-bottom:14px;">KPIs Marketing</h2>
 
-<h2 style="margin-bottom:14px;">📊 KPIs Marketing</h2>
+<div class="cardsGrid">
 
-<div class="grid">
-
-<div class="cardKpi">
-<h4>Registros</h4>
-<div id="g_mk_registros"></div>
-</div>
-
-<div class="cardKpi">
-<h4>Clicks</h4>
-<div id="g_mk_clicks"></div>
-</div>
-
-<div class="cardKpi">
-<h4>Conversión</h4>
-<div id="g_mk_conv"></div>
-</div>
-
-<div class="cardKpi">
-<h4>Top Red</h4>
-<div class="num" id="mk_red">-</div>
-</div>
-
-<div class="cardKpi">
-<h4>Top Campaña</h4>
-<div class="num" id="mk_camp">-</div>
-</div>
-
-<div class="cardKpi">
-<h4>Top Publicación</h4>
-<div class="num" id="mk_post">-</div>
-</div>
-
-</div>
-</div>
+<div class="cardBox">
+<div class="cardTitle">Registros</div>
 <div class="cardNum" id="mk_registros">0</div>
 <div class="kpiState" id="mk_registros_state">0%</div>
 </div>
@@ -1290,19 +1259,7 @@ user: username,
 pass: password
 };
 
-
-function renderGauge(id,val,meta){
-let pct = (val/meta)*100;
-if(!isFinite(pct)) pct = 0;
-let color = pct>=80?"#22c55e":pct>=50?"#f59e0b":"#ef4444";
-let deg = Math.min(pct,100)*3.6;
-document.getElementById(id).innerHTML = `
-<div class="gaugeWrap" style="background:conic-gradient(${color} ${deg}deg,#e5e7eb ${deg}deg);">
-<div class="gaugeNum">${Math.round(pct)}%</div>
-</div>`;
-}
 saveUsers();
-
 
 await saveAttributedRegistration(username);
 
@@ -2172,22 +2129,18 @@ async function loadMarketingKpis(){
 const user = (window.currentUser || "").toLowerCase().trim();
 if(!user)return;
 
-const { data:regs } = await sb.from("attributed_registrations").select("*").eq("username_owner",user);
-const { data:clicks } = await sb.from("social_clicks").select("*").eq("username",user);
+let meta = 10;
+let periodo = "mensual";
 
-let totalRegs = (regs||[]).length;
-let totalClicks = (clicks||[]).length;
+const { data:kpi } = await sb
+.from("kpi_manager")
+.select("*")
+.order("updated_at",{ascending:false})
+.limit(1);
 
-let conv = totalClicks>0 ? (totalRegs/totalClicks)*100 : 0;
-
-renderGauge("g_mk_registros", totalRegs, 10);
-renderGauge("g_mk_clicks", totalClicks, 10);
-renderGauge("g_mk_conv", conv, 10);
-
-loadTopMarketing(regs);
-
-document.getElementById("kpi_total_registros")?.innerText = totalRegs;
-
+if(kpi && kpi.length){
+meta = Number(kpi[0].registros || 10);
+periodo = kpi[0].periodo || "mensual";
 }
 
 let desde = new Date();
@@ -2374,19 +2327,7 @@ ${texto}
 
 }
 
-
-function renderGauge(id,val,meta){
-let pct = (val/meta)*100;
-if(!isFinite(pct)) pct = 0;
-let color = pct>=80?"#22c55e":pct>=50?"#f59e0b":"#ef4444";
-let deg = Math.min(pct,100)*3.6;
-document.getElementById(id).innerHTML = `
-<div class="gaugeWrap" style="background:conic-gradient(${color} ${deg}deg,#e5e7eb ${deg}deg);">
-<div class="gaugeNum">${Math.round(pct)}%</div>
-</div>`;
-}
 saveUsers();
-
 loadPage();
 runClock();
 /* ========================================= */
