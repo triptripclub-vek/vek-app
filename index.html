@@ -808,7 +808,9 @@ margin-bottom:12px;
 
 <button class="copyBtn" onclick="generateSocialPost()">Generar Publicación</button>
 
-<button class="copyBtn" onclick="copySocialPost()">Copiar Texto + Link</button>
+<button class="copyBtn" onclick="copySocialText()">
+Copiar Texto + Link
+</button>
 
 <div id="social_download" style="margin-top:14px;"></div>
 
@@ -2647,6 +2649,24 @@ select.innerHTML = "<option value=''>Seleccionar campaña</option>";
 (data || []).forEach(c=>{
 select.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
 });
+
+}
+
+function copySocialText(){
+
+const textarea = document.getElementById("social_result");
+
+if(!textarea || !textarea.value){
+alert("No hay contenido para copiar");
+return;
+}
+
+textarea.select();
+textarea.setSelectionRange(0, 99999); // móvil
+
+document.execCommand("copy");
+
+alert("Texto copiado correctamente");
 
 }
 
