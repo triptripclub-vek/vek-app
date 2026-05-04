@@ -1378,6 +1378,67 @@ alert("KPIs guardados correctamente");
 
 }
 
+async function createCampaign(){
+
+const nombre = admin_nombre.value.trim();
+const texto = admin_texto.value.trim();
+const red = admin_red.value;
+const file = admin_file.files[0];
+
+if(!nombre || !texto){
+alert("Completa nombre y texto");
+return;
+}
+
+let url = "";
+
+/* SUBIR ARCHIVO */
+if(file){
+
+const fileName = Date.now() + "_" + file.name;
+
+const { error: uploadError } = await sb.storage
+.from("social-content")
+.upload(fileName, file);
+
+if(uploadError){
+alert("Error subiendo archivo");
+console.log(uploadError);
+return;
+}
+
+url = sb.storage
+.from("social-content")
+.getPublicUrl(fileName).data.publicUrl;
+}
+
+/* GUARDAR EN BD */
+const { error } = await sb
+.from("social_campaigns")
+.insert([{
+nombre,
+texto,
+contenido_url: url,
+red_social: red
+}]);
+
+if(error){
+alert("Error guardando campaña");
+console.log(error);
+return;
+}
+
+alert("Campaña creada correctamente");
+
+/* LIMPIAR */
+admin_nombre.value = "";
+admin_texto.value = "";
+admin_file.value = "";
+
+loadCampaignsAdmin();
+
+}
+
 function showKpisUser(){
 
 dashboardCards.classList.add("hidden");
