@@ -712,6 +712,11 @@ font-weight:900;
 
 <button class="menuBtn hidden" id="btnSemaforo" onclick="showSemaforoManager()"><i class="fas fa-traffic-light"></i> <span class="menuText"> Semáforo Manager</span></button>
 
+<button class="menuBtn hidden" id="btnSocialManager" onclick="showSocialManager()">
+<i class="fas fa-bullhorn"></i>
+<span class="menuText"> Social Manager</span>
+</button>
+
 
 <button class="menuBtn"><i class="fas fa-user"></i> <span class="menuText"> Editar perfil</span></button>
 
@@ -944,6 +949,40 @@ font-family:Arial;
 <button class="copyBtn" onclick="saveKpiManagerNew()">
 Guardar KPIs
 </button>
+
+</div>
+
+<div id="socialManagerModule" class="linkCard hidden">
+
+<h3>📣 Social Manager (Admin)</h3>
+
+<label>Red Social</label>
+<select id="admin_red">
+<option value="facebook">Facebook</option>
+<option value="instagram">Instagram</option>
+<option value="tiktok">TikTok</option>
+<option value="whatsapp">WhatsApp</option>
+<option value="youtube">YouTube</option>
+<option value="x">X</option>
+</select>
+
+<label>Nombre campaña</label>
+<input id="admin_nombre" placeholder="Ej: campaña1">
+
+<label>Texto campaña</label>
+<textarea id="admin_texto" placeholder="Texto que el usuario publicará"></textarea>
+
+<label>Contenido (imagen o video)</label>
+<input type="file" id="admin_file">
+
+<button class="copyBtn" onclick="createCampaign()">
+Crear campaña
+</button>
+
+<hr>
+
+<h4>Campañas creadas</h4>
+<div id="admin_campaigns"></div>
 
 </div>
 
@@ -1306,6 +1345,7 @@ btnSemaforo.classList.add("hidden");
 if(name.toLowerCase()=="admin"){
 btnKpiManager.classList.remove("hidden");
 btnSemaforo.classList.remove("hidden");
+btnSocialManager.classList.remove("hidden");
 }
 
 }
