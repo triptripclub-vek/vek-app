@@ -1696,6 +1696,11 @@ if(window.innerWidth <= 900){
 closeSidebar();
 }
 
+loadCampaignsUser();
+
+document.getElementById("social_network")
+.addEventListener("change", loadCampaignsUser);
+
 }
 
 async function loadSocialTemplates(){
