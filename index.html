@@ -789,7 +789,8 @@ box-shadow:0 8px 20px rgba(0,0,0,.15);
 <option value="paid">Pagado</option>
 </select>
 
-<input id="social_campaign" placeholder="Nombre campaña">
+<label>Selecciona campaña</label>
+<select id="campaign_select"></select>
 
 <select id="social_template" style="margin-bottom:12px;"></select>
 
@@ -2615,6 +2616,26 @@ await sb.from("social_campaigns").delete().eq("id", id);
 loadCampaignsAdmin();
 
 }
+
+async function loadCampaignsUser(){
+
+const net = document.getElementById("social_network").value;
+
+const { data } = await sb
+.from("social_campaigns")
+.select("*")
+.eq("red_social", net);
+
+const select = document.getElementById("campaign_select");
+
+select.innerHTML = "<option value=''>Seleccionar campaña</option>";
+
+(data || []).forEach(c=>{
+select.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
+});
+
+}
+
 saveUsers();
 loadPage();
 runClock();
