@@ -1838,6 +1838,23 @@ closeSidebar();
 
 }
 
+function showSocialManager(){
+
+dashboardCards.classList.add("hidden");
+activityModule.classList.add("hidden");
+historyModule.classList.add("hidden");
+kpiModule.classList.add("hidden");
+semaforoModule.classList.add("hidden");
+gaugeModule.classList.add("hidden");
+landingModule.classList.add("hidden");
+socialModule.classList.add("hidden");
+
+socialManagerModule.classList.remove("hidden");
+
+loadCampaignsAdmin();
+
+}
+
 function openAcademy(){
 
 if(window.innerWidth <= 900){
