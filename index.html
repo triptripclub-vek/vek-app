@@ -2518,6 +2518,103 @@ ${value} / ${meta}
 </div>
 `;
 }
+
+/* =========================
+SOCIAL MANAGER FUNCTIONS
+========================= */
+
+async function createCampaign(){
+
+const nombre = document.getElementById("admin_nombre").value.trim();
+const texto = document.getElementById("admin_texto").value.trim();
+const red = document.getElementById("admin_red").value;
+const file = document.getElementById("admin_file").files[0];
+
+if(!nombre || !texto){
+alert("Completa nombre y texto");
+return;
+}
+
+let url = "";
+
+if(file){
+
+const fileName = Date.now() + "_" + file.name;
+
+const { error: uploadError } = await sb.storage
+.from("social-content")
+.upload(fileName, file);
+
+if(uploadError){
+alert("Error subiendo archivo");
+console.log(uploadError);
+return;
+}
+
+url = sb.storage
+.from("social-content")
+.getPublicUrl(fileName).data.publicUrl;
+}
+
+const { error } = await sb
+.from("social_campaigns")
+.insert([{
+nombre,
+texto,
+contenido_url: url,
+red_social: red
+}]);
+
+if(error){
+alert("Error guardando campaña");
+console.log(error);
+return;
+}
+
+alert("Campaña creada correctamente");
+
+document.getElementById("admin_nombre").value = "";
+document.getElementById("admin_texto").value = "";
+document.getElementById("admin_file").value = "";
+
+loadCampaignsAdmin();
+
+}
+
+
+async function loadCampaignsAdmin(){
+
+const { data } = await sb
+.from("social_campaigns")
+.select("*")
+.order("created_at",{ascending:false});
+
+const container = document.getElementById("admin_campaigns");
+
+container.innerHTML = "";
+
+(data || []).forEach(c=>{
+
+container.innerHTML += `
+<div style="border:1px solid #ddd;padding:10px;margin-bottom:10px;">
+<b>${c.nombre}</b><br>
+${c.red_social}<br>
+
+<button onclick="deleteCampaign('${c.id}')">Eliminar</button>
+</div>
+`;
+
+});
+
+}
+
+async function deleteCampaign(id){
+
+await sb.from("social_campaigns").delete().eq("id", id);
+
+loadCampaignsAdmin();
+
+}
 saveUsers();
 loadPage();
 runClock();
