@@ -804,6 +804,7 @@ border-radius:12px;
 border:1px solid #ddd;
 margin-bottom:12px;
 "></textarea>
+<div id="social_download"></div>
 
 <button class="copyBtn" onclick="generateSocialPost()">Generar Publicación</button>
 
@@ -1723,45 +1724,53 @@ social_asset.innerHTML = `
 
 }
 
-function generateSocialPost(){
+async function generateSocialPost(){
 
-const net = social_network.value;
-const type = social_type.value;
-const camp = social_campaign.value.trim() || "general";
-const user = window.currentUser || "demo";
+const net = document.getElementById("social_network").value;
+const type = document.getElementById("social_type").value;
+const user = window.currentUser;
 
-let txt = social_template.options[social_template.selectedIndex].text;
+const id = document.getElementById("campaign_select").value;
+
+if(!id){
+alert("Selecciona campaña");
+return;
+}
+
+const { data } = await sb
+.from("social_campaigns")
+.select("*")
+.eq("id", id)
+.limit(1);
+
+const camp = data[0];
 
 let link =
 location.origin +
 "/?ref=" + user +
 "&utm_source=" + net +
 "&utm_medium=" + type +
-"&utm_campaign=" + camp;
+"&utm_campaign=" + camp.nombre;
 
-social_result.value =
-txt + "\n\n" + link;
+/* TEXTO + LINK */
+document.getElementById("social_result").value =
+camp.texto + "\n\n" + link;
 
-if(social_asset.value){
+/* DESCARGA */
+const download = document.getElementById("social_download");
 
-social_download.innerHTML = `
-<a href="${social_asset.value}" target="_blank" class="copyBtn" style="display:block;text-align:center;">
+if(camp.contenido_url){
+download.innerHTML = `
+<a href="${camp.contenido_url}" target="_blank" class="copyBtn">
 Descargar Contenido
 </a>
 `;
-
 }else{
-social_download.innerHTML = "";
+download.innerHTML = "";
 }
 
 }
 
-function copySocialPost(){
-
-navigator.clipboard.writeText(social_result.value);
-alert("Publicación copiada");
-
-}
 
 async function saveSemaforoFull(){
 
