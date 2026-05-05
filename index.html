@@ -799,6 +799,7 @@ border-radius:12px;
 border:1px solid #ddd;
 margin-bottom:12px;
 "></textarea>
+<div id="social_preview" style="margin-top:15px;"></div>
 <div id="social_download"></div>
 
 <button class="copyBtn" onclick="generateSocialPost()">Generar Publicación</button>
@@ -1740,7 +1741,15 @@ location.origin +
 /* TEXTO + LINK */
 document.getElementById("social_result").value =
 camp.texto + "\n\n" + link;
+const preview = document.getElementById("social_preview");
 
+if(camp.contenido_url){
+    preview.innerHTML = `
+        <img src="${camp.contenido_url}" style="max-width:100%; border-radius:12px;">
+    `;
+}else{
+    preview.innerHTML = "";
+}
 /* DESCARGA */
 const download = document.getElementById("social_download");
 
