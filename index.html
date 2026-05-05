@@ -1752,24 +1752,30 @@ camp.texto + "\n\n" + link;
 console.log("CONTENIDO:", camp.contenido_url);
 
 /* PREVIEW */
-const preview = document.getElementById("social_preview");
+let preview = document.getElementById("social_preview");
 
-console.log("PREVIEW DIV:", preview);
-
-if(preview){
-preview.style.minHeight = "200px";
-    preview.innerHTML = "";
-
-    if(camp.contenido_url){
-        const img = document.createElement("img");
-        img.src = camp.contenido_url;
-        img.style.maxWidth = "100%";
-        img.style.borderRadius = "12px";
-
-        preview.appendChild(img);
-    }
+if(!preview){
+    preview = document.createElement("div");
+    preview.id = "social_preview";
+    document.body.appendChild(preview);
 }
 
+preview.innerHTML = "";
+
+if(camp.contenido_url){
+    const img = document.createElement("img");
+    img.src = camp.contenido_url;
+
+    img.style.position = "fixed";
+    img.style.bottom = "20px";
+    img.style.right = "20px";
+    img.style.width = "200px";
+    img.style.zIndex = "9999";
+    img.style.borderRadius = "12px";
+    img.style.boxShadow = "0 10px 20px rgba(0,0,0,0.2)";
+
+    preview.appendChild(img);
+}
 /* DESCARGA */
 const download = document.getElementById("social_download");
 
