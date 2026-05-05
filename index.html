@@ -1742,16 +1742,15 @@ location.origin +
 document.getElementById("social_result").value =
 camp.texto + "\n\n" + link;
 console.log("CONTENIDO:", camp.contenido_url);
-const preview = document.getElementById("social_preview");
-console.log("PREVIEW DIV:", preview);
+setTimeout(() => {
+    const preview = document.getElementById("social_preview");
 
-if(camp.contenido_url){
-    preview.innerHTML = `
-        <img src="${camp.contenido_url}" style="max-width:100%; border-radius:12px;">
-    `;
-}else{
-    preview.innerHTML = "";
-}
+    if(preview && camp.contenido_url){
+        preview.innerHTML = `
+            <img src="${camp.contenido_url}" style="max-width:100%; border-radius:12px;">
+        `;
+    }
+}, 200);
 /* DESCARGA */
 const download = document.getElementById("social_download");
 
