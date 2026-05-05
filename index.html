@@ -2,14 +2,6 @@
 <html lang="es">
 <head>
 
-<style>
-#social_preview {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    height: auto !important;
-}
-</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>VEK APP - ENTREGA 2A ESTABLE</title>
@@ -1762,27 +1754,19 @@ console.log("CONTENIDO:", camp.contenido_url);
 /* PREVIEW */
 const preview = document.getElementById("social_preview");
 
-preview.style.display = "block";
-
-let parent = preview.parentElement;
-
-while(parent){
-    parent.style.display = "block";
-    parent.style.visibility = "visible";
-    parent.style.opacity = "1";
-    parent = parent.parentElement;
-}
-
 console.log("PREVIEW DIV:", preview);
 
-if(preview && camp.contenido_url){
-    const img = document.createElement("img");
-    img.src = camp.contenido_url;
-    img.style.maxWidth = "100%";
-    img.style.borderRadius = "12px";
-
+if(preview){
     preview.innerHTML = "";
-    preview.appendChild(img);
+
+    if(camp.contenido_url){
+        const img = document.createElement("img");
+        img.src = camp.contenido_url;
+        img.style.maxWidth = "100%";
+        img.style.borderRadius = "12px";
+
+        preview.appendChild(img);
+    }
 }
 
 /* DESCARGA */
