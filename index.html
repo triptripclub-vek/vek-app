@@ -1683,10 +1683,20 @@ if(window.innerWidth <= 900){
 closeSidebar();
 }
 
+/* cargar campañas inicial */
 loadCampaignsUser();
 
-document.getElementById("social_network")
-.addEventListener("change", loadCampaignsUser);
+/* generar automático al cambiar red */
+document.getElementById("social_network").onchange = async () => {
+    await loadCampaignsUser();
+};
+
+/* generar automático al seleccionar campaña */
+document.getElementById("campaign_select").onchange = () => {
+    generateSocialPost();
+};
+
+/* eliminar selects viejos si existen */
 const t = document.getElementById("social_template");
 const a = document.getElementById("social_asset");
 
@@ -1694,7 +1704,6 @@ if(t) t.remove();
 if(a) a.remove();
 
 }
-
 
 
 async function generateSocialPost(){
