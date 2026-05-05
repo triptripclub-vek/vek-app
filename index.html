@@ -246,8 +246,6 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
 <input id="pass" type="password" placeholder="Contraseña">
 
 <button class="blue" onclick="loginUser()">Ingresar</button>
-<button class="dark" onclick="loginAdmin()">Admin</button>
-
 
 </div>
 </section>
@@ -1162,6 +1160,12 @@ const { data, error } = await sb
 .limit(1);
 
 if(!error && data && data.length > 0){
+
+if(u === "admin"){
+alert("Acceso no permitido");
+return;
+}
+
 openDashboard(u);
 return;
 }
@@ -1170,30 +1174,21 @@ return;
 
 /* Respaldo local */
 if(users[u] && users[u].pass === p){
-openDashboard(u);
+
+if(u === "admin"){
+alert("Acceso no permitido");
 return;
 }
 
+openDashboard(u);
+return;
+}
 alert("Datos incorrectos");
 }
 
 /* =========================================
    LOGIN ADMIN
 ========================================= */
-function loginAdmin(){
-
-let u = prompt("Usuario admin:");
-if(u===null)return;
-
-let p = prompt("Contraseña admin:");
-if(p===null)return;
-
-if(u==="admin" && p==="admin123"){
-openDashboard("ADMIN");
-}else{
-alert("Admin incorrecto");
-}
-}
 
 /* =========================================
    REGISTER USER
@@ -1346,11 +1341,6 @@ loadKpisMonth();
 btnKpiManager.classList.add("hidden");
 btnSemaforo.classList.add("hidden");
 
-if(name.toLowerCase()=="admin"){
-btnKpiManager.classList.remove("hidden");
-btnSemaforo.classList.remove("hidden");
-btnSocialManager.classList.remove("hidden");
-}
 
 }
 /* =========================================
