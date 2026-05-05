@@ -1687,6 +1687,11 @@ loadCampaignsUser();
 
 document.getElementById("social_network")
 .addEventListener("change", loadCampaignsUser);
+const t = document.getElementById("social_template");
+const a = document.getElementById("social_asset");
+
+if(t) t.remove();
+if(a) a.remove();
 
 }
 
