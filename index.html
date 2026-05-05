@@ -1716,7 +1716,6 @@ async function generateSocialPost(){
 const net = document.getElementById("social_network").value;
 const type = document.getElementById("social_type").value;
 const user = window.currentUser;
-
 const id = document.getElementById("campaign_select").value;
 
 if(!id){
@@ -1724,13 +1723,19 @@ alert("Selecciona campaña");
 return;
 }
 
-const { data } = await sb
+const { data, error } = await sb
 .from("social_campaigns")
 .select("*")
 .eq("id", id)
-.limit(1);
+.single();
 
-const camp = data[0];
+if(error || !data){
+console.log("ERROR DATA:", error);
+alert("Error cargando campaña");
+return;
+}
+
+const camp = data;
 
 let link =
 location.origin +
@@ -1748,24 +1753,22 @@ console.log("CONTENIDO:", camp.contenido_url);
 /* PREVIEW */
 const preview = document.getElementById("social_preview");
 
-if(preview){
-    preview.style.display = "block";
+console.log("PREVIEW DIV:", preview);
+
+if(preview && camp.contenido_url){
+    const img = document.createElement("img");
+    img.src = camp.contenido_url;
+    img.style.maxWidth = "100%";
+    img.style.borderRadius = "12px";
+
     preview.innerHTML = "";
-
-    if(camp.contenido_url){
-        const img = document.createElement("img");
-        img.src = camp.contenido_url;
-        img.style.maxWidth = "100%";
-        img.style.borderRadius = "12px";
-
-        preview.appendChild(img);
-    }
+    preview.appendChild(img);
 }
 
 /* DESCARGA */
 const download = document.getElementById("social_download");
 
-if(camp.contenido_url){
+if(download && camp.contenido_url){
 download.innerHTML = `
 <a href="${camp.contenido_url}" target="_blank" class="copyBtn">
 Descargar Contenido
