@@ -1121,13 +1121,11 @@ Guardar Semáforo
 <script>
 // 🔐 PROTECCIÓN ADMIN CORRECTA
 if(localStorage.getItem("vek_admin") !== "true"){
-// solo bloquea dashboard, no el login
-document.addEventListener("DOMContentLoaded", () => {
-document.getElementById("loginPage").classList.remove("hidden");
-document.getElementById("dashboard").classList.add("hidden");
-});
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("loginPage").classList.remove("hidden");
+        document.getElementById("dashboard").classList.add("hidden");
+    });
 }
-
 /* =========================================
    CONFIG SUPABASE
 ========================================= */
@@ -1328,6 +1326,7 @@ if(name.toLowerCase()=="admin"){
 btnKpiManager.classList.remove("hidden");
 btnSemaforo.classList.remove("hidden");
 btnSocialManager.classList.remove("hidden");
+showDashboard();
 }
 
 }
@@ -1363,16 +1362,9 @@ alert("KPIs guardados correctamente");
 
 function showKpisUser(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
+hideAllModules();
 
 kpiModule.classList.remove("hidden");
-
-socialModule.classList.add("hidden");
-landingModule.classList.add("hidden");
 
 loadMarketingKpis();
 
@@ -1381,7 +1373,6 @@ closeSidebar();
 }
 
 }
-
 
 function logout(){
 localStorage.removeItem("vek_admin");
@@ -1476,17 +1467,27 @@ String(s).padStart(2,"0");
 
 /* ========================================= */
 
-function showLandingCenter(){
+function hideAllModules(){
 
 dashboardCards.classList.add("hidden");
 activityModule.classList.add("hidden");
 historyModule.classList.add("hidden");
 kpiModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
 gaugeModule.classList.add("hidden");
+semaforoModule.classList.add("hidden");
+socialModule.classList.add("hidden");
+landingModule.classList.add("hidden");
+kpiManagerModule.classList.add("hidden");
+socialManagerModule.classList.add("hidden");
+
+}
+
+
+function showLandingCenter(){
+
+hideAllModules();
 
 landingModule.classList.remove("hidden");
-socialModule.classList.add("hidden");
 
 loadLandingPhone();
 
@@ -1560,27 +1561,22 @@ waBtnFloat.href = "https://wa.me/" + phone;
 
 function showSocialTracker(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-kpiModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
-landingModule.classList.add("hidden");
+hideAllModules();
 
 socialModule.classList.remove("hidden");
 
 loadSocialTemplates();
 loadSocialAssets();
+loadCampaignsUser();
+
+const select = document.getElementById("social_network");
+
+// evitar duplicar eventos
+select.onchange = loadCampaignsUser;
 
 if(window.innerWidth <= 900){
 closeSidebar();
 }
-
-loadCampaignsUser();
-
-document.getElementById("social_network")
-.addEventListener("change", loadCampaignsUser);
 
 }
 
@@ -1711,18 +1707,14 @@ alert("Semáforo guardado correctamente");
 
 function showActivity(){
 
-dashboardCards.classList.add("hidden");
-kpiModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-
-socialModule.classList.add("hidden");
-landingModule.classList.add("hidden");
+hideAllModules();
 
 activityModule.classList.remove("hidden");
 
 act_fecha.value = new Date().toISOString().split("T")[0];
+
+historyModule.classList.remove("hidden");
+loadHistory();
 
 }
 
@@ -1777,20 +1769,11 @@ alert("Error general");
 
 function showDashboard(){
 
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-kpiModule.classList.add("hidden");
+hideAllModules();
 
 dashboardCards.classList.remove("hidden");
+
 loadKpisMonth();
-
-semaforoModule.classList.add("hidden");
-
-gaugeModule.classList.add("hidden");
-
-landingModule.classList.add("hidden");
-
-socialModule.classList.add("hidden");
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -1800,18 +1783,15 @@ closeSidebar();
 
 function showSocialManager(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-kpiModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
-landingModule.classList.add("hidden");
-socialModule.classList.add("hidden");
+hideAllModules();
 
 socialManagerModule.classList.remove("hidden");
 
 loadCampaignsAdmin();
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
 
 }
 
@@ -1899,23 +1879,6 @@ PVP:${vp}
 }
 
 
-
-
-const oldShowActivity = showActivity;
-
-showActivity = function(){
-
-oldShowActivity();
-
-historyModule.classList.remove("hidden");
-
-loadHistory();
-
-if(window.innerWidth <= 900){
-closeSidebar();
-}
-
-}
 
 async function loadKpisMonth(){
 
@@ -2072,18 +2035,9 @@ alert("Metas guardadas correctamente");
 
 async function showSemaforoManager(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-
-kpiModule.classList.add("hidden");
-kpiManagerModule.classList.add("hidden"); // 🔥 ESTA LÍNEA FALTABA
+hideAllModules();
 
 semaforoModule.classList.remove("hidden");
-
-socialModule.classList.add("hidden");
-landingModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
 
 await loadSemaforoActual();
 
@@ -2114,17 +2068,9 @@ if(el) el.value = r[key] || 0;
 
 function showKpiManager(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-kpiModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
+hideAllModules();
 
 kpiManagerModule.classList.remove("hidden");
-
-socialModule.classList.add("hidden");
-landingModule.classList.add("hidden");
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -2134,18 +2080,11 @@ closeSidebar();
 
 function showGaugeModule(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
+hideAllModules();
 
-kpiModule.classList.remove("hidden");
+gaugeModule.classList.remove("hidden");
 
-socialModule.classList.add("hidden");
-landingModule.classList.add("hidden");
-
-loadMarketingKpis();
+loadGaugeKpis();
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -2536,24 +2475,20 @@ select.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
 
 function copySocialText(){
 
-const textarea = document.getElementById("social_result");
+const text = document.getElementById("social_result").value;
 
-if(!textarea || !textarea.value){
+if(!text){
 alert("No hay contenido para copiar");
 return;
 }
 
-textarea.select();
-textarea.setSelectionRange(0, 99999); // móvil
-
-document.execCommand("copy");
-
-alert("Texto copiado correctamente");
+navigator.clipboard.writeText(text)
+.then(()=> alert("Texto copiado correctamente"))
+.catch(()=> alert("Error al copiar"));
 
 }
 
 saveUsers();
-loadPage();
 runClock();
 /* ========================================= */
 </script>
