@@ -790,9 +790,6 @@ box-shadow:0 8px 20px rgba(0,0,0,.15);
 <label>Selecciona campaña</label>
 <select id="campaign_select"></select>
 
-<select id="social_template" style="margin-bottom:12px;"></select>
-
-<select id="social_asset" style="margin-bottom:12px;"></select>
 
 <textarea id="social_result" style="
 width:100%;
@@ -1693,25 +1690,7 @@ document.getElementById("social_network")
 
 }
 
-async function loadSocialTemplates(){
 
-social_template.innerHTML = `
-<option value="1">¿Buscas ingresos extra desde casa?</option>
-<option value="2">Conoce una oportunidad gratuita</option>
-<option value="3">Convierte tu consumo en negocio</option>
-`;
-
-}
-
-async function loadSocialAssets(){
-
-social_asset.innerHTML = `
-<option value="">Selecciona creativo</option>
-<option value="https://res.cloudinary.com/demo/image/upload/sample.jpg">Imagen Facebook</option>
-<option value="https://res.cloudinary.com/demo/video/upload/dog.mp4">Video Reel</option>
-`;
-
-}
 
 async function generateSocialPost(){
 
