@@ -292,6 +292,78 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
     font-weight:bold;
     cursor:pointer;
 }
+
+/* LOGIN FULL SCREEN */
+
+.login-full{
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    background:#fff;
+}
+
+/* HERO IMAGEN */
+.login-hero-full{
+    height:55vh;
+    background:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f') center/cover no-repeat;
+    position:relative;
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+}
+
+/* OVERLAY TEXTO */
+.login-hero-full .overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.4);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    color:#fff;
+}
+
+.login-hero-full h1{
+    font-size:32px;
+    font-weight:900;
+}
+
+.login-hero-full p{
+    font-size:18px;
+    margin-top:8px;
+}
+
+/* FORMULARIO ABAJO */
+.login-form-full{
+    flex:1;
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:15px;
+}
+
+.login-form-full input{
+    padding:14px;
+    border-radius:14px;
+    border:1px solid #ddd;
+    font-size:16px;
+}
+
+/* BOTON FULL */
+.login-form-full button{
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    background:#111;
+    color:#fff;
+    font-size:18px;
+    font-weight:bold;
+    margin-top:10px;
+}
+
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -302,11 +374,10 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
 
 <section id="loginPage">
 
-<div class="login-container">
+<div class="login-full">
 
-    <!-- IMAGEN SUPERIOR -->
-    <div class="login-hero">
-        <img src="https://fztcpxdlakbregupsush.supabase.co/storage/v1/object/public/social-content/login%20foto.png">
+    <!-- HERO FULL -->
+    <div class="login-hero-full">
         <div class="overlay">
             <h1>Bienvenido a VEK</h1>
             <p>Ingresos Residuales 24/7</p>
@@ -314,7 +385,7 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
     </div>
 
     <!-- FORMULARIO -->
-    <div class="login-form">
+    <div class="login-form-full">
         <input type="text" id="user" placeholder="Usuario o correo">
         <input type="password" id="pass" placeholder="Contraseña">
 
@@ -324,6 +395,7 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
 </div>
 
 </section>
+
 <!-- LANDING -->
 <section id="landingPage" class="hidden">
 
