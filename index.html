@@ -1684,19 +1684,22 @@ closeSidebar();
 }
 
 /* cargar campañas inicial */
-loadCampaignsUser();
+loadCampaignsUser().then(() => {
+    generateSocialPost(); // 🔥 ESTA LÍNEA FALTABA
+});
 
-/* generar automático al cambiar red */
+/* cuando cambia red */
 document.getElementById("social_network").onchange = async () => {
     await loadCampaignsUser();
+    generateSocialPost(); // 🔥 AGREGAR AQUÍ
 };
 
-/* generar automático al seleccionar campaña */
+/* cuando cambia campaña */
 document.getElementById("campaign_select").onchange = () => {
     generateSocialPost();
 };
 
-/* eliminar selects viejos si existen */
+/* eliminar selects viejos */
 const t = document.getElementById("social_template");
 const a = document.getElementById("social_asset");
 
