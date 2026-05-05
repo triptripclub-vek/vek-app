@@ -1762,6 +1762,17 @@ console.log("CONTENIDO:", camp.contenido_url);
 /* PREVIEW */
 const preview = document.getElementById("social_preview");
 
+preview.style.display = "block";
+
+let parent = preview.parentElement;
+
+while(parent){
+    parent.style.display = "block";
+    parent.style.visibility = "visible";
+    parent.style.opacity = "1";
+    parent = parent.parentElement;
+}
+
 console.log("PREVIEW DIV:", preview);
 
 if(preview && camp.contenido_url){
