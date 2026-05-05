@@ -1751,30 +1751,39 @@ camp.texto + "\n\n" + link;
 
 console.log("CONTENIDO:", camp.contenido_url);
 
+
 /* PREVIEW */
-let preview = document.getElementById("social_preview");
+const preview = document.getElementById("social_preview");
 
-if(!preview){
-    preview = document.createElement("div");
-    preview.id = "social_preview";
-    document.body.appendChild(preview);
-}
+console.log("PREVIEW DIV:", preview);
 
-preview.innerHTML = "";
+if(preview){
 
-if(camp.contenido_url){
-    const img = document.createElement("img");
-    img.src = camp.contenido_url;
+    preview.innerHTML = "";
 
-    img.style.position = "fixed";
-    img.style.bottom = "20px";
-    img.style.right = "20px";
-    img.style.width = "200px";
-    img.style.zIndex = "9999";
-    img.style.borderRadius = "12px";
-    img.style.boxShadow = "0 10px 20px rgba(0,0,0,0.2)";
+    if(camp.contenido_url){
 
-    preview.appendChild(img);
+        // 👉 Detecta si es video
+        if(camp.contenido_url.includes(".mp4")){
+
+            const video = document.createElement("video");
+            video.src = camp.contenido_url;
+            video.controls = true;
+            video.style.width = "100%";
+            video.style.borderRadius = "12px";
+
+            preview.appendChild(video);
+
+        }else{
+
+            const img = document.createElement("img");
+            img.src = camp.contenido_url;
+            img.style.maxWidth = "100%";
+            img.style.borderRadius = "12px";
+
+            preview.appendChild(img);
+        }
+    }
 }
 /* DESCARGA */
 const download = document.getElementById("social_download");
