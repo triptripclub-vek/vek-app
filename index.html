@@ -395,35 +395,6 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
 
 </section>
 
-<!-- RED ATOMY -->
-<section id="atomyPage" class="hidden">
-
-<div class="card">
-
-<h2>🔥 Red Atomy</h2>
-
-<input id="atomy_pvp" type="number" placeholder="PVP">
-
-<input id="atomy_pvi" type="number" placeholder="PVI">
-
-<input id="atomy_pvd" type="number" placeholder="PVD">
-
-<input id="atomy_activos_izq" type="number" placeholder="Activos Izquierda">
-
-<input id="atomy_activos_der" type="number" placeholder="Activos Derecha">
-
-<input id="atomy_patrocinados" type="number" placeholder="Patrocinados Personales">
-
-<button class="blue" onclick="saveAtomyMetrics()">
-Guardar Datos
-</button>
-
-</div>
-
-</section>
-
-
-
 <!-- LANDING -->
 <section id="landingPage" class="hidden">
 
@@ -1364,123 +1335,6 @@ return;
 alert("Datos incorrectos");
 }
 
-async function saveAtomyMetrics(){
-
-const user = window.currentUser;
-
-const pvp =
-document.getElementById("atomy_pvp").value || 0;
-
-const pvi =
-document.getElementById("atomy_pvi").value || 0;
-
-const pvd =
-document.getElementById("atomy_pvd").value || 0;
-
-const activos_izq =
-document.getElementById("atomy_activos_izq").value || 0;
-
-const activos_der =
-document.getElementById("atomy_activos_der").value || 0;
-
-const patrocinados =
-document.getElementById("atomy_patrocinados").value || 0;
-
-
-/* VERIFICAR SI YA EXISTE */
-
-const { data: existing } = await sb
-.from("atomy_user_metrics")
-.select("*")
-.eq("user_id", user)
-.limit(1);
-
-
-/* UPDATE */
-
-if(existing.length > 0){
-
-await sb
-.from("atomy_user_metrics")
-.update({
-
-pvp,
-pvi,
-pvd,
-
-activos_izq,
-activos_der,
-
-patrocinados_personales: patrocinados,
-
-updated_at: new Date()
-
-})
-.eq("user_id", user);
-
-}else{
-
-/* INSERT */
-
-await sb
-.from("atomy_user_metrics")
-.insert({
-
-user_id: user,
-
-pvp,
-pvi,
-pvd,
-
-activos_izq,
-activos_der,
-
-patrocinados_personales: patrocinados
-
-});
-
-}
-
-alert("Datos guardados");
-
-loadAtomyMetrics();
-
-}
-
-async function loadAtomyMetrics(){
-
-const user = window.currentUser;
-
-const { data } = await sb
-.from("atomy_user_metrics")
-.select("*")
-.eq("user_id", user)
-.limit(1);
-
-if(data.length <= 0) return;
-
-const atomy = data[0];
-
-document.getElementById("atomy_pvp").value =
-atomy.pvp || 0;
-
-document.getElementById("atomy_pvi").value =
-atomy.pvi || 0;
-
-document.getElementById("atomy_pvd").value =
-atomy.pvd || 0;
-
-document.getElementById("atomy_activos_izq").value =
-atomy.activos_izq || 0;
-
-document.getElementById("atomy_activos_der").value =
-atomy.activos_der || 0;
-
-document.getElementById("atomy_patrocinados").value =
-atomy.patrocinados_personales || 0;
-
-}
-
 /* =========================================
    LOGIN ADMIN
 ========================================= */
@@ -2210,47 +2064,6 @@ act_notas.value="";
 
 }catch(e){
 alert("Error general");
-}
-
-}
-
-function showPage(pageId){
-
-dashboardCards.classList.add("hidden");
-
-activityModule.classList.add("hidden");
-
-historyModule.classList.add("hidden");
-
-kpiModule.classList.add("hidden");
-
-semaforoModule.classList.add("hidden");
-
-gaugeModule.classList.add("hidden");
-
-landingModule.classList.add("hidden");
-
-socialModule.classList.add("hidden");
-
-kpiManagerModule.classList.add("hidden");
-
-socialManagerModule.classList.add("hidden");
-
-/* OCULTAR RED ATOMY */
-document.getElementById("atomyPage")
-.classList.add("hidden");
-
-/* MOSTRAR */
-document.getElementById(pageId)
-.classList.remove("hidden");
-
-/* CARGAR DATOS */
-if(pageId === "atomyPage"){
-loadAtomyMetrics();
-}
-
-if(window.innerWidth <= 900){
-closeSidebar();
 }
 
 }
