@@ -1249,6 +1249,31 @@ Guardar Semáforo
 </div>
 </div>
 
+<!-- RED ATOMY -->
+<div id="atomyPage" class="linkCard hidden">
+
+<h2 style="margin-bottom:20px;">
+🔥 Red Atomy
+</h2>
+
+<input id="atomy_pvp" placeholder="PVP">
+
+<input id="atomy_pvi" placeholder="PVI">
+
+<input id="atomy_pvd" placeholder="PVD">
+
+<input id="atomy_left" placeholder="Activos Izquierda">
+
+<input id="atomy_right" placeholder="Activos Derecha">
+
+<input id="atomy_personals" placeholder="Patrocinados Personales">
+
+<button class="copyBtn" onclick="saveAtomyMetrics()">
+Guardar Datos
+</button>
+
+</div>
+
 
 <div class="linkCard">
 <h3>🔗 Tu enlace personal</h3>
@@ -2064,6 +2089,37 @@ act_notas.value="";
 
 }catch(e){
 alert("Error general");
+}
+
+}
+
+function showPage(pageId){
+
+/* ocultar módulos */
+dashboardCards.classList.add("hidden");
+activityModule.classList.add("hidden");
+historyModule.classList.add("hidden");
+kpiModule.classList.add("hidden");
+socialModule.classList.add("hidden");
+landingModule.classList.add("hidden");
+gaugeModule.classList.add("hidden");
+
+const atomyPage = document.getElementById("atomyPage");
+
+if(atomyPage){
+atomyPage.classList.add("hidden");
+}
+
+/* mostrar módulo */
+const page = document.getElementById(pageId);
+
+if(page){
+page.classList.remove("hidden");
+}
+
+/* cerrar sidebar móvil */
+if(window.innerWidth <= 900){
+closeSidebar();
 }
 
 }
