@@ -1638,6 +1638,8 @@ document.getElementById("atomyPage")
 .classList.add("hidden");
 
 kpiModule.classList.remove("hidden");
+document.getElementById("dashboardReferral")
+.classList.remove("hidden");
 
 socialModule.classList.add("hidden");
 landingModule.classList.add("hidden");
@@ -1774,6 +1776,16 @@ document.querySelector(".vekSidebar").classList.remove("show");
 overlay.classList.remove("show");
 }
 
+function toggleSidebar(){
+
+const sidebar = document.querySelector(".vekSidebar");
+
+sidebar.classList.toggle("show");
+
+overlay.classList.toggle("show");
+
+}
+
 /* =========================================
    LOAD PAGE
 ========================================= */
@@ -1893,6 +1905,8 @@ document.getElementById("atomyPage")
 
 landingModule.classList.remove("hidden");
 socialModule.classList.add("hidden");
+document.getElementById("dashboardReferral")
+.classList.remove("hidden");
 
 loadLandingPhone();
 
@@ -1977,6 +1991,8 @@ document.getElementById("atomyPage")
 .classList.add("hidden");
 
 socialModule.classList.remove("hidden");
+document.getElementById("dashboardReferral")
+.classList.remove("hidden");
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -2163,6 +2179,8 @@ socialModule.classList.add("hidden");
 landingModule.classList.add("hidden");
 
 activityModule.classList.remove("hidden");
+document.getElementById("dashboardReferral")
+.classList.remove("hidden");
 
 act_fecha.value = new Date().toISOString().split("T")[0];
 
@@ -2227,6 +2245,8 @@ kpiModule.classList.add("hidden");
 socialModule.classList.add("hidden");
 landingModule.classList.add("hidden");
 gaugeModule.classList.add("hidden");
+document.getElementById("dashboardReferral")
+.classList.add("hidden");
 
 const atomyPage = document.getElementById("atomyPage");
 
@@ -2257,6 +2277,8 @@ document.getElementById("atomyPage")
 .classList.add("hidden");
 
 dashboardCards.classList.remove("hidden");
+document.getElementById("dashboardReferral")
+.classList.remove("hidden");
 loadKpisMonth();
 
 semaforoModule.classList.add("hidden");
@@ -2287,6 +2309,8 @@ document.getElementById("atomyPage")
 .classList.add("hidden");
 
 socialManagerModule.classList.remove("hidden");
+document.getElementById("dashboardReferral")
+.classList.remove("hidden");
 
 loadCampaignsAdmin();
 
@@ -2558,6 +2582,8 @@ kpiModule.classList.add("hidden");
 kpiManagerModule.classList.add("hidden"); // 🔥 ESTA LÍNEA FALTABA
 
 semaforoModule.classList.remove("hidden");
+document.getElementById("dashboardReferral")
+.classList.remove("hidden");
 
 socialModule.classList.add("hidden");
 landingModule.classList.add("hidden");
@@ -2602,6 +2628,8 @@ document.getElementById("atomyPage")
 .classList.add("hidden");
 
 kpiManagerModule.classList.remove("hidden");
+document.getElementById("dashboardReferral")
+.classList.remove("hidden");
 
 socialModule.classList.add("hidden");
 landingModule.classList.add("hidden");
