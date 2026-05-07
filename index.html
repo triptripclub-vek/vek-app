@@ -2189,9 +2189,10 @@ const download = document.getElementById("social_download");
 
 if(download && camp.contenido_url){
 download.innerHTML = `
-<a href="${camp.contenido_url}" target="_blank" class="copyBtn">
+<button class="copyBtn"
+onclick="downloadContent('${camp.contenido_url}')">
 Descargar Contenido
-</a>
+</button>
 `;
 }else{
 download.innerHTML = "";
