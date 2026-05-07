@@ -2925,6 +2925,48 @@ document.addEventListener("DOMContentLoaded", () => {
         select.addEventListener("change", generateSocialPost);
     }
 });
+
+async function saveAtomyMetrics(){
+
+const payload = {
+
+user_id: window.currentUser,
+
+pvp: Number(document.getElementById("atomy_pvp").value || 0),
+
+pvi: Number(document.getElementById("atomy_pvi").value || 0),
+
+pvd: Number(document.getElementById("atomy_pvd").value || 0),
+
+activos_izq: Number(document.getElementById("atomy_left").value || 0),
+
+activos_der: Number(document.getElementById("atomy_right").value || 0),
+
+patrocinados_personales: Number(document.getElementById("atomy_personals").value || 0),
+
+updated_at: new Date().toISOString()
+
+};
+
+const { error } = await sb
+.from("atomy_user_metrics")
+.upsert([payload], {
+onConflict:"user_id"
+});
+
+if(error){
+
+console.log(error);
+
+alert("Error guardando datos");
+
+return;
+
+}
+
+alert("Datos guardados correctamente");
+
+}
 saveUsers();
 loadPage();
 runClock();
