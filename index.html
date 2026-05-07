@@ -991,7 +991,21 @@ Copiar Texto + Link
 
 <div id="landingModule" class="linkCard hidden">
 
-<h3 style="margin-bottom:18px;">🌐 Landing Center</h3>
+<h3 style="margin-bottom:18px;">
+
+🌐 Landing Center
+
+<i class="fas fa-circle-info"
+style="
+color:#2563eb;
+cursor:pointer;
+margin-left:8px;
+font-size:18px;
+"
+onclick="showLandingHelp()">
+</i>
+
+</h3>
 
 <p style="
 font-size:14px;
@@ -1740,6 +1754,81 @@ Click en este botón
 <b>"Copiar Enlace"</b>
 para enviar por cualquier medio e invitar
 a más personas a tu sistema de negocio.
+
+</p>
+
+<button onclick="this.closest('div').parentNode.remove()"
+style="
+background:#2563eb;
+color:#fff;
+border:none;
+padding:14px 25px;
+border-radius:12px;
+font-size:16px;
+cursor:pointer;
+font-weight:bold;
+">
+
+Entendido
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+document.body.appendChild(modal);
+
+}
+
+function showLandingHelp(){
+
+const modal = document.createElement("div");
+
+modal.innerHTML = `
+
+<div style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.65);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:99999;
+padding:20px;
+">
+
+<div style="
+background:#fff;
+width:100%;
+max-width:420px;
+border-radius:18px;
+padding:30px;
+text-align:center;
+box-shadow:0 10px 40px rgba(0,0,0,.25);
+">
+
+<h2 style="
+margin-bottom:15px;
+font-size:24px;
+color:#111;
+">
+🌐 Landing Center
+</h2>
+
+<p style="
+font-size:16px;
+line-height:1.6;
+color:#444;
+margin-bottom:25px;
+">
+
+Agrega tu número de WhatsApp para conectar tu página personal de ventas con tu WhatsApp.
 
 </p>
 
