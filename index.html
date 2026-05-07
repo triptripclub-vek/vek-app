@@ -2932,21 +2932,28 @@ const payload = {
 
 user_id: window.currentUser,
 
-pvp: Number(document.getElementById("atomy_pvp").value || 0),
-
-pvi: Number(document.getElementById("atomy_pvi").value || 0),
-
-pvd: Number(document.getElementById("atomy_pvd").value || 0),
-
-activos_izq: Number(document.getElementById("atomy_left").value || 0),
-
-activos_der: Number(document.getElementById("atomy_right").value || 0),
-
-patrocinados_personales: Number(document.getElementById("atomy_personals").value || 0),
-
 updated_at: new Date().toISOString()
 
 };
+
+const pvp = document.getElementById("atomy_pvp").value;
+const pvi = document.getElementById("atomy_pvi").value;
+const pvd = document.getElementById("atomy_pvd").value;
+const izq = document.getElementById("atomy_left").value;
+const der = document.getElementById("atomy_right").value;
+const pp = document.getElementById("atomy_personals").value;
+
+if(pvp !== "") payload.pvp = Number(pvp);
+
+if(pvi !== "") payload.pvi = Number(pvi);
+
+if(pvd !== "") payload.pvd = Number(pvd);
+
+if(izq !== "") payload.activos_izq = Number(izq);
+
+if(der !== "") payload.activos_der = Number(der);
+
+if(pp !== "") payload.patrocinados_personales = Number(pp);
 
 const { error } = await sb
 .from("atomy_user_metrics")
@@ -2966,7 +2973,15 @@ return;
 
 alert("Datos guardados correctamente");
 
+document.getElementById("atomy_pvp").value = "";
+document.getElementById("atomy_pvi").value = "";
+document.getElementById("atomy_pvd").value = "";
+document.getElementById("atomy_left").value = "";
+document.getElementById("atomy_right").value = "";
+document.getElementById("atomy_personals").value = "";
+
 }
+
 saveUsers();
 loadPage();
 runClock();
