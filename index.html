@@ -1704,6 +1704,42 @@ console.log(err);
 }
 
 }
+
+async function downloadContent(url){
+
+try{
+
+const response = await fetch(url);
+
+const blob = await response.blob();
+
+const blobUrl = window.URL.createObjectURL(blob);
+
+const a = document.createElement("a");
+
+a.href = blobUrl;
+
+a.download = "contenido";
+
+document.body.appendChild(a);
+
+a.click();
+
+a.remove();
+
+window.URL.revokeObjectURL(blobUrl);
+
+}catch(err){
+
+console.log(err);
+
+alert("No se pudo descargar el contenido");
+
+}
+
+}
+
+
 function showReferralHelp(){
 
 const modal = document.createElement("div");
