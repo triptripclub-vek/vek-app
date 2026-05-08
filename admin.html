@@ -1115,22 +1115,27 @@ Guardar Semáforo
 </div>
 </div>
 
+<div id="referralModule" class="linkCard hidden">
 
-<div class="linkCard">
 <h3>🔗 Tu enlace personal</h3>
 
 <div class="linkBox" id="myLink"></div>
-<button class="copyBtn" onclick="copyLink()">Copiar enlace</button>
+
+<button
+class="copyBtn"
+onclick="copyLink()">
+
+Copiar enlace
+
+</button>
+
 </div>
 
-</main>
-</div>
 
 <!-- ATOMY MANAGER -->
 
 <div id="atomyManagerModule"
-
-style="display:none;">
+class="linkCard hidden">
 
 <div class="card">
 
@@ -1435,6 +1440,9 @@ alert("KPIs guardados correctamente");
 function showKpisUser(){
 
 hideAllModules();
+document
+.getElementById("referralModule")
+.classList.add("hidden");
 
 kpiModule.classList.remove("hidden");
 
@@ -1551,6 +1559,13 @@ socialModule.classList.add("hidden");
 landingModule.classList.add("hidden");
 kpiManagerModule.classList.add("hidden");
 socialManagerModule.classList.add("hidden");
+document
+.getElementById("referralModule")
+.classList.add("hidden");
+
+document
+.getElementById("atomyManagerModule")
+.classList.add("hidden");
 
 }
 
@@ -1558,6 +1573,9 @@ socialManagerModule.classList.add("hidden");
 function showLandingCenter(){
 
 hideAllModules();
+document
+.getElementById("referralModule")
+.classList.add("hidden");
 
 landingModule.classList.remove("hidden");
 
@@ -1634,6 +1652,10 @@ waBtnFloat.href = "https://wa.me/" + phone;
 function showSocialTracker(){
 
 hideAllModules();
+
+document
+.getElementById("referralModule")
+.classList.add("hidden");
 
 socialModule.classList.remove("hidden");
 
@@ -1780,6 +1802,9 @@ alert("Semáforo guardado correctamente");
 function showActivity(){
 
 hideAllModules();
+document
+.getElementById("referralModule")
+.classList.add("hidden");
 
 activityModule.classList.remove("hidden");
 
@@ -1844,6 +1869,9 @@ function showDashboard(){
 hideAllModules();
 
 dashboardCards.classList.remove("hidden");
+document
+.getElementById("referralModule")
+.classList.remove("hidden");
 
 loadKpisMonth();
 
@@ -1856,10 +1884,33 @@ closeSidebar();
 function showSocialManager(){
 
 hideAllModules();
+document
+.getElementById("referralModule")
+.classList.add("hidden");
 
 socialManagerModule.classList.remove("hidden");
 
 loadCampaignsAdmin();
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
+}
+
+function showAtomyManager(){
+
+hideAllModules();
+
+/* OCULTAR LINK PERSONAL */
+document
+.getElementById("referralModule")
+.classList.add("hidden");
+
+/* MOSTRAR MÓDULO */
+document
+.getElementById("atomyManagerModule")
+.classList.remove("hidden");
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -2108,6 +2159,9 @@ alert("Metas guardadas correctamente");
 async function showSemaforoManager(){
 
 hideAllModules();
+document
+.getElementById("referralModule")
+.classList.add("hidden");
 
 semaforoModule.classList.remove("hidden");
 
@@ -2141,6 +2195,9 @@ if(el) el.value = r[key] || 0;
 function showKpiManager(){
 
 hideAllModules();
+document
+.getElementById("referralModule")
+.classList.add("hidden");
 
 kpiManagerModule.classList.remove("hidden");
 
