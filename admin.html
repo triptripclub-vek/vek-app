@@ -1126,6 +1126,67 @@ Guardar Semáforo
 </main>
 </div>
 
+<!-- ATOMY MANAGER -->
+
+<div id="atomyManagerModule"
+
+style="display:none;">
+
+<div class="card">
+
+<h2 style="margin-bottom:20px;">
+
+🧠 Atomy Manager
+
+</h2>
+
+<input
+id="rule_pp"
+type="number"
+placeholder="PP por quincena">
+
+<input
+id="rule_patrocinados"
+type="number"
+placeholder="Patrocinados esperados">
+
+<input
+id="rule_activos"
+type="number"
+placeholder="Activos por línea">
+
+<input
+id="rule_pv"
+type="number"
+placeholder="PV por activo">
+
+<input
+id="rule_rojo"
+type="number"
+placeholder="Semáforo rojo %">
+
+<input
+id="rule_amarillo"
+type="number"
+placeholder="Semáforo amarillo %">
+
+<input
+id="rule_verde"
+type="number"
+placeholder="Semáforo verde %">
+
+<button
+class="blue"
+onclick="saveAtomyRules()">
+
+Guardar reglas
+
+</button>
+
+</div>
+
+</div>
+
 </section>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
