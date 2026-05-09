@@ -2625,6 +2625,8 @@ async function saveAtomyRules(){
 
 const payload = {
 
+id: "global_rules",
+
 pp_por_quincena:
 Number(document.getElementById("rule_pp").value || 0),
 
@@ -2651,25 +2653,20 @@ new Date().toISOString()
 
 };
 
-/* ELIMINAR REGLA ANTERIOR */
-
-await sb
-.from("atomy_growth_rules")
-.delete()
-.neq("id","0");
-
-/* INSERTAR NUEVA */
-
 const { error } = await sb
 .from("atomy_growth_rules")
-.insert([payload]);
+.upsert([payload],{
+onConflict:"id"
+});
 
 if(error){
 
-alert("Error guardando");
 console.log(error);
 
+alert("Error guardando reglas");
+
 return;
+
 }
 
 alert("Reglas guardadas correctamente");
