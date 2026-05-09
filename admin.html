@@ -2625,8 +2625,6 @@ async function saveAtomyRules(){
 
 const payload = {
 
-id: "global_rules",
-
 pp_por_quincena:
 Number(document.getElementById("rule_pp").value || 0),
 
@@ -2653,11 +2651,41 @@ new Date().toISOString()
 
 };
 
-const { error } = await sb
+/* BUSCAR SI YA EXISTE */
+
+const { data:existing } = await sb
 .from("atomy_growth_rules")
-.upsert([payload],{
-onConflict:"id"
-});
+.select("id")
+.limit(1);
+
+let error = null;
+
+/* SI EXISTE → UPDATE */
+
+if(existing && existing.length){
+
+const rowId = existing[0].id;
+
+const result = await sb
+.from("atomy_growth_rules")
+.update(payload)
+.eq("id",rowId);
+
+error = result.error;
+
+}
+
+/* SI NO EXISTE → INSERT */
+
+else{
+
+const result = await sb
+.from("atomy_growth_rules")
+.insert([payload]);
+
+error = result.error;
+
+}
 
 if(error){
 
