@@ -941,6 +941,8 @@ onclick="copyLink(this)">
 Copiar enlace
 </button>
 
+<div class="linkBox" id="myLink"></div>
+
 </div>
 
 
@@ -989,7 +991,7 @@ border:1px solid #ddd;
 margin-bottom:12px;
 "></textarea>
 
-<div id="social_download"></div>
+
 
 
 
@@ -1556,19 +1558,33 @@ window.currentUser = name.toLowerCase();
 
 dashName.innerText = name.toUpperCase();
 
+const myLink = document.getElementById("myLink");
+
+if(myLink){
+
 myLink.innerText =
 location.origin +
 "/?ref=" + name +
 "&utm_source=direct&utm_medium=personal&utm_campaign=mainlink";
+
+}
+
 loadKpisMonth();
 
 calculateQuincenas();
 
-btnKpiManager.classList.add("hidden");
-btnSemaforo.classList.add("hidden");
+document.getElementById("btnKpiManager")
+.classList.add("hidden");
 
+document.getElementById("btnSemaforo")
+.classList.add("hidden");
+
+document.getElementById("btnSocialManager")
+.classList.add("hidden");
 
 }
+
+
 /* =========================================
    UTILIDADES
 ========================================= */
@@ -1598,66 +1614,6 @@ alert("KPIs guardados correctamente");
 
 }
 
-async function createCampaign(){
-
-const nombre = admin_nombre.value.trim();
-const texto = admin_texto.value.trim();
-const red = admin_red.value;
-const file = admin_file.files[0];
-
-if(!nombre || !texto){
-alert("Completa nombre y texto");
-return;
-}
-
-let url = "";
-
-/* SUBIR ARCHIVO */
-if(file){
-
-const fileName = Date.now() + "_" + file.name;
-
-const { error: uploadError } = await sb.storage
-.from("social-content")
-.upload(fileName, file);
-
-if(uploadError){
-alert("Error subiendo archivo");
-console.log(uploadError);
-return;
-}
-
-url = sb.storage
-.from("social-content")
-.getPublicUrl(fileName).data.publicUrl;
-}
-
-/* GUARDAR EN BD */
-const { error } = await sb
-.from("social_campaigns")
-.insert([{
-nombre,
-texto,
-contenido_url: url,
-red_social: red
-}]);
-
-if(error){
-alert("Error guardando campaña");
-console.log(error);
-return;
-}
-
-alert("Campaña creada correctamente");
-
-/* LIMPIAR */
-admin_nombre.value = "";
-admin_texto.value = "";
-admin_file.value = "";
-
-loadCampaignsAdmin();
-
-}
 
 function showKpisUser(){
 
@@ -2550,7 +2506,7 @@ landingModule.classList.add("hidden");
 socialModule.classList.add("hidden");
 document.getElementById("atomyPage")
 .classList.add("hidden");
-
+kpiManagerModule.classList.add("hidden");
 socialManagerModule.classList.remove("hidden");
 document.getElementById("dashboardReferral")
 .classList.add("hidden");
@@ -2785,33 +2741,6 @@ ${val}
 
 }
 
-async function saveKpiManager(){
-
-const payload = {
-periodo: meta_periodo.value,
-publicaciones: Number(meta_publicaciones.value||0),
-prospectos: Number(meta_prospectos.value||0),
-conversaciones: Number(meta_conversaciones.value||0),
-calificados: Number(meta_calificados.value||0),
-videos: Number(meta_videos.value||0),
-formularios: Number(meta_formularios.value||0),
-registros: Number(meta_registros.value||0),
-vp: Number(meta_vp.value||0),
-updated_at: new Date().toISOString()
-};
-
-const { error } = await sb
-.from("kpi_manager")
-.insert([payload]);
-
-if(error){
-alert("Error: " + error.message);
-return;
-}
-
-alert("Metas guardadas correctamente");
-
-}
 
 async function showSemaforoManager(){
 
@@ -2867,10 +2796,11 @@ gaugeModule.classList.add("hidden");
 semaforoModule.classList.add("hidden");
 document.getElementById("atomyPage")
 .classList.add("hidden");
+document.getElementById("dashboardReferral")
+.classList.add("hidden");
 
 kpiManagerModule.classList.remove("hidden");
-document.getElementById("dashboardReferral")
-.classList.remove("hidden");
+
 
 socialModule.classList.add("hidden");
 landingModule.classList.add("hidden");
