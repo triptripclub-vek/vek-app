@@ -2651,7 +2651,7 @@ new Date().toISOString()
 
 };
 
-/* BUSCAR SI YA EXISTE */
+/* BUSCAR FILA EXISTENTE */
 
 const { data:existing } = await sb
 .from("atomy_growth_rules")
@@ -2660,9 +2660,9 @@ const { data:existing } = await sb
 
 let error = null;
 
-/* SI EXISTE → UPDATE */
+/* UPDATE */
 
-if(existing && existing.length){
+if(existing && existing.length > 0){
 
 const rowId = existing[0].id;
 
@@ -2675,7 +2675,7 @@ error = result.error;
 
 }
 
-/* SI NO EXISTE → INSERT */
+/* INSERT */
 
 else{
 
