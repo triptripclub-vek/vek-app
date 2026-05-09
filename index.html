@@ -1323,7 +1323,6 @@ Guardar Semáforo
 
 <input id="atomy_right" placeholder="Activos Derecha">
 
-<input id="atomy_personals" placeholder="Patrocinados Personales">
 
 <button class="copyBtn" onclick="saveAtomyMetrics()">
 Guardar Datos
@@ -3256,7 +3255,7 @@ const pvi = document.getElementById("atomy_pvi").value;
 const pvd = document.getElementById("atomy_pvd").value;
 const izq = document.getElementById("atomy_left").value;
 const der = document.getElementById("atomy_right").value;
-const pp = document.getElementById("atomy_personals").value;
+
 
 if(pvp !== "") payload.pvp = Number(pvp);
 
@@ -3268,7 +3267,6 @@ if(izq !== "") payload.activos_izq = Number(izq);
 
 if(der !== "") payload.activos_der = Number(der);
 
-if(pp !== "") payload.patrocinados_personales = Number(pp);
 
 const { error } = await sb
 .from("atomy_user_metrics")
@@ -3297,109 +3295,103 @@ document.getElementById("atomy_personals").value = "";
 
 }
 
+```javascript
 async function calculateQuincenas(){
 
-const user = (window.currentUser || "").toLowerCase().trim();
+const user =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
 
 if(!user) return;
 
-/* FECHA ACTUAL */
-const now = new Date();
+/* =========================
+   OBTENER FECHA AFILIACIÓN
+========================= */
 
-const year = now.getFullYear();
-const month = now.getMonth() + 1;
-const day = now.getDate();
-
-/* CALCULAR QUINCENA */
-let startDate;
-let endDate;
-let quincena;
-
-if(day <= 15){
-
-quincena = 1;
-
-startDate =
-year + "-" +
-String(month).padStart(2,"0") +
-"-01";
-
-endDate =
-year + "-" +
-String(month).padStart(2,"0") +
-"-15";
-
-}else{
-
-quincena = 2;
-
-startDate =
-year + "-" +
-String(month).padStart(2,"0") +
-"-16";
-
-endDate =
-year + "-" +
-String(month).padStart(2,"0") +
-"-31";
-
-}
-
-/* OBTENER DATOS */
 const { data, error } = await sb
-.from("atomy_user_metrics")
-.select("*")
-.eq("user_id", user)
+.from("users")
+.select("created_at")
+.eq("username", user)
 .limit(1);
 
 if(error || !data || !data.length){
 
-console.log("Sin métricas Atomy");
+console.log("Usuario no encontrado");
+
+window.userQuincenas = 0;
 
 return;
 
 }
 
-const atomy = data[0];
+const createdAt = data[0].created_at;
 
-/* DATOS */
-const pvp = Number(atomy.pvp || 0);
-const pvi = Number(atomy.pvi || 0);
-const pvd = Number(atomy.pvd || 0);
+if(!createdAt){
 
-const izquierda = Number(atomy.activos_izq || 0);
-const derecha = Number(atomy.activos_der || 0);
+window.userQuincenas = 0;
 
-const personales =
-Number(atomy.patrocinados_personales || 0);
+return;
 
-/* ESTADO */
-let status = "INACTIVO";
-
-if(pvp >= 100){
-status = "ACTIVO";
 }
 
+/* =========================
+   FECHAS
+========================= */
+
+const fechaInicio =
+new Date(createdAt);
+
+const fechaActual =
+new Date();
+
+/* =========================
+   DIFERENCIA EN DÍAS
+========================= */
+
+const diferenciaMs =
+fechaActual - fechaInicio;
+
+const dias =
+Math.floor(
+diferenciaMs / (1000 * 60 * 60 * 24)
+);
+
+/* =========================
+   CALCULAR QUINCENAS
+========================= */
+
+let quincenas =
+Math.floor(dias / 15);
+
+/* mínimo 1 */
+
+if(quincenas <= 0){
+
+quincenas = 1;
+
+}
+
+/* =========================
+   GLOBAL
+========================= */
+
+window.userQuincenas =
+quincenas;
+
 /* DEBUG */
+
 console.log({
 
-quincena,
-startDate,
-endDate,
-
-pvp,
-pvi,
-pvd,
-
-izquierda,
-derecha,
-personales,
-
-status
+usuario:user,
+createdAt,
+dias,
+quincenas
 
 });
 
 }
+```
 
 saveUsers();
 loadPage();
