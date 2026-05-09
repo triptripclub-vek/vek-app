@@ -2617,8 +2617,109 @@ navigator.clipboard.writeText(text)
 
 }
 
+/* =========================================
+   ATOMY MANAGER
+========================================= */
+
+async function saveAtomyRules(){
+
+const payload = {
+
+pp_por_quincena:
+Number(document.getElementById("rule_pp").value || 0),
+
+patrocinados_por_quincena:
+Number(document.getElementById("rule_patrocinados").value || 0),
+
+activos_por_linea_quincena:
+Number(document.getElementById("rule_activos").value || 0),
+
+pv_por_activo:
+Number(document.getElementById("rule_pv").value || 0),
+
+semaforo_rojo:
+Number(document.getElementById("rule_rojo").value || 0),
+
+semaforo_amarillo:
+Number(document.getElementById("rule_amarillo").value || 0),
+
+semaforo_verde:
+Number(document.getElementById("rule_verde").value || 0),
+
+updated_at:
+new Date().toISOString()
+
+};
+
+/* ELIMINAR REGLA ANTERIOR */
+
+await sb
+.from("atomy_growth_rules")
+.delete()
+.neq("id","0");
+
+/* INSERTAR NUEVA */
+
+const { error } = await sb
+.from("atomy_growth_rules")
+.insert([payload]);
+
+if(error){
+
+alert("Error guardando");
+console.log(error);
+
+return;
+}
+
+alert("Reglas guardadas correctamente");
+
+}
+
+/* ========================================= */
+
+async function loadAtomyRules(){
+
+const { data, error } = await sb
+.from("atomy_growth_rules")
+.select("*")
+.order("updated_at",{ascending:false})
+.limit(1);
+
+if(error || !data || !data.length){
+return;
+}
+
+const r = data[0];
+
+document.getElementById("rule_pp").value =
+r.pp_por_quincena || 0;
+
+document.getElementById("rule_patrocinados").value =
+r.patrocinados_por_quincena || 0;
+
+document.getElementById("rule_activos").value =
+r.activos_por_linea_quincena || 0;
+
+document.getElementById("rule_pv").value =
+r.pv_por_activo || 0;
+
+document.getElementById("rule_rojo").value =
+r.semaforo_rojo || 0;
+
+document.getElementById("rule_amarillo").value =
+r.semaforo_amarillo || 0;
+
+document.getElementById("rule_verde").value =
+r.semaforo_verde || 0;
+
+}
+
 saveUsers();
+
 runClock();
+
+loadAtomyRules();
 /* ========================================= */
 </script>
 </body>
