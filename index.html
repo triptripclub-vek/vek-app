@@ -1562,6 +1562,8 @@ location.origin +
 "&utm_source=direct&utm_medium=personal&utm_campaign=mainlink";
 loadKpisMonth();
 
+calculateQuincenas();
+
 btnKpiManager.classList.add("hidden");
 btnSemaforo.classList.add("hidden");
 
@@ -3362,6 +3364,110 @@ document.getElementById("atomy_pvd").value = "";
 document.getElementById("atomy_left").value = "";
 document.getElementById("atomy_right").value = "";
 document.getElementById("atomy_personals").value = "";
+
+}
+
+async function calculateQuincenas(){
+
+const user = (window.currentUser || "").toLowerCase().trim();
+
+if(!user) return;
+
+/* FECHA ACTUAL */
+const now = new Date();
+
+const year = now.getFullYear();
+const month = now.getMonth() + 1;
+const day = now.getDate();
+
+/* CALCULAR QUINCENA */
+let startDate;
+let endDate;
+let quincena;
+
+if(day <= 15){
+
+quincena = 1;
+
+startDate =
+year + "-" +
+String(month).padStart(2,"0") +
+"-01";
+
+endDate =
+year + "-" +
+String(month).padStart(2,"0") +
+"-15";
+
+}else{
+
+quincena = 2;
+
+startDate =
+year + "-" +
+String(month).padStart(2,"0") +
+"-16";
+
+endDate =
+year + "-" +
+String(month).padStart(2,"0") +
+"-31";
+
+}
+
+/* OBTENER DATOS */
+const { data, error } = await sb
+.from("atomy_user_metrics")
+.select("*")
+.eq("user_id", user)
+.limit(1);
+
+if(error || !data || !data.length){
+
+console.log("Sin métricas Atomy");
+
+return;
+
+}
+
+const atomy = data[0];
+
+/* DATOS */
+const pvp = Number(atomy.pvp || 0);
+const pvi = Number(atomy.pvi || 0);
+const pvd = Number(atomy.pvd || 0);
+
+const izquierda = Number(atomy.activos_izq || 0);
+const derecha = Number(atomy.activos_der || 0);
+
+const personales =
+Number(atomy.patrocinados_personales || 0);
+
+/* ESTADO */
+let status = "INACTIVO";
+
+if(pvp >= 100){
+status = "ACTIVO";
+}
+
+/* DEBUG */
+console.log({
+
+quincena,
+startDate,
+endDate,
+
+pvp,
+pvi,
+pvd,
+
+izquierda,
+derecha,
+personales,
+
+status
+
+});
 
 }
 
