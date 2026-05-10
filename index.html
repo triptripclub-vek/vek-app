@@ -3240,6 +3240,127 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+async function saveProfile(){
+
+const payload = {
+
+username: window.currentUser,
+
+birth_date:
+document.getElementById("profile_birth").value,
+
+curp:
+document.getElementById("profile_curp").value,
+
+street:
+document.getElementById("profile_street").value,
+
+ext_number:
+document.getElementById("profile_ext").value,
+
+int_number:
+document.getElementById("profile_int").value,
+
+colony:
+document.getElementById("profile_colony").value,
+
+postal_code:
+document.getElementById("profile_cp").value,
+
+city:
+document.getElementById("profile_city").value,
+
+state:
+document.getElementById("profile_state").value,
+
+registration_completed: true
+
+};
+
+/* VALIDACIÓN */
+
+if(
+!payload.birth_date ||
+!payload.curp ||
+!payload.street ||
+!payload.postal_code ||
+!payload.city ||
+!payload.state
+){
+
+alert("Completa todos los campos obligatorios");
+
+return;
+
+}
+
+/* DATOS USER */
+
+const { data:userData } = await sb
+.from("users")
+.select("*")
+.eq("username", window.currentUser)
+.limit(1);
+
+if(userData && userData.length){
+
+payload.full_name =
+userData[0].nombre || "";
+
+payload.email =
+userData[0].email || "";
+
+payload.phone =
+userData[0].telefono || "";
+
+payload.country =
+userData[0].pais || "";
+
+}
+
+/* UPSERT */
+
+const { error } = await sb
+.from("user_profiles")
+.upsert([payload],{
+onConflict:"username"
+});
+
+if(error){
+
+console.log(error);
+
+alert("Error guardando perfil");
+
+return;
+
+}
+
+alert("Registro completado correctamente");
+
+/* LIMPIAR */
+
+document.getElementById("profile_birth").value = "";
+
+document.getElementById("profile_curp").value = "";
+
+document.getElementById("profile_street").value = "";
+
+document.getElementById("profile_ext").value = "";
+
+document.getElementById("profile_int").value = "";
+
+document.getElementById("profile_colony").value = "";
+
+document.getElementById("profile_cp").value = "";
+
+document.getElementById("profile_city").value = "";
+
+document.getElementById("profile_state").value = "";
+
+}
+
+
 async function saveAtomyMetrics(){
 
 const payload = {
