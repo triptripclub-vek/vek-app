@@ -846,7 +846,17 @@ font-weight:900;
 <span class="menuText"> WhatsApp</span>
 </button>
 
-<button class="menuBtn"><i class="fas fa-file-alt"></i> <span class="menuText"> Completar mi Registro</span></button>
+<button
+class="menuBtn"
+onclick="showRegisterModule()">
+
+<i class="fas fa-file-alt"></i>
+
+<span class="menuText">
+Completar mi Registro
+</span>
+
+</button>
 
 <button class="menuBtn" onclick="openAcademy()"><i class="fas fa-graduation-cap"></i> <span class="menuText">VEK Network Academy</span></button>
 
@@ -1310,7 +1320,7 @@ Guardar Semáforo
 
 <div
 id="registerModule"
-class="module hidden">
+class="linkCard hidden"
 
 <h2>
 📝 Completar mi registro
@@ -1674,21 +1684,9 @@ alert("KPIs guardados correctamente");
 
 function showKpisUser(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
-document.getElementById("atomyPage")
-.classList.add("hidden");
+hideAllModules();
 
 kpiModule.classList.remove("hidden");
-document.getElementById("dashboardReferral")
-.classList.add("hidden");
-socialModule.classList.add("hidden");
-landingModule.classList.add("hidden");
-
-loadMarketingKpis();
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -1697,9 +1695,6 @@ closeSidebar();
 }
 
 
-function logout(){
-location.href = location.origin;
-}
 
 async function copyLink(btn){
 
@@ -2148,21 +2143,13 @@ String(s).padStart(2,"0");
 
 /* ========================================= */
 
+
 function showLandingCenter(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-kpiModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
-document.getElementById("atomyPage")
-.classList.add("hidden");
+hideAllModules();
 
 landingModule.classList.remove("hidden");
-socialModule.classList.add("hidden");
-document.getElementById("dashboardReferral")
-.classList.add("hidden");
+
 loadLandingPhone();
 
 if(window.innerWidth <= 900){
@@ -2235,46 +2222,13 @@ waBtnFloat.href = "https://wa.me/" + phone;
 
 function showSocialTracker(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-kpiModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
-landingModule.classList.add("hidden");
-document.getElementById("atomyPage")
-.classList.add("hidden");
+hideAllModules();
 
 socialModule.classList.remove("hidden");
-document.getElementById("dashboardReferral")
-.classList.add("hidden");
 
 if(window.innerWidth <= 900){
 closeSidebar();
 }
-
-/* cargar campañas inicial */
-loadCampaignsUser().then(() => {
-    generateSocialPost(); // 🔥 ESTA LÍNEA FALTABA
-});
-
-/* cuando cambia red */
-document.getElementById("social_network").onchange = async () => {
-    await loadCampaignsUser();
-    generateSocialPost(); // 🔥 AGREGAR AQUÍ
-};
-
-/* cuando cambia campaña */
-document.getElementById("campaign_select").onchange = () => {
-    generateSocialPost();
-};
-
-/* eliminar selects viejos */
-const t = document.getElementById("social_template");
-const a = document.getElementById("social_asset");
-
-if(t) t.remove();
-if(a) a.remove();
 
 }
 
@@ -2421,24 +2375,18 @@ alert("Semáforo guardado correctamente");
 
 }
 
+
 function showActivity(){
 
-dashboardCards.classList.add("hidden");
-kpiModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-document.getElementById("atomyPage")
-.classList.add("hidden");
-
-socialModule.classList.add("hidden");
-landingModule.classList.add("hidden");
+hideAllModules();
 
 activityModule.classList.remove("hidden");
-document.getElementById("dashboardReferral")
-.classList.add("hidden");
 
-act_fecha.value = new Date().toISOString().split("T")[0];
+loadActivity();
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
 
 }
 
@@ -2491,27 +2439,13 @@ alert("Error general");
 
 }
 
+
 function showPage(pageId){
 
-/* ocultar módulos */
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-kpiModule.classList.add("hidden");
-socialModule.classList.add("hidden");
-landingModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
-document.getElementById("dashboardReferral")
-.classList.add("hidden");
+hideAllModules();
 
-const atomyPage = document.getElementById("atomyPage");
-
-if(atomyPage){
-atomyPage.classList.add("hidden");
-}
-
-/* mostrar módulo */
-const page = document.getElementById(pageId);
+const page =
+document.getElementById(pageId);
 
 if(page){
 page.classList.remove("hidden");
@@ -2521,33 +2455,54 @@ if(pageId === "atomyPage"){
 loadAtomyMetrics();
 }
 
-/* cerrar sidebar móvil */
 if(window.innerWidth <= 900){
 closeSidebar();
 }
+
+}
+
+function hideAllModules(){
+
+const modules = [
+
+"dashboardCards",
+"activityModule",
+"historyModule",
+"kpiModule",
+"socialModule",
+"landingModule",
+"gaugeModule",
+"semaforoModule",
+"dashboardReferral",
+"atomyPage",
+"registerModule",
+"kpiManagerModule",
+"socialManagerModule"
+
+];
+
+modules.forEach(id => {
+
+const el = document.getElementById(id);
+
+if(el){
+el.classList.add("hidden");
+}
+
+});
 
 }
 
 function showDashboard(){
 
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-kpiModule.classList.add("hidden");
-document.getElementById("atomyPage")
-.classList.add("hidden");
+hideAllModules();
 
 dashboardCards.classList.remove("hidden");
+
 document.getElementById("dashboardReferral")
 .classList.remove("hidden");
+
 loadKpisMonth();
-
-semaforoModule.classList.add("hidden");
-
-gaugeModule.classList.add("hidden");
-
-landingModule.classList.add("hidden");
-
-socialModule.classList.add("hidden");
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -2555,23 +2510,33 @@ closeSidebar();
 
 }
 
+function showRegisterModule(){
+
+hideAllModules();
+
+document.getElementById("registerModule")
+.classList.remove("hidden");
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
+}
+
+
+
 function showSocialManager(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-kpiModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
-landingModule.classList.add("hidden");
-socialModule.classList.add("hidden");
-document.getElementById("atomyPage")
-.classList.add("hidden");
-kpiManagerModule.classList.add("hidden");
-socialManagerModule.classList.remove("hidden");
-document.getElementById("dashboardReferral")
-.classList.add("hidden");
+hideAllModules();
+
+document.getElementById("socialManagerModule")
+.classList.remove("hidden");
+
 loadCampaignsAdmin();
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
 
 }
 
@@ -2803,22 +2768,13 @@ ${val}
 }
 
 
+
+
 async function showSemaforoManager(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-document.getElementById("atomyPage")
-.classList.add("hidden");
-kpiModule.classList.add("hidden");
-kpiManagerModule.classList.add("hidden"); // 🔥 ESTA LÍNEA FALTABA
+hideAllModules();
 
 semaforoModule.classList.remove("hidden");
-document.getElementById("dashboardReferral")
-.classList.add("hidden");
-socialModule.classList.add("hidden");
-landingModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
 
 await loadSemaforoActual();
 
@@ -2849,22 +2805,12 @@ if(el) el.value = r[key] || 0;
 
 function showKpiManager(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-kpiModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
-document.getElementById("atomyPage")
-.classList.add("hidden");
-document.getElementById("dashboardReferral")
-.classList.add("hidden");
+hideAllModules();
 
-kpiManagerModule.classList.remove("hidden");
+document.getElementById("kpiManagerModule")
+.classList.remove("hidden");
 
-
-socialModule.classList.add("hidden");
-landingModule.classList.add("hidden");
+loadKpiManager();
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -2874,26 +2820,18 @@ closeSidebar();
 
 function showGaugeModule(){
 
-dashboardCards.classList.add("hidden");
-activityModule.classList.add("hidden");
-historyModule.classList.add("hidden");
-semaforoModule.classList.add("hidden");
-gaugeModule.classList.add("hidden");
-document.getElementById("atomyPage")
-.classList.add("hidden");
+hideAllModules();
 
-kpiModule.classList.remove("hidden");
+gaugeModule.classList.remove("hidden");
 
-socialModule.classList.add("hidden");
-landingModule.classList.add("hidden");
-
-loadMarketingKpis();
+loadGaugeKpis();
 
 if(window.innerWidth <= 900){
 closeSidebar();
 }
 
 }
+
 
 async function loadMarketingKpis(){
 
