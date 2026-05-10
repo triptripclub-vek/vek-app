@@ -1131,6 +1131,40 @@ Copiar enlace
 
 </div>
 
+<!-- MOTOR EXPECTATIVAS -->
+
+<div id="expectativasModule" class="linkCard hidden">
+
+<h2 style="margin-bottom:20px;">
+📈 Motor de Expectativas
+</h2>
+
+<div class="grid">
+
+<div class="cardKpi">
+<h4>Quincena actual</h4>
+<div class="num" id="exp_quincena">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>PP esperado</h4>
+<div class="num" id="exp_pp">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>Patrocinados esperados</h4>
+<div class="num" id="exp_patrocinados">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>Avance</h4>
+<div class="num" id="exp_avance">0%</div>
+</div>
+
+</div>
+
+</div>
+
 
 <!-- ATOMY MANAGER -->
 
@@ -1567,6 +1601,10 @@ document
 .getElementById("atomyManagerModule")
 .classList.add("hidden");
 
+document
+.getElementById("expectativasModule")
+.classList.add("hidden");
+
 }
 
 
@@ -1869,6 +1907,11 @@ function showDashboard(){
 hideAllModules();
 
 dashboardCards.classList.remove("hidden");
+
+document
+.getElementById("expectativasModule")
+.classList.remove("hidden");
+
 document
 .getElementById("referralModule")
 .classList.remove("hidden");
@@ -2741,11 +2784,86 @@ r.semaforo_verde || 0;
 
 }
 
+/* =========================================
+   MOTOR EXPECTATIVAS
+========================================= */
+
+async function loadExpectativas(){
+
+const { data, error } = await sb
+.from("atomy_growth_rules")
+.select("*")
+.order("updated_at",{ascending:false})
+.limit(1);
+
+if(error || !data || !data.length){
+return;
+}
+
+const rules = data[0];
+
+/* FECHA INICIO */
+
+const inicio = new Date("2025-01-01");
+const hoy = new Date();
+
+/* DIFERENCIA */
+
+const dias = Math.floor(
+(hoy - inicio) / (1000*60*60*24)
+);
+
+/* QUINCENAS */
+
+const quincenas =
+Math.max(1, Math.floor(dias / 15));
+
+/* EXPECTATIVAS */
+
+const pp =
+quincenas *
+Number(rules.pp_por_quincena || 0);
+
+const patrocinados =
+quincenas *
+Number(rules.patrocinados_por_quincena || 0);
+
+/* AVANCE */
+
+let avance = 0;
+
+if(pp > 0){
+
+avance = Math.min(
+100,
+Math.round((pp / 10000) * 100)
+);
+
+}
+
+/* RENDER */
+
+document.getElementById("exp_quincena").innerText =
+quincenas;
+
+document.getElementById("exp_pp").innerText =
+pp;
+
+document.getElementById("exp_patrocinados").innerText =
+patrocinados;
+
+document.getElementById("exp_avance").innerText =
+avance + "%";
+
+}
+
 saveUsers();
 
 runClock();
 
 loadAtomyRules();
+
+loadExpectativas();
 /* ========================================= */
 </script>
 </body>
