@@ -826,7 +826,17 @@ font-weight:900;
 
 <button class="menuBtn hidden" onclick="showActivity()"><i class="fas fa-pencil-alt"></i> <span class="menuText"> Actividad diaria</span></button>
 
-<button class="menuBtn"><i class="fas fa-users"></i> <span class="menuText"> Mis patrocinados</span></button>
+<button
+class="menuBtn"
+onclick="showSponsoredModule()">
+
+<i class="fas fa-users"></i>
+
+<span class="menuText">
+Mis patrocinados
+</span>
+
+</button>
 
 <button class="menuBtn" onclick="showKpisUser()"><i class="fas fa-gauge-high"></i> <span class="menuText"> KPIs</span></button>
 
@@ -973,7 +983,7 @@ Copiar enlace
 </div>
 
 
-<div id="socialModule" class="linkCard hidden"
+<div id="socialModule" class="linkCard hidden">
 
 <h3 style="margin-bottom:18px;">
 
@@ -1390,6 +1400,32 @@ Guardar información
 
 </div>
 
+<!-- MIS PATROCINADOS -->
+
+<div
+id="sponsoredModule"
+class="linkCard hidden">
+
+<h2 style="margin-bottom:20px;">
+👥 Mis patrocinados
+</h2>
+
+<div id="sponsoredList">
+
+<div style="
+padding:20px;
+opacity:.7;
+text-align:center;
+">
+
+No hay patrocinados pendientes
+
+</div>
+
+</div>
+
+</div>
+
 
 <!-- RED ATOMY -->
 <div id="atomyPage" class="linkCard hidden">
@@ -1659,6 +1695,8 @@ location.origin +
 }
 
 loadKpisMonth();
+
+loadRealRegistrations();
 
 calculateQuincenas();
 
@@ -2522,6 +2560,7 @@ const modules = [
 "dashboardReferral",
 "atomyPage",
 "registerModule",
+"sponsoredModule",
 "kpiManagerModule",
 "socialManagerModule"
 
@@ -2585,6 +2624,20 @@ closeSidebar();
 
 }
 
+function showSponsoredModule(){
+
+hideAllModules();
+
+document.getElementById("sponsoredModule")
+.classList.remove("hidden");
+
+loadSponsoredUsers();
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
+}
 
 
 function showSocialManager(){
@@ -2701,6 +2754,55 @@ loadHistory();
 if(window.innerWidth <= 900){
 closeSidebar();
 }
+
+}
+
+async function loadRealRegistrations(){
+
+const user =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+if(!user) return;
+
+/* BUSCAR USUARIOS PATROCINADOS */
+
+const { data:usersData } = await sb
+.from("users")
+.select("*")
+.eq("sponsor", user);
+
+if(!usersData || !usersData.length){
+
+document.getElementById("kpi_registros")
+.innerHTML = "0";
+
+return;
+
+}
+
+let total = 0;
+
+for(const u of usersData){
+
+const { data:profile } = await sb
+.from("user_profiles")
+.select("*")
+.eq("username", u.username)
+.eq("atomy_validated", true)
+.limit(1);
+
+if(profile && profile.length){
+
+total++;
+
+}
+
+}
+
+document.getElementById("kpi_registros")
+.innerHTML = total;
 
 }
 
@@ -3400,6 +3502,8 @@ return;
 
 alert("Registro completado correctamente");
 
+await createSponsorAlert();
+
 /* LIMPIAR */
 
 document.getElementById("profile_birth").value = "";
@@ -3422,6 +3526,53 @@ document.getElementById("profile_state").value = "";
 
 }
 
+
+async function createSponsorAlert(){
+
+const username = window.currentUser;
+
+if(!username) return;
+
+/* OBTENER SPONSOR */
+
+const { data:userData } = await sb
+.from("users")
+.select("sponsor")
+.eq("username", username)
+.limit(1);
+
+if(
+!userData ||
+!userData.length
+) return;
+
+const sponsor =
+userData[0].sponsor;
+
+if(!sponsor) return;
+
+/* CREAR ALERTA */
+
+await sb
+.from("vek_alerts")
+.insert([{
+
+username: sponsor.toLowerCase(),
+
+title: "Nuevo registro pendiente",
+
+message:
+"Tienes un usuario que completó sus datos para registro en Atomy.",
+
+type: "pending_registration",
+
+is_read: false,
+
+created_at: new Date().toISOString()
+
+}]);
+
+}
 
 async function saveAtomyMetrics(){
 
@@ -3607,6 +3758,159 @@ quincenas
 });
 
 }
+
+async function loadSponsoredUsers(){
+
+const sponsor =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+if(!sponsor) return;
+
+const { data, error } = await sb
+.from("user_profiles")
+.select("*")
+.eq("registration_completed", true);
+
+if(error){
+
+console.log(error);
+
+return;
+
+}
+
+const container =
+document.getElementById("sponsoredList");
+
+container.innerHTML = "";
+
+if(!data || data.length === 0){
+
+container.innerHTML = `
+<div style="
+padding:20px;
+text-align:center;
+opacity:.7;
+">
+No hay patrocinados pendientes
+</div>
+`;
+
+return;
+
+}
+
+/* FILTRAR SOLO LOS DE MI RED */
+
+let found = false;
+
+for(const user of data){
+
+const { data:userInfo } = await sb
+.from("users")
+.select("*")
+.eq("username", user.username)
+.limit(1);
+
+if(
+userInfo &&
+userInfo.length &&
+(userInfo[0].sponsor || "").toLowerCase() === sponsor
+){
+
+found = true;
+
+container.innerHTML += `
+
+<div style="
+padding:18px;
+border:1px solid #ddd;
+border-radius:14px;
+margin-bottom:14px;
+">
+
+<h3 style="margin-bottom:10px;">
+${user.full_name}
+</h3>
+
+<div><b>Email:</b> ${user.email}</div>
+<div><b>Teléfono:</b> ${user.phone}</div>
+<div><b>País:</b> ${user.country}</div>
+<div><b>CURP:</b> ${user.curp}</div>
+<div><b>Dirección:</b> ${user.street}</div>
+<div><b>Código Postal:</b> ${user.postal_code}</div>
+<div><b>Ciudad:</b> ${user.city}</div>
+<div><b>Estado:</b> ${user.state}</div>
+
+<button
+class="copyBtn"
+style="margin-top:14px;"
+onclick="validateSponsored('${user.username}')">
+
+✅ Ya lo registré en Atomy
+
+</button>
+
+</div>
+
+`;
+
+}
+
+}
+
+if(!found){
+
+container.innerHTML = `
+<div style="
+padding:20px;
+text-align:center;
+opacity:.7;
+">
+No hay patrocinados pendientes
+</div>
+`;
+
+}
+
+}
+
+async function validateSponsored(username){
+
+const ok = confirm(
+"¿Confirmas que este usuario ya fue registrado en Atomy?"
+);
+
+if(!ok) return;
+
+const { error } = await sb
+.from("user_profiles")
+.update({
+atomy_validated: true,
+validated_at: new Date().toISOString()
+})
+.eq("username", username);
+
+if(error){
+
+console.log(error);
+
+alert("Error validando usuario");
+
+return;
+
+}
+
+alert("Usuario validado correctamente");
+
+loadSponsoredUsers();
+
+loadRealRegistrations();
+
+}
+
 
 async function checkRegistrationAlert(){
 
