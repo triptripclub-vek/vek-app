@@ -906,6 +906,10 @@ box-shadow:0 8px 20px rgba(0,0,0,.15);
 <div class="status">● Estado Activo</div>
 </div>
 
+
+<div class="avatar">V</div>
+</div>
+
 <div
 id="vekAlert"
 class="hidden"
@@ -914,16 +918,12 @@ background:#fff3cd;
 color:#856404;
 padding:14px;
 border-radius:12px;
-margin-top:15px;
-margin-bottom:15px;
+margin-bottom:20px;
 font-weight:bold;
 ">
 
 ⚠️ Completa tu registro para continuar tu activación Atomy.
 
-</div>
-
-<div class="avatar">V</div>
 </div>
 
 <div class="grid" id="dashboardCards">
@@ -1637,6 +1637,7 @@ function openDashboard(name){
 loginPage.classList.add("hidden");
 landingPage.classList.add("hidden");
 dashboard.classList.remove("hidden");
+showDashboard();
 
 window.currentUser = name.toLowerCase();
 
@@ -2565,9 +2566,8 @@ dashboard.classList.add("hidden");
 
 loginPage.classList.remove("hidden");
 
-document.getElementById("loginUser").value = "";
-
-document.getElementById("loginPass").value = "";
+document.getElementById("user").value = "";
+document.getElementById("pass").value = "";
 
 }
 
