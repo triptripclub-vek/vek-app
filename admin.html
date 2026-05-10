@@ -2596,71 +2596,44 @@ navigator.clipboard.writeText(text)
    ATOMY MANAGER
 ========================================= */
 
+```javascript id="m2r8b4"
 async function saveAtomyRules(){
+
+const pp =
+Number(
+document.getElementById("rule_pp").value
+) || 0;
+
+const patrocinados =
+Number(
+document.getElementById("rule_patrocinados").value
+) || 0;
+
+/* =========================
+   PAYLOAD
+========================= */
 
 const payload = {
 
-pp_por_quincena:
-Number(document.getElementById("rule_pp").value || 0),
+id:"global_rules",
+
+pp_por_quincena:pp,
 
 patrocinados_por_quincena:
-Number(document.getElementById("rule_patrocinados").value || 0),
-
-activos_por_linea_quincena:
-Number(document.getElementById("rule_activos").value || 0),
-
-pv_por_activo:
-Number(document.getElementById("rule_pv").value || 0),
-
-semaforo_rojo:
-Number(document.getElementById("rule_rojo").value || 0),
-
-semaforo_amarillo:
-Number(document.getElementById("rule_amarillo").value || 0),
-
-semaforo_verde:
-Number(document.getElementById("rule_verde").value || 0),
+patrocinados,
 
 updated_at:
-new Date().toISOString()
+new Date()
 
 };
 
-/* BUSCAR FILA EXISTENTE */
+/* =========================
+   UPSERT
+========================= */
 
-const { data:existing } = await sb
+const { error } = await sb
 .from("atomy_growth_rules")
-.select("id")
-.limit(1);
-
-let error = null;
-
-/* UPDATE */
-
-if(existing && existing.length > 0){
-
-const rowId = existing[0].id;
-
-const result = await sb
-.from("atomy_growth_rules")
-.update(payload)
-.eq("id",rowId);
-
-error = result.error;
-
-}
-
-/* INSERT */
-
-else{
-
-const result = await sb
-.from("atomy_growth_rules")
-.insert([payload]);
-
-error = result.error;
-
-}
+.upsert(payload);
 
 if(error){
 
@@ -2672,9 +2645,11 @@ return;
 
 }
 
-alert("Reglas guardadas correctamente");
+alert("Reglas guardadas");
 
 }
+```
+
 
 
 /* ========================================= */
