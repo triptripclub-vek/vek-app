@@ -2534,6 +2534,23 @@ closeSidebar();
 
 }
 
+function logoutUser(){
+
+window.currentUser = null;
+
+localStorage.removeItem("vek_user");
+
+dashboard.classList.add("hidden");
+
+loginPage.classList.remove("hidden");
+
+document.getElementById("loginUser").value = "";
+
+document.getElementById("loginPass").value = "";
+
+}
+
+
 function showRegisterModule(){
 
 hideAllModules();
