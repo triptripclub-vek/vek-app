@@ -1155,6 +1155,31 @@ id="rule_patrocinados"
 type="number"
 placeholder="Patrocinados esperados">
 
+<input
+id="rule_activos"
+type="number"
+placeholder="Activos por línea">
+
+<input
+id="rule_pv"
+type="number"
+placeholder="PV por activo">
+
+<input
+id="rule_rojo"
+type="number"
+placeholder="Semáforo rojo %">
+
+<input
+id="rule_amarillo"
+type="number"
+placeholder="Semáforo amarillo %">
+
+<input
+id="rule_verde"
+type="number"
+placeholder="Semáforo verde %">
+
 <button
 class="blue"
 onclick="saveAtomyRules()">
@@ -2595,43 +2620,72 @@ navigator.clipboard.writeText(text)
 /* =========================================
    ATOMY MANAGER
 ========================================= */
+
 async function saveAtomyRules(){
-
-const pp =
-Number(
-document.getElementById("rule_pp").value
-) || 0;
-
-const patrocinados =
-Number(
-document.getElementById("rule_patrocinados").value
-) || 0;
-
-/* =========================
-   PAYLOAD
-========================= */
 
 const payload = {
 
-id:"global_rules",
-
-pp_por_quincena:pp,
+pp_por_quincena:
+Number(document.getElementById("rule_pp").value || 0),
 
 patrocinados_por_quincena:
-patrocinados,
+Number(document.getElementById("rule_patrocinados").value || 0),
+
+activos_por_linea_quincena:
+Number(document.getElementById("rule_activos").value || 0),
+
+pv_por_activo:
+Number(document.getElementById("rule_pv").value || 0),
+
+semaforo_rojo:
+Number(document.getElementById("rule_rojo").value || 0),
+
+semaforo_amarillo:
+Number(document.getElementById("rule_amarillo").value || 0),
+
+semaforo_verde:
+Number(document.getElementById("rule_verde").value || 0),
 
 updated_at:
-new Date()
+new Date().toISOString()
 
 };
 
-/* =========================
-   UPSERT
-========================= */
+/* BUSCAR FILA EXISTENTE */
 
-const { error } = await sb
+const { data:existing } = await sb
 .from("atomy_growth_rules")
-.upsert(payload);
+.select("id")
+.limit(1);
+
+let error = null;
+
+/* UPDATE */
+
+if(existing && existing.length > 0){
+
+const rowId = existing[0].id;
+
+const result = await sb
+.from("atomy_growth_rules")
+.update(payload)
+.eq("id",rowId);
+
+error = result.error;
+
+}
+
+/* INSERT */
+
+else{
+
+const result = await sb
+.from("atomy_growth_rules")
+.insert([payload]);
+
+error = result.error;
+
+}
 
 if(error){
 
@@ -2643,11 +2697,9 @@ return;
 
 }
 
-alert("Reglas guardadas");
+alert("Reglas guardadas correctamente");
 
 }
-```
-
 
 
 /* ========================================= */
