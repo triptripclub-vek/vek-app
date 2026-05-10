@@ -2459,6 +2459,10 @@ if(page){
 page.classList.remove("hidden");
 }
 
+if(pageId === "atomyPage"){
+loadAtomyMetrics();
+}
+
 /* cerrar sidebar móvil */
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -3291,11 +3295,44 @@ document.getElementById("atomy_pvi").value = "";
 document.getElementById("atomy_pvd").value = "";
 document.getElementById("atomy_left").value = "";
 document.getElementById("atomy_right").value = "";
-document.getElementById("atomy_personals").value = "";
 
 }
 
-```javascript
+
+async function loadAtomyMetrics(){
+
+const user = window.currentUser;
+
+const { data, error } = await sb
+.from("atomy_user_metrics")
+.select("*")
+.eq("user_id", user)
+.limit(1);
+
+if(error || !data || !data.length){
+return;
+}
+
+const r = data[0];
+
+document.getElementById("atomy_pvp").value =
+r.pvp || "";
+
+document.getElementById("atomy_pvi").value =
+r.pvi || "";
+
+document.getElementById("atomy_pvd").value =
+r.pvd || "";
+
+document.getElementById("atomy_left").value =
+r.activos_izq || "";
+
+document.getElementById("atomy_right").value =
+r.activos_der || "";
+
+}
+
+
 async function calculateQuincenas(){
 
 const user =
@@ -3391,7 +3428,7 @@ quincenas
 });
 
 }
-```
+
 
 saveUsers();
 loadPage();
