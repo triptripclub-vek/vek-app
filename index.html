@@ -2463,16 +2463,40 @@ closeSidebar();
 
 function hideAllModules(){
 
+if(dashboardCards){
+dashboardCards.classList.add("hidden");
+}
+
+if(activityModule){
+activityModule.classList.add("hidden");
+}
+
+if(historyModule){
+historyModule.classList.add("hidden");
+}
+
+if(kpiModule){
+kpiModule.classList.add("hidden");
+}
+
+if(socialModule){
+socialModule.classList.add("hidden");
+}
+
+if(landingModule){
+landingModule.classList.add("hidden");
+}
+
+if(gaugeModule){
+gaugeModule.classList.add("hidden");
+}
+
+if(semaforoModule){
+semaforoModule.classList.add("hidden");
+}
+
 const modules = [
 
-"dashboardCards",
-"activityModule",
-"historyModule",
-"kpiModule",
-"socialModule",
-"landingModule",
-"gaugeModule",
-"semaforoModule",
 "dashboardReferral",
 "atomyPage",
 "registerModule",
