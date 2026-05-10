@@ -906,6 +906,23 @@ box-shadow:0 8px 20px rgba(0,0,0,.15);
 <div class="status">● Estado Activo</div>
 </div>
 
+<div
+id="vekAlert"
+class="hidden"
+style="
+background:#fff3cd;
+color:#856404;
+padding:14px;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:15px;
+font-weight:bold;
+">
+
+⚠️ Completa tu registro para continuar tu activación Atomy.
+
+</div>
+
 <div class="avatar">V</div>
 </div>
 
@@ -956,7 +973,7 @@ Copiar enlace
 </div>
 
 
-<div id="socialModule" class="linkCard hidden">
+<div id="socialModule" class="linkCard hidden"
 
 <h3 style="margin-bottom:18px;">
 
@@ -1320,7 +1337,7 @@ Guardar Semáforo
 
 <div
 id="registerModule"
-class="linkCard hidden"
+class="linkCard hidden">
 
 <h2>
 📝 Completar mi registro
@@ -1622,6 +1639,10 @@ landingPage.classList.add("hidden");
 dashboard.classList.remove("hidden");
 
 window.currentUser = name.toLowerCase();
+
+/* ALERTA REGISTRO */
+
+checkRegistrationAlert();
 
 dashName.innerText = name.toUpperCase();
 
@@ -3584,6 +3605,37 @@ dias,
 quincenas
 
 });
+
+}
+
+async function checkRegistrationAlert(){
+
+const user = window.currentUser;
+
+if(!user) return;
+
+const { data } = await sb
+.from("user_profiles")
+.select("registration_completed")
+.eq("username", user)
+.limit(1);
+
+const alertBox =
+document.getElementById("vekAlert");
+
+if(
+!data ||
+data.length === 0 ||
+!data[0].registration_completed
+){
+
+alertBox.classList.remove("hidden");
+
+}else{
+
+alertBox.classList.add("hidden");
+
+}
 
 }
 
