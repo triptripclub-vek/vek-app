@@ -2769,72 +2769,114 @@ rules.factor_expansion || 0;
 
 async function loadExpectativas(){
 
-const { data, error } = await sb
+/* REGLAS */
+
+const { data:rulesData } = await sb
 .from("atomy_growth_rules")
 .select("*")
-.order("updated_at",{ascending:false})
 .limit(1);
 
-if(error || !data || !data.length){
+if(!rulesData || rulesData.length === 0){
 return;
 }
 
-const rules = data[0];
+const rules = rulesData[0];
 
-/* FECHA INICIO */
+/* CONFIG */
 
-const inicio = new Date("2025-01-01");
-const hoy = new Date();
+const personales =
+Number(rules.personales_por_quincena || 1);
 
-/* DIFERENCIA */
+const pvp =
+Number(rules.pvp_por_usuario || 0);
 
-const dias = Math.floor(
-(hoy - inicio) / (1000*60*60*24)
-);
+const expansion =
+Number(rules.factor_expansion || 1);
+
+/* USUARIOS REALES */
+
+const { data:realUsers } = await sb
+.from("user_profiles")
+.select("*")
+.eq("atomy_validated", true);
+
+const totalReales =
+realUsers ? realUsers.length : 0;
+
+/* FECHA SISTEMA */
+
+const startDate =
+new Date("2025-01-01");
+
+const now =
+new Date();
 
 /* QUINCENAS */
 
+const diffMs =
+now - startDate;
+
+const diffDays =
+Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
 const quincenas =
-Math.max(1, Math.floor(dias / 15));
+Math.max(1, Math.floor(diffDays / 15));
 
-/* EXPECTATIVAS */
+/* MOTOR COMPUESTO */
 
-const pp =
-quincenas *
-Number(rules.pp_por_quincena || 0);
+let usuariosEsperados = 1;
 
-const patrocinados =
-quincenas *
-Number(rules.patrocinados_por_quincena || 0);
+for(let i=1; i<quincenas; i++){
+
+usuariosEsperados =
+usuariosEsperados *
+(personales * expansion);
+
+}
+
+/* EVITAR INFINITO */
+
+usuariosEsperados =
+Math.floor(usuariosEsperados);
+
+/* PVP */
+
+const pvpEsperado =
+usuariosEsperados * pvp;
 
 /* AVANCE */
 
 let avance = 0;
 
-if(pp > 0){
+if(usuariosEsperados > 0){
 
-avance = Math.min(
-100,
-Math.round((pp / 10000) * 100)
+avance =
+Math.floor(
+(totalReales / usuariosEsperados) * 100
 );
 
 }
 
-/* RENDER */
+/* UI */
 
-document.getElementById("exp_quincena").innerText =
-quincenas;
+document.getElementById("exp_quincena")
+.innerText = quincenas;
 
-document.getElementById("exp_pp").innerText =
-pp;
+document.getElementById("exp_pp")
+.innerText =
+pvpEsperado.toLocaleString();
 
-document.getElementById("exp_patrocinados").innerText =
-patrocinados;
+document.getElementById("exp_patrocinados")
+.innerText =
+usuariosEsperados.toLocaleString();
 
-document.getElementById("exp_avance").innerText =
+document.getElementById("exp_avance")
+.innerText =
 avance + "%";
 
 }
+
+
 
 saveUsers();
 
