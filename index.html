@@ -3987,6 +3987,8 @@ const ok = confirm(
 
 if(!ok) return;
 
+/* VALIDAR USUARIO */
+
 const { error } = await sb
 .from("user_profiles")
 .update({
@@ -4005,11 +4007,30 @@ return;
 
 }
 
-alert("Usuario validado correctamente");
+/* OBTENER SPONSOR */
+
+const sponsor =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+/* BORRAR ALERTAS */
+
+await sb
+.from("vek_alerts")
+.delete()
+.eq("username", sponsor)
+.eq("type", "pending_registration");
+
+/* RECARGAR */
 
 loadSponsoredUsers();
 
 loadRealRegistrations();
+
+loadSponsorAlerts();
+
+alert("Usuario validado correctamente");
 
 }
 
