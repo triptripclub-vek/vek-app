@@ -3580,6 +3580,8 @@ title: "Nuevo registro pendiente",
 message:
 "Tienes un usuario que completó sus datos para registro en Atomy.",
 
+lead_username: username,
+
 type: "pending_registration",
 
 is_read: false,
@@ -3788,7 +3790,8 @@ if(!sponsor) return;
 const { data, error } = await sb
 .from("user_profiles")
 .select("*")
-.eq("registration_completed", true);
+.eq("registration_completed", true)
+.eq("atomy_validated", false);
 
 const container =
 document.getElementById("sponsoredList");
@@ -4017,9 +4020,11 @@ const sponsor =
 /* BORRAR ALERTAS */
 
 await sb
+await sb
 .from("vek_alerts")
 .delete()
 .eq("username", sponsor)
+.eq("lead_username", username)
 .eq("type", "pending_registration");
 
 /* RECARGAR */
