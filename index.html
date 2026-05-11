@@ -1752,12 +1752,17 @@ hideAllModules();
 
 kpiModule.classList.remove("hidden");
 
+/* CARGAR KPIs */
+loadMarketingKpis();
+
+/* CARGAR GAUGES */
+loadGaugeKpis();
+
 if(window.innerWidth <= 900){
 closeSidebar();
 }
 
 }
-
 
 
 async function copyLink(btn){
