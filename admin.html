@@ -1180,39 +1180,20 @@ class="linkCard hidden">
 </h2>
 
 <input
-id="rule_pp"
+id="rule_personales"
 type="number"
-placeholder="PP por quincena">
+placeholder="Patrocinios personales por quincena">
 
 <input
-id="rule_patrocinados"
+id="rule_pvp"
 type="number"
-placeholder="Patrocinados esperados">
+placeholder="PVP esperado por usuario">
 
 <input
-id="rule_activos"
+id="rule_expansion"
 type="number"
-placeholder="Activos por línea">
+placeholder="Factor expansión líneas">
 
-<input
-id="rule_pv"
-type="number"
-placeholder="PV por activo">
-
-<input
-id="rule_rojo"
-type="number"
-placeholder="Semáforo rojo %">
-
-<input
-id="rule_amarillo"
-type="number"
-placeholder="Semáforo amarillo %">
-
-<input
-id="rule_verde"
-type="number"
-placeholder="Semáforo verde %">
 
 <button
 class="blue"
@@ -2668,26 +2649,20 @@ async function saveAtomyRules(){
 
 const payload = {
 
-pp_por_quincena:
-Number(document.getElementById("rule_pp").value || 0),
+personales_por_quincena:
+Number(
+document.getElementById("rule_personales").value || 0
+),
 
-patrocinados_por_quincena:
-Number(document.getElementById("rule_patrocinados").value || 0),
+pvp_por_usuario:
+Number(
+document.getElementById("rule_pvp").value || 0
+),
 
-activos_por_linea_quincena:
-Number(document.getElementById("rule_activos").value || 0),
-
-pv_por_activo:
-Number(document.getElementById("rule_pv").value || 0),
-
-semaforo_rojo:
-Number(document.getElementById("rule_rojo").value || 0),
-
-semaforo_amarillo:
-Number(document.getElementById("rule_amarillo").value || 0),
-
-semaforo_verde:
-Number(document.getElementById("rule_verde").value || 0),
+factor_expansion:
+Number(
+document.getElementById("rule_expansion").value || 0
+),
 
 updated_at:
 new Date().toISOString()
@@ -2744,45 +2719,49 @@ alert("Reglas guardadas correctamente");
 
 }
 
-
 /* ========================================= */
+
 
 async function loadAtomyRules(){
 
 const { data, error } = await sb
 .from("atomy_growth_rules")
 .select("*")
-.order("updated_at",{ascending:false})
 .limit(1);
 
-if(error || !data || !data.length){
+if(error){
+
+console.log(error);
+
 return;
-}
-
-const r = data[0];
-
-document.getElementById("rule_pp").value =
-r.pp_por_quincena || 0;
-
-document.getElementById("rule_patrocinados").value =
-r.patrocinados_por_quincena || 0;
-
-document.getElementById("rule_activos").value =
-r.activos_por_linea_quincena || 0;
-
-document.getElementById("rule_pv").value =
-r.pv_por_activo || 0;
-
-document.getElementById("rule_rojo").value =
-r.semaforo_rojo || 0;
-
-document.getElementById("rule_amarillo").value =
-r.semaforo_amarillo || 0;
-
-document.getElementById("rule_verde").value =
-r.semaforo_verde || 0;
 
 }
+
+if(!data || data.length === 0){
+
+return;
+
+}
+
+const rules = data[0];
+
+/* PERSONALES */
+
+document.getElementById("rule_personales").value =
+rules.personales_por_quincena || 0;
+
+/* PVP */
+
+document.getElementById("rule_pvp").value =
+rules.pvp_por_usuario || 0;
+
+/* EXPANSIÓN */
+
+document.getElementById("rule_expansion").value =
+rules.factor_expansion || 0;
+
+}
+
 
 /* =========================================
    MOTOR EXPECTATIVAS
