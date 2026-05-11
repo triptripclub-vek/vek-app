@@ -936,6 +936,8 @@ font-weight:bold;
 
 </div>
 
+<div id="sponsorAlerts"></div>
+
 <div class="grid" id="dashboardCards">
 
 <div class="cardKpi"><h4>Publicaciones</h4><div class="num" id="kpi_publicaciones">0</div></div>
@@ -1680,6 +1682,8 @@ window.currentUser = name.toLowerCase();
 /* ALERTA REGISTRO */
 
 checkRegistrationAlert();
+
+loadSponsorAlerts();
 
 dashName.innerText = name.toUpperCase();
 
@@ -4026,6 +4030,70 @@ alertBox.classList.remove("hidden");
 alertBox.classList.add("hidden");
 
 }
+
+}
+
+async function loadSponsorAlerts(){
+
+const user =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+if(!user) return;
+
+const container =
+document.getElementById("sponsorAlerts");
+
+if(!container) return;
+
+const { data, error } = await sb
+.from("vek_alerts")
+.select("*")
+.eq("username", user)
+.eq("is_read", false)
+.order("created_at",{ascending:false});
+
+if(error){
+
+console.log(error);
+
+return;
+
+}
+
+if(!data || data.length === 0){
+
+container.innerHTML = "";
+
+return;
+
+}
+
+container.innerHTML = "";
+
+data.forEach(alert => {
+
+container.innerHTML += `
+
+<div style="
+background:#fee2e2;
+color:#991b1b;
+padding:16px;
+border-radius:14px;
+margin-bottom:16px;
+font-weight:bold;
+border:1px solid #fecaca;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
+">
+
+🚨 ${alert.message}
+
+</div>
+
+`;
+
+});
 
 }
 
