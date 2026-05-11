@@ -2290,12 +2290,19 @@ hideAllModules();
 
 socialModule.classList.remove("hidden");
 
+/* CARGAR CAMPAÑAS */
+loadCampaignsUser();
+
+/* GENERAR AUTOMÁTICO */
+setTimeout(()=>{
+generateSocialPost();
+},300);
+
 if(window.innerWidth <= 900){
 closeSidebar();
 }
 
 }
-
 
 async function generateSocialPost(){
 
