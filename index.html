@@ -3759,6 +3759,7 @@ quincenas
 
 }
 
+
 async function loadSponsoredUsers(){
 
 const sponsor =
@@ -3773,18 +3774,30 @@ const { data, error } = await sb
 .select("*")
 .eq("registration_completed", true);
 
+const container =
+document.getElementById("sponsoredList");
+
+if(!container) return;
+
+container.innerHTML = "";
+
 if(error){
 
 console.log(error);
 
+container.innerHTML = `
+<div style="
+padding:20px;
+text-align:center;
+color:red;
+">
+Error cargando patrocinados
+</div>
+`;
+
 return;
 
 }
-
-const container =
-document.getElementById("sponsoredList");
-
-container.innerHTML = "";
 
 if(!data || data.length === 0){
 
@@ -3817,7 +3830,8 @@ const { data:userInfo } = await sb
 if(
 userInfo &&
 userInfo.length &&
-(userInfo[0].sponsor || "").toLowerCase() === sponsor
+(userInfo[0].sponsor || "")
+.toLowerCase() === sponsor
 ){
 
 found = true;
@@ -3825,28 +3839,99 @@ found = true;
 container.innerHTML += `
 
 <div style="
+background:#fff;
 padding:18px;
 border:1px solid #ddd;
 border-radius:14px;
-margin-bottom:14px;
+margin-bottom:16px;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
 ">
 
-<h3 style="margin-bottom:10px;">
-${user.full_name}
+<h3 style="
+margin-bottom:14px;
+color:#2563eb;
+">
+👤 ${user.full_name || "Sin nombre"}
 </h3>
 
-<div><b>Email:</b> ${user.email}</div>
-<div><b>Teléfono:</b> ${user.phone}</div>
-<div><b>País:</b> ${user.country}</div>
-<div><b>CURP:</b> ${user.curp}</div>
-<div><b>Dirección:</b> ${user.street}</div>
-<div><b>Código Postal:</b> ${user.postal_code}</div>
-<div><b>Ciudad:</b> ${user.city}</div>
-<div><b>Estado:</b> ${user.state}</div>
+<div style="margin-bottom:6px;">
+<b>Usuario:</b>
+${user.username || ""}
+</div>
+
+<div style="margin-bottom:6px;">
+<b>Email:</b>
+${user.email || ""}
+</div>
+
+<div style="margin-bottom:6px;">
+<b>Teléfono:</b>
+${user.phone || ""}
+</div>
+
+<div style="margin-bottom:6px;">
+<b>País:</b>
+${user.country || ""}
+</div>
+
+<hr style="
+margin:14px 0;
+border:none;
+border-top:1px solid #eee;
+">
+
+<div style="margin-bottom:6px;">
+<b>Fecha nacimiento:</b>
+${user.birth_date || ""}
+</div>
+
+<div style="margin-bottom:6px;">
+<b>CURP:</b>
+${user.curp || ""}
+</div>
+
+<div style="margin-bottom:6px;">
+<b>Calle:</b>
+${user.street || ""}
+</div>
+
+<div style="margin-bottom:6px;">
+<b>Número exterior:</b>
+${user.ext_number || ""}
+</div>
+
+<div style="margin-bottom:6px;">
+<b>Número interior:</b>
+${user.int_number || ""}
+</div>
+
+<div style="margin-bottom:6px;">
+<b>Colonia:</b>
+${user.colony || ""}
+</div>
+
+<div style="margin-bottom:6px;">
+<b>Código Postal:</b>
+${user.postal_code || ""}
+</div>
+
+<div style="margin-bottom:6px;">
+<b>Ciudad:</b>
+${user.city || ""}
+</div>
+
+<div style="margin-bottom:6px;">
+<b>Estado:</b>
+${user.state || ""}
+</div>
 
 <button
 class="copyBtn"
-style="margin-top:14px;"
+style="
+margin-top:18px;
+background:#16a34a;
+width:100%;
+"
 onclick="validateSponsored('${user.username}')">
 
 ✅ Ya lo registré en Atomy
@@ -3876,6 +3961,7 @@ No hay patrocinados pendientes
 }
 
 }
+
 
 async function validateSponsored(username){
 
