@@ -1163,6 +1163,17 @@ Copiar enlace
 
 </div>
 
+<div class="cardKpi">
+<h4>Línea izquierda esperada</h4>
+<div class="num" id="exp_izquierda">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>Línea derecha esperada</h4>
+<div class="num" id="exp_derecha">0</div>
+</div>
+
+
 </div>
 
 
@@ -2844,6 +2855,35 @@ Math.floor(usuariosEsperados);
 const pvpEsperado =
 usuariosEsperados * pvp;
 
+/* IZQUIERDA / DERECHA */
+
+let izquierda = 0;
+let derecha = 0;
+
+if(quincenas >= 2){
+
+izquierda =
+(quincenas - 1)
+*
+(personales * expansion);
+
+}
+
+if(quincenas >= 3){
+
+derecha =
+(quincenas - 2)
+*
+(personales * expansion);
+
+}
+
+izquierda =
+Math.floor(izquierda);
+
+derecha =
+Math.floor(derecha);
+
 /* AVANCE */
 
 let avance = 0;
@@ -2873,6 +2913,14 @@ usuariosEsperados.toLocaleString();
 document.getElementById("exp_avance")
 .innerText =
 avance + "%";
+
+document.getElementById("exp_izquierda")
+.innerText =
+izquierda.toLocaleString();
+
+document.getElementById("exp_derecha")
+.innerText =
+derecha.toLocaleString();
 
 }
 
