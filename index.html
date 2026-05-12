@@ -3456,7 +3456,7 @@ ${estado}
 
 }
 
-function renderGaugeOld(containerId, value, meta, sem){
+function renderGauge(containerId, value, meta, sem){
 
 let pct = Math.round((value/meta)*100);
 if(!isFinite(pct)) pct = 0;
