@@ -2814,6 +2814,52 @@ const { data:realUsers } = await sb
 const totalReales =
 realUsers ? realUsers.length : 0;
 
+/* USUARIO ACTUAL */
+
+const currentUser =
+(window.currentUser || "")
+.toLowerCase();
+
+/* PERFIL USUARIO */
+
+const currentProfile =
+realUsers.find(u =>
+u.username === currentUser
+);
+
+/* FECHA VALIDACIÓN */
+
+let fechaValidacion =
+new Date();
+
+if(
+currentProfile &&
+currentProfile.atomy_validated_at
+){
+
+fechaValidacion =
+new Date(
+currentProfile.atomy_validated_at
+);
+
+}
+
+/* QUINCENAS DEL USUARIO */
+
+const diffUserMs =
+now - fechaValidacion;
+
+const diffUserDays =
+Math.floor(
+diffUserMs / (1000 * 60 * 60 * 24)
+);
+
+const quincenasUsuario =
+Math.max(
+1,
+Math.floor(diffUserDays / 15)
+);
+
 /* FECHA SISTEMA */
 
 const startDate =
@@ -2853,7 +2899,9 @@ Math.floor(usuariosEsperados);
 /* PVP */
 
 const pvpEsperado =
-usuariosEsperados * pvp;
+usuariosEsperados *
+pvp *
+quincenasUsuario;
 
 /* IZQUIERDA / DERECHA */
 
