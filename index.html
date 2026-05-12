@@ -3354,11 +3354,13 @@ document.getElementById(
 
 if(!container) return;
 
-const avance =
+const avanceReal =
 meta > 0
 ? Math.round((real/meta)*100)
 : 0;
 
+const avance =
+Math.min(avanceReal,100);
 let color = "#ef4444";
 let estado = "Rojo";
 
@@ -3418,7 +3420,7 @@ font-weight:800;
 color:${color};
 margin-bottom:14px;
 ">
-${avance}%
+${avanceReal}%
 </div>
 
 <div style="
