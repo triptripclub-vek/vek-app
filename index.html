@@ -3730,13 +3730,26 @@ if(!rulesData || !rulesData.length) return;
 const rules = rulesData[0];
 
 const personales =
-Number(rules.personales_por_quincena || 1);
+Number(
+rules.personales_por_quincena ||
+rules.personal_pp ||
+1
+);
 
 const pvpPorUsuario =
-Number(rules.pvp_personal || 0);
+Number(
+rules.pvp_personal ||
+rules.puntos_personales ||
+0
+);
 
 const expansion =
-Number(rules.factor_expansion || 1);
+Number(
+rules.factor_expansion ||
+rules.expansion_factor ||
+1
+);
+
 
 /* USUARIO VALIDADO */
 
