@@ -3338,7 +3338,7 @@ return data?.[0] || null;
 }
 
 
-function renderGauge(
+function renderExpectationGauge(
 titulo,
 meta,
 real,
@@ -4071,7 +4071,7 @@ document.getElementById(
    RENDER GAUGES
 ========================= */
 
-renderGauge(
+renderExpectationGauge(
 "Patrocinados Activos",
 totalEsperados,
 totalPatrocinadosReales,
@@ -4080,7 +4080,7 @@ semaforo.patrocinados_amarillo,
 semaforo.patrocinados_verde
 );
 
-renderGauge(
+renderExpectationGauge(
 "Puntos Personales",
 pvpEsperado,
 pvpReal,
@@ -4089,7 +4089,7 @@ semaforo.pvp_amarillo,
 semaforo.pvp_verde
 );
 
-renderGauge(
+renderExpectationGauge(
 "PVI",
 pviEsperado,
 pviReal,
@@ -4098,7 +4098,7 @@ semaforo.pvi_amarillo,
 semaforo.pvi_verde
 );
 
-renderGauge(
+renderExpectationGauge(
 "PVD",
 pvdEsperado,
 pvdReal,
@@ -4107,7 +4107,7 @@ semaforo.pvd_amarillo,
 semaforo.pvd_verde
 );
 
-renderGauge(
+renderExpectationGauge(
 "Activos Izquierda",
 izquierda,
 activosIzqReal,
@@ -4116,7 +4116,7 @@ semaforo.act_izq_amarillo,
 semaforo.act_izq_verde
 );
 
-renderGauge(
+renderExpectationGauge(
 "Activos Derecha",
 derecha,
 activosDerReal,
