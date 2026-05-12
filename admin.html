@@ -1041,6 +1041,26 @@ Crear campaña
 
 <h3 style="margin-top:20px;">🌐 Red Atomy</h3>
 
+<label>Patrocinados — Rojo (%)</label>
+<input
+id="sem_pat_rojo"
+type="number"
+value="20">
+
+<label>Patrocinados — Amarillo (%)</label>
+<input
+id="sem_pat_amarillo"
+type="number"
+value="60">
+
+<label>Patrocinados — Verde (%)</label>
+<input
+id="sem_pat_verde"
+type="number"
+value="80">
+
+
+
 <label>PVP — Rojo</label>
 <input id="sem_pvp_rojo">
 
@@ -1734,6 +1754,8 @@ async function saveSemaforoFull(){
 
 const data = {
 
+/* MARKETING */
+
 reg_rojo: Number(sem_reg_rojo.value||0),
 reg_amarillo: Number(sem_reg_amarillo.value||0),
 reg_verde: Number(sem_reg_verde.value||0),
@@ -1746,25 +1768,56 @@ conv_rojo: Number(sem_conv_rojo.value||0),
 conv_amarillo: Number(sem_conv_amarillo.value||0),
 conv_verde: Number(sem_conv_verde.value||0),
 
+/* PATROCINADOS */
+
+patrocinados_rojo:
+Number(document.getElementById("sem_pat_rojo").value||0),
+
+patrocinados_amarillo:
+Number(document.getElementById("sem_pat_amarillo").value||0),
+
+patrocinados_verde:
+Number(document.getElementById("sem_pat_verde").value||0),
+
+/* PVP */
+
 pvp_rojo: Number(sem_pvp_rojo.value||0),
 pvp_amarillo: Number(sem_pvp_amarillo.value||0),
 pvp_verde: Number(sem_pvp_verde.value||0),
+
+/* PVI */
 
 pvi_rojo: Number(sem_pvi_rojo.value||0),
 pvi_amarillo: Number(sem_pvi_amarillo.value||0),
 pvi_verde: Number(sem_pvi_verde.value||0),
 
+/* PVD */
+
 pvd_rojo: Number(sem_pvd_rojo.value||0),
 pvd_amarillo: Number(sem_pvd_amarillo.value||0),
 pvd_verde: Number(sem_pvd_verde.value||0),
 
-act_izq_rojo: Number(sem_act_izq_rojo.value||0),
-act_izq_amarillo: Number(sem_act_izq_amarillo.value||0),
-act_izq_verde: Number(sem_act_izq_verde.value||0),
+/* ACTIVOS IZQUIERDA */
 
-act_der_rojo: Number(sem_act_der_rojo.value||0),
-act_der_amarillo: Number(sem_act_der_amarillo.value||0),
-act_der_verde: Number(sem_act_der_verde.value||0),
+act_izq_rojo:
+Number(sem_act_izq_rojo.value||0),
+
+act_izq_amarillo:
+Number(sem_act_izq_amarillo.value||0),
+
+act_izq_verde:
+Number(sem_act_izq_verde.value||0),
+
+/* ACTIVOS DERECHA */
+
+act_der_rojo:
+Number(sem_act_der_rojo.value||0),
+
+act_der_amarillo:
+Number(sem_act_der_amarillo.value||0),
+
+act_der_verde:
+Number(sem_act_der_verde.value||0),
 
 updated_at: new Date().toISOString()
 
@@ -1775,13 +1828,17 @@ const { error } = await sb
 .insert([data]);
 
 if(error){
+
 alert(error.message);
+
 return;
+
 }
 
 alert("Semáforo guardado correctamente");
 
 }
+
 
 function showActivity(){
 
