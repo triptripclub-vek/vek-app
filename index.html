@@ -1453,6 +1453,66 @@ Guardar Datos
 
 </div>
 
+<!-- MOTOR EXPECTATIVAS -->
+
+<div
+id="expectativasUsuario"
+style="
+margin-top:25px;
+">
+
+<h2 style="
+margin-bottom:20px;
+">
+📈 Motor de Expectativas
+</h2>
+
+<div class="grid">
+
+<div class="cardKpi">
+<h4>Quincena actual</h4>
+<div class="num" id="exp_quincena">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>Patrocinados esperados</h4>
+<div class="num" id="exp_patrocinados">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>PVP esperado</h4>
+<div class="num" id="exp_pvp">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>PVI esperado</h4>
+<div class="num" id="exp_pvi">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>PVD esperado</h4>
+<div class="num" id="exp_pvd">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>Línea izquierda esperada</h4>
+<div class="num" id="exp_izquierda">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>Línea derecha esperada</h4>
+<div class="num" id="exp_derecha">0</div>
+</div>
+
+<div class="cardKpi">
+<h4>Avance</h4>
+<div class="num" id="exp_avance">0%</div>
+</div>
+
+</div>
+
+</div>
+
 
 
 
@@ -1684,6 +1744,8 @@ window.currentUser = name.toLowerCase();
 checkRegistrationAlert();
 
 loadSponsorAlerts();
+
+loadUserExpectativas();
 
 dashName.innerText = name.toUpperCase();
 
@@ -3643,6 +3705,162 @@ document.getElementById("atomy_pvi").value = "";
 document.getElementById("atomy_pvd").value = "";
 document.getElementById("atomy_left").value = "";
 document.getElementById("atomy_right").value = "";
+
+}
+
+
+async function loadUserExpectativas(){
+
+const user =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+if(!user) return;
+
+/* REGLAS ADMIN */
+
+const { data:rulesData } = await sb
+.from("atomy_growth_rules")
+.select("*")
+.limit(1);
+
+if(!rulesData || !rulesData.length) return;
+
+const rules = rulesData[0];
+
+const personales =
+Number(rules.personales_por_quincena || 1);
+
+const pvpPorUsuario =
+Number(rules.pvp_personal || 0);
+
+const expansion =
+Number(rules.factor_expansion || 1);
+
+/* USUARIO VALIDADO */
+
+const { data:profileData } = await sb
+.from("user_profiles")
+.select("*")
+.eq("username", user)
+.eq("atomy_validated", true)
+.limit(1);
+
+if(!profileData || !profileData.length) return;
+
+const profile = profileData[0];
+
+/* FECHA VALIDACIÓN */
+
+const startDate =
+new Date(
+profile.validated_at ||
+profile.created_at
+);
+
+const now = new Date();
+
+const diff =
+now.getTime() - startDate.getTime();
+
+const quincenas =
+Math.max(
+1,
+Math.floor(
+diff / (1000 * 60 * 60 * 24 * 15)
+)
+);
+
+/* CRECIMIENTO COMPUESTO */
+
+let totalEsperados = 0;
+
+for(let q=1; q<=quincenas; q++){
+
+totalEsperados +=
+personales *
+Math.pow(expansion, q - 1);
+
+}
+
+totalEsperados =
+Math.floor(totalEsperados);
+
+/* LÍNEAS */
+
+const izquierda =
+Math.floor(totalEsperados * 0.5);
+
+const derecha =
+totalEsperados - izquierda;
+
+/* PUNTOS */
+
+const pvpEsperado =
+totalEsperados *
+pvpPorUsuario *
+quincenas;
+
+const pviEsperado =
+izquierda *
+pvpPorUsuario;
+
+const pvdEsperado =
+derecha *
+pvpPorUsuario;
+
+/* DATOS REALES */
+
+const { data:realData } = await sb
+.from("atomy_metrics")
+.select("*")
+.eq("username", user)
+.limit(1);
+
+let avance = 0;
+
+if(realData && realData.length){
+
+const real =
+Number(realData[0].pvp || 0);
+
+if(pvpEsperado > 0){
+
+avance =
+Math.floor(
+(real / pvpEsperado) * 100
+);
+
+}
+
+}
+
+/* UI */
+
+document.getElementById("exp_quincena")
+.innerText = quincenas;
+
+document.getElementById("exp_patrocinados")
+.innerText = totalEsperados;
+
+document.getElementById("exp_pvp")
+.innerText = pvpEsperado;
+
+document.getElementById("exp_pvi")
+.innerText = pviEsperado;
+
+document.getElementById("exp_pvd")
+.innerText = pvdEsperado;
+
+document.getElementById("exp_izquierda")
+.innerText = izquierda;
+
+document.getElementById("exp_derecha")
+.innerText = derecha;
+
+document.getElementById("exp_avance")
+.innerText = avance + "%";
 
 }
 
