@@ -2524,7 +2524,7 @@ updated_at: new Date().toISOString()
 };
 
 const { error } = await sb
-.from("semaforo_manager")
+.from("atomy_semaforos")
 .insert([data]);
 
 if(error){
@@ -3052,7 +3052,7 @@ closeSidebar();
 async function loadSemaforoActual(){
 
 const { data } = await sb
-.from("semaforo_manager")
+.from("atomy_semaforos")
 .select("*")
 .order("updated_at",{ascending:false})
 .limit(1);
@@ -3328,7 +3328,7 @@ ${texto}
 async function getSemaforo(){
 
 const { data } = await sb
-.from("semaforo_manager")
+.from("atomy_semaforos")
 .select("*")
 .order("updated_at",{ascending:false})
 .limit(1);
