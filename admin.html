@@ -1131,50 +1131,6 @@ Copiar enlace
 
 </div>
 
-<!-- MOTOR EXPECTATIVAS -->
-
-<div id="expectativasModule" class="linkCard hidden">
-
-<h2 style="margin-bottom:20px;">
-📈 Motor de Expectativas
-</h2>
-
-<div class="grid">
-
-<div class="cardKpi">
-<h4>Quincena actual</h4>
-<div class="num" id="exp_quincena">0</div>
-</div>
-
-<div class="cardKpi">
-<h4>PP esperado</h4>
-<div class="num" id="exp_pp">0</div>
-</div>
-
-<div class="cardKpi">
-<h4>Patrocinados esperados</h4>
-<div class="num" id="exp_patrocinados">0</div>
-</div>
-
-<div class="cardKpi">
-<h4>Avance</h4>
-<div class="num" id="exp_avance">0%</div>
-</div>
-
-</div>
-
-<div class="cardKpi">
-<h4>Línea izquierda esperada</h4>
-<div class="num" id="exp_izquierda">0</div>
-</div>
-
-<div class="cardKpi">
-<h4>Línea derecha esperada</h4>
-<div class="num" id="exp_derecha">0</div>
-</div>
-
-
-</div>
 
 
 <!-- ATOMY MANAGER -->
@@ -1593,9 +1549,7 @@ document
 .getElementById("atomyManagerModule")
 .classList.add("hidden");
 
-document
-.getElementById("expectativasModule")
-.classList.add("hidden");
+
 
 }
 
@@ -1900,9 +1854,7 @@ hideAllModules();
 
 dashboardCards.classList.remove("hidden");
 
-document
-.getElementById("expectativasModule")
-.classList.remove("hidden");
+
 
 document
 .getElementById("referralModule")
@@ -2980,7 +2932,6 @@ runClock();
 
 loadAtomyRules();
 
-loadExpectativas();
 /* ========================================= */
 </script>
 </body>
