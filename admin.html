@@ -1111,7 +1111,7 @@ value="80">
 <input id="sem_act_der_verde">
 
 
-<button class="copyBtn" onclick="saveSemaforoFull()">
+<button class="copyBtn" onclick="saveAtomySemaforo()">
 Guardar Semáforo
 </button>
 
@@ -1768,57 +1768,6 @@ conv_rojo: Number(sem_conv_rojo.value||0),
 conv_amarillo: Number(sem_conv_amarillo.value||0),
 conv_verde: Number(sem_conv_verde.value||0),
 
-/* PATROCINADOS */
-
-patrocinados_rojo:
-Number(document.getElementById("sem_pat_rojo").value||0),
-
-patrocinados_amarillo:
-Number(document.getElementById("sem_pat_amarillo").value||0),
-
-patrocinados_verde:
-Number(document.getElementById("sem_pat_verde").value||0),
-
-/* PVP */
-
-pvp_rojo: Number(sem_pvp_rojo.value||0),
-pvp_amarillo: Number(sem_pvp_amarillo.value||0),
-pvp_verde: Number(sem_pvp_verde.value||0),
-
-/* PVI */
-
-pvi_rojo: Number(sem_pvi_rojo.value||0),
-pvi_amarillo: Number(sem_pvi_amarillo.value||0),
-pvi_verde: Number(sem_pvi_verde.value||0),
-
-/* PVD */
-
-pvd_rojo: Number(sem_pvd_rojo.value||0),
-pvd_amarillo: Number(sem_pvd_amarillo.value||0),
-pvd_verde: Number(sem_pvd_verde.value||0),
-
-/* ACTIVOS IZQUIERDA */
-
-act_izq_rojo:
-Number(sem_act_izq_rojo.value||0),
-
-act_izq_amarillo:
-Number(sem_act_izq_amarillo.value||0),
-
-act_izq_verde:
-Number(sem_act_izq_verde.value||0),
-
-/* ACTIVOS DERECHA */
-
-act_der_rojo:
-Number(sem_act_der_rojo.value||0),
-
-act_der_amarillo:
-Number(sem_act_der_amarillo.value||0),
-
-act_der_verde:
-Number(sem_act_der_verde.value||0),
-
 updated_at: new Date().toISOString()
 
 };
@@ -1838,6 +1787,99 @@ return;
 alert("Semáforo guardado correctamente");
 
 }
+
+
+async function saveAtomySemaforo(){
+
+const data = {
+
+/* PATROCINADOS */
+
+pat_rojo:
+Number(document.getElementById("sem_pat_rojo").value || 0),
+
+pat_amarillo:
+Number(document.getElementById("sem_pat_amarillo").value || 0),
+
+pat_verde:
+Number(document.getElementById("sem_pat_verde").value || 0),
+
+/* PVP */
+
+pvp_rojo:
+Number(sem_pvp_rojo.value || 0),
+
+pvp_amarillo:
+Number(sem_pvp_amarillo.value || 0),
+
+pvp_verde:
+Number(sem_pvp_verde.value || 0),
+
+/* PVI */
+
+pvi_rojo:
+Number(sem_pvi_rojo.value || 0),
+
+pvi_amarillo:
+Number(sem_pvi_amarillo.value || 0),
+
+pvi_verde:
+Number(sem_pvi_verde.value || 0),
+
+/* PVD */
+
+pvd_rojo:
+Number(sem_pvd_rojo.value || 0),
+
+pvd_amarillo:
+Number(sem_pvd_amarillo.value || 0),
+
+pvd_verde:
+Number(sem_pvd_verde.value || 0),
+
+/* ACTIVOS IZQUIERDA */
+
+act_izq_rojo:
+Number(sem_act_izq_rojo.value || 0),
+
+act_izq_amarillo:
+Number(sem_act_izq_amarillo.value || 0),
+
+act_izq_verde:
+Number(sem_act_izq_verde.value || 0),
+
+/* ACTIVOS DERECHA */
+
+act_der_rojo:
+Number(sem_act_der_rojo.value || 0),
+
+act_der_amarillo:
+Number(sem_act_der_amarillo.value || 0),
+
+act_der_verde:
+Number(sem_act_der_verde.value || 0),
+
+updated_at:
+new Date().toISOString()
+
+};
+
+const { error } = await sb
+.from("atomy_red_semaforos")
+.insert([data]);
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+alert("Semáforo Atomy guardado correctamente");
+
+}
+
 
 
 function showActivity(){
