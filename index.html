@@ -3147,6 +3147,7 @@ conv = Number(((totalRegs/totalClicks)*100).toFixed(1));
    SEMAFORO
 ===================== */
 const sem = await getSemaforo();
+const atomySemaforo = await getAtomySemaforo();
 
 /* MAPEO */
 const sem_reg = sem ? {
@@ -3339,6 +3340,17 @@ return data?.[0] || null;
 
 }
 
+async function getAtomySemaforo(){
+
+const { data } = await sb
+.from("atomy_red_semaforos")
+.select("*")
+.order("updated_at",{ascending:false})
+.limit(1);
+
+return data?.[0] || null;
+
+}
 
 function renderExpectationGauge(
 titulo,
@@ -4033,6 +4045,9 @@ Math.floor(
 const semaforo =
 await getSemaforo() || {};
 
+const atomySemaforo =
+await getAtomySemaforo() || {};
+
 
 
 /* UI */
@@ -4078,54 +4093,54 @@ renderExpectationGauge(
 "Patrocinados Activos",
 totalEsperados,
 totalPatrocinadosReales,
-semaforo.pat_rojo,
-semaforo.pat_amarillo,
-semaforo.pat_verde
+atomySemaforo.pat_rojo,
+atomySemaforo.pat_amarillo,
+atomySemaforo.pat_verde
 );
 
 renderExpectationGauge(
 "Puntos Personales",
 pvpEsperado,
 pvpReal,
-semaforo.pvp_rojo,
-semaforo.pvp_amarillo,
-semaforo.pvp_verde
+atomySemaforo.pvp_rojo,
+atomySemaforo.pvp_amarillo,
+atomySemaforo.pvp_verde
 );
 
 renderExpectationGauge(
 "PVI",
 pviEsperado,
 pviReal,
-semaforo.pvi_rojo,
-semaforo.pvi_amarillo,
-semaforo.pvi_verde
+atomySemaforo.pvi_rojo,
+atomySemaforo.pvi_amarillo,
+atomySemaforo.pvi_verde
 );
 
 renderExpectationGauge(
 "PVD",
 pvdEsperado,
 pvdReal,
-semaforo.pvd_rojo,
-semaforo.pvd_amarillo,
-semaforo.pvd_verde
+atomySemaforo.pvd_rojo,
+atomySemaforo.pvd_amarillo,
+atomySemaforo.pvd_verde
 );
 
 renderExpectationGauge(
 "Activos Izquierda",
-izquierda,
-activosIzqReal,
-semaforo.act_izq_rojo,
-semaforo.act_izq_amarillo,
-semaforo.act_izq_verde
+izquierdaEsperada,
+izquierdaReal,
+atomySemaforo.act_izq_rojo,
+atomySemaforo.act_izq_amarillo,
+atomySemaforo.act_izq_verde
 );
 
 renderExpectationGauge(
 "Activos Derecha",
-derecha,
-activosDerReal,
-semaforo.act_der_rojo,
-semaforo.act_der_amarillo,
-semaforo.act_der_verde
+derechaEsperada,
+derechaReal,
+atomySemaforo.act_der_rojo,
+atomySemaforo.act_der_amarillo,
+atomySemaforo.act_der_verde
 );
 
 
