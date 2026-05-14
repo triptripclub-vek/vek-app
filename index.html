@@ -4059,14 +4059,17 @@ document.getElementById("exp_patrocinados")
 document.getElementById("exp_pvp")
 .innerText = pvpEsperado;
 
-document.getElementById("real_pvp")
-?.innerText = pvpReal;
+if(document.getElementById("real_pvp")){
+document.getElementById("real_pvp").innerText = pvpReal;
+}
 
-document.getElementById("real_pvi")
-?.innerText = pviReal;
+if(document.getElementById("real_pvi")){
+document.getElementById("real_pvi").innerText = pviReal;
+}
 
-document.getElementById("real_pvd")
-?.innerText = pvdReal;
+if(document.getElementById("real_pvd")){
+document.getElementById("real_pvd").innerText = pvdReal;
+}
 
 document.getElementById("exp_pvi")
 .innerText = pviEsperado;
