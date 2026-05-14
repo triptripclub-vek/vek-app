@@ -1762,6 +1762,11 @@ showDashboard();
 
 window.currentUser = name.toLowerCase();
 
+localStorage.setItem(
+"vek_user",
+window.currentUser
+);
+
 /* ALERTA REGISTRO */
 
 checkRegistrationAlert();
@@ -2775,7 +2780,10 @@ window.open("https://triptripclub.systeme.io/31529e03","_blank");
 
 async function loadHistory(){
 
-const user = (window.currentUser || "").toLowerCase().trim();
+const user =
+(localStorage.getItem("vek_user") || "")
+.toLowerCase()
+.trim();
 
 let now = new Date();
 let year = now.getFullYear();
@@ -3872,7 +3880,7 @@ document.getElementById("atomy_right").value = "";
 async function loadUserExpectativas(){
 
 const user =
-(window.currentUser || "")
+(localStorage.getItem("vek_user") || "")
 .toLowerCase()
 .trim();
 
@@ -4167,7 +4175,8 @@ atomySemaforo.act_der_verde
 
 async function loadAtomyMetrics(){
 
-const user = window.currentUser;
+const user =
+localStorage.getItem("vek_user");
 
 const { data, error } = await sb
 .from("atomy_user_metrics")
