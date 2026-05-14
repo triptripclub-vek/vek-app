@@ -3643,13 +3643,51 @@ alert("Texto copiado correctamente");
 
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const select = document.getElementById("campaign_select");
 
-    if(select){
-        select.addEventListener("change", generateSocialPost);
+document.addEventListener("DOMContentLoaded", () => {
+
+    const campaignSelect =
+    document.getElementById("campaign_select");
+
+    const networkSelect =
+    document.getElementById("social_network");
+
+    if(campaignSelect){
+
+        campaignSelect.addEventListener(
+            "change",
+            generateSocialPost
+        );
+
     }
+
+    if(networkSelect){
+
+        networkSelect.addEventListener(
+            "change",
+            async () => {
+
+                await loadCampaignsUser();
+
+                document.getElementById(
+                    "social_result"
+                ).value = "";
+
+                document.getElementById(
+                    "social_preview"
+                ).innerHTML = "";
+
+                document.getElementById(
+                    "social_download"
+                ).innerHTML = "";
+
+            }
+        );
+
+    }
+
 });
+
 
 async function saveProfile(){
 
