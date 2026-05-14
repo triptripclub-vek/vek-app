@@ -4175,8 +4175,37 @@ const { data, error } = await sb
 .eq("user_id", user)
 .limit(1);
 
-if(error || !data || !data.length){
+if(error){
+
+console.log(error);
+
 return;
+
+}
+
+if(!data || !data.length){
+
+document.getElementById("atomy_pvp").value = "";
+document.getElementById("atomy_pvi").value = "";
+document.getElementById("atomy_pvd").value = "";
+document.getElementById("atomy_left").value = "";
+document.getElementById("atomy_right").value = "";
+
+document.getElementById("gaugesContainer").innerHTML = "";
+
+document.getElementById("exp_quincena").innerText = "0";
+document.getElementById("exp_patrocinados").innerText = "0";
+document.getElementById("exp_pvp").innerText = "0";
+document.getElementById("exp_pvi").innerText = "0";
+document.getElementById("exp_pvd").innerText = "0";
+document.getElementById("exp_izquierda").innerText = "0";
+document.getElementById("exp_derecha").innerText = "0";
+document.getElementById("exp_avance").innerText = "0%";
+
+await loadUserExpectativas();
+
+return;
+
 }
 
 const r = data[0];
@@ -4195,6 +4224,8 @@ r.activos_izq || "";
 
 document.getElementById("atomy_right").value =
 r.activos_der || "";
+
+await loadUserExpectativas();
 
 }
 
