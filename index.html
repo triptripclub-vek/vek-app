@@ -1768,7 +1768,7 @@ checkRegistrationAlert();
 
 loadSponsorAlerts();
 
-loadUserExpectativas();
+
 
 dashName.innerText = name.toUpperCase();
 
@@ -1788,6 +1788,12 @@ loadKpisMonth();
 loadRealRegistrations();
 
 calculateQuincenas();
+
+setTimeout(async()=>{
+
+await loadUserExpectativas();
+
+},500);
 
 document.getElementById("btnKpiManager")
 .classList.add("hidden");
