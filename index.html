@@ -3978,39 +3978,30 @@ pvpPorUsuario;
    DATOS REALES
 ========================= */
 
-const { data:realData } = await sb
+const { data: atomyData, error: atomyError } = await sb
 .from("atomy_user_metrics")
 .select("*")
 .eq("user_id", user)
-.limit(1);
+.single();
 
-let pvpReal = 0;
-let pviReal = 0;
-let pvdReal = 0;
-let activosIzqReal = 0;
-let activosDerReal = 0;
+const pvpReal =
+Number(atomyData?.pvp || 0);
+
+const pviReal =
+Number(atomyData?.pvi || 0);
+
+const pvdReal =
+Number(atomyData?.pvd || 0);
+
+const activosIzqReal =
+Number(atomyData?.activos_izq || 0);
+
+const activosDerReal =
+Number(atomyData?.activos_der || 0);
 
 const izquierdaReal = activosIzqReal;
 const derechaReal = activosDerReal;
 
-if(realData && realData.length){
-
-pvpReal =
-Number(realData[0].pvp || 0);
-
-pviReal =
-Number(realData[0].pvi || 0);
-
-pvdReal =
-Number(realData[0].pvd || 0);
-
-activosIzqReal =
-Number(realData[0].activos_izq || 0);
-
-activosDerReal =
-Number(realData[0].activos_der || 0);
-
-}
 
 /* =========================
    PATROCINADOS REALES
