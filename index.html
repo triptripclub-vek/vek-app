@@ -3879,6 +3879,25 @@ document.getElementById("atomy_right").value = "";
 
 async function loadUserExpectativas(){
 
+document.getElementById("exp_quincena").innerText = "0";
+
+document.getElementById("exp_patrocinados").innerText = "0";
+
+document.getElementById("exp_pvp").innerText = "0";
+
+document.getElementById("exp_pvi").innerText = "0";
+
+document.getElementById("exp_pvd").innerText = "0";
+
+document.getElementById("exp_izquierda").innerText = "0";
+
+document.getElementById("exp_derecha").innerText = "0";
+
+document.getElementById("exp_avance").innerText = "0%";
+
+document.getElementById("gaugesContainer").innerHTML = "";
+
+
 const user =
 (localStorage.getItem("vek_user") || "")
 .toLowerCase()
