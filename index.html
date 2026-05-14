@@ -4015,7 +4015,7 @@ const { data: atomyData, error: atomyError } = await sb
 .from("atomy_user_metrics")
 .select("*")
 .eq("user_id", user)
-.single();
+.maybeSingle();
 
 const pvpReal =
 Number(atomyData?.pvp || 0);
