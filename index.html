@@ -1436,6 +1436,31 @@ No hay patrocinados pendientes
 
 </div>
 
+<div class="card" style="margin-top:20px;">
+
+<h3 style="margin-bottom:15px;">
+📊 Seguimiento de Patrocinados
+</h3>
+
+<select
+id="tracked_user_select"
+style="
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-bottom:20px;
+">
+<option value="">
+Seleccionar patrocinado
+</option>
+</select>
+
+<div id="tracked_user_kpis"></div>
+
+</div>
+
+
 </div>
 
 
@@ -4394,6 +4419,7 @@ quincenas
 }
 
 
+
 async function loadSponsoredUsers(){
 
 const sponsor =
@@ -4581,6 +4607,143 @@ onclick="validateSponsored('${user.username}')">
 
 }
 
+/* =========================
+SEGUIMIENTO DE PATROCINADOS
+========================= */
+
+const trackedSelect =
+document.getElementById(
+"tracked_user_select"
+);
+
+if(trackedSelect){
+
+trackedSelect.innerHTML = `
+<option value="">
+Seleccionar patrocinado
+</option>
+`;
+
+const { data:validatedUsers } = await sb
+.from("user_profiles")
+.select("*")
+.eq("registration_completed", true)
+.eq("atomy_validated", true);
+
+for(const user of (validatedUsers || [])){
+
+const { data:userInfo } = await sb
+.from("users")
+.select("*")
+.eq("username", user.username)
+.limit(1);
+
+if(
+userInfo &&
+userInfo.length &&
+(userInfo[0].sponsor || "")
+.toLowerCase() === sponsor
+){
+
+trackedSelect.innerHTML += `
+<option value="${user.username}">
+${user.full_name || user.username}
+</option>
+`;
+
+}
+
+}
+
+trackedSelect.onchange = async function(){
+
+const username = this.value;
+
+if(!username) return;
+
+const { data:kpis } = await sb
+.from("activity")
+.select("*")
+.eq("username", username);
+
+let total = {
+publicaciones:0,
+prospectos:0,
+conversaciones:0,
+calificados:0,
+videos:0,
+formularios:0,
+registros:0,
+vp:0
+};
+
+(kpis || []).forEach(r=>{
+
+total.publicaciones += Number(r.publicaciones || 0);
+total.prospectos += Number(r.prospectos || 0);
+total.conversaciones += Number(r.conversaciones || 0);
+total.calificados += Number(r.calificados || 0);
+total.videos += Number(r.videos || 0);
+total.formularios += Number(r.formularios || 0);
+total.registros += Number(r.registros || 0);
+total.vp += Number(r.vp || 0);
+
+});
+
+document.getElementById(
+"tracked_user_kpis"
+).innerHTML = `
+
+<div class="grid">
+
+<div class="cardKpi">
+<h4>Publicaciones</h4>
+<div class="num">${total.publicaciones}</div>
+</div>
+
+<div class="cardKpi">
+<h4>Prospectos</h4>
+<div class="num">${total.prospectos}</div>
+</div>
+
+<div class="cardKpi">
+<h4>Conversaciones</h4>
+<div class="num">${total.conversaciones}</div>
+</div>
+
+<div class="cardKpi">
+<h4>Calificados</h4>
+<div class="num">${total.calificados}</div>
+</div>
+
+<div class="cardKpi">
+<h4>PVD</h4>
+<div class="num">${total.videos}</div>
+</div>
+
+<div class="cardKpi">
+<h4>PVI</h4>
+<div class="num">${total.formularios}</div>
+</div>
+
+<div class="cardKpi">
+<h4>Registros</h4>
+<div class="num">${total.registros}</div>
+</div>
+
+<div class="cardKpi">
+<h4>PVP</h4>
+<div class="num">${total.vp}</div>
+</div>
+
+</div>
+
+`;
+
+};
+
+}
+
 if(!found){
 
 container.innerHTML = `
@@ -4596,6 +4759,7 @@ No hay patrocinados pendientes
 }
 
 }
+
 
 
 async function validateSponsored(username){
