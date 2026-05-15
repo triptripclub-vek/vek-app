@@ -4661,79 +4661,159 @@ const username = this.value;
 
 if(!username) return;
 
-const { data:kpis } = await sb
-.from("activity")
+/* =========================
+KPIs RED ATOMY
+========================= */
+
+const { data:metrics } = await sb
+.from("atomy_user_metrics")
+.select("*")
+.eq("user_id", username)
+.maybeSingle();
+
+const pvp =
+Number(metrics?.pvp || 0);
+
+const pvi =
+Number(metrics?.pvi || 0);
+
+const pvd =
+Number(metrics?.pvd || 0);
+
+const izquierda =
+Number(metrics?.activos_izq || 0);
+
+const derecha =
+Number(metrics?.activos_der || 0);
+
+/* =========================
+PATROCINADOS ACTIVOS
+========================= */
+
+const { data:sponsored } = await sb
+.from("users")
+.select("username")
+.eq("sponsor", username);
+
+let patrocinadosActivos = 0;
+
+for(const u of (sponsored || [])){
+
+const { data:profile } = await sb
+.from("user_profiles")
+.select("username")
+.eq("username", u.username)
+.eq("atomy_validated", true)
+.limit(1);
+
+if(profile && profile.length){
+patrocinadosActivos++;
+}
+
+}
+
+/* =========================
+KPIs DASHBOARD PRO
+========================= */
+
+const { data:regs } = await sb
+.from("attributed_registrations")
+.select("*")
+.eq("username_owner", username);
+
+const { data:clicks } = await sb
+.from("social_clicks")
 .select("*")
 .eq("username", username);
 
-let total = {
-publicaciones:0,
-prospectos:0,
-conversaciones:0,
-calificados:0,
-videos:0,
-formularios:0,
-registros:0,
-vp:0
-};
+const totalRegistros =
+(regs || []).length;
 
-(kpis || []).forEach(r=>{
+const totalClicks =
+(clicks || []).length;
 
-total.publicaciones += Number(r.publicaciones || 0);
-total.prospectos += Number(r.prospectos || 0);
-total.conversaciones += Number(r.conversaciones || 0);
-total.calificados += Number(r.calificados || 0);
-total.videos += Number(r.videos || 0);
-total.formularios += Number(r.formularios || 0);
-total.registros += Number(r.registros || 0);
-total.vp += Number(r.vp || 0);
+let conversion = 0;
 
-});
+if(totalClicks > 0){
+
+conversion =
+Math.round(
+(totalRegistros / totalClicks) * 100
+);
+
+}
+
+/* =========================
+RENDER
+========================= */
 
 document.getElementById(
 "tracked_user_kpis"
 ).innerHTML = `
 
+<h3 style="
+margin-bottom:18px;
+margin-top:10px;
+">
+🔥 KPIs RED ATOMY
+</h3>
+
 <div class="grid">
 
-<div class="cardKpi">
-<h4>Publicaciones</h4>
-<div class="num">${total.publicaciones}</div>
+<div class="cardKpi green">
+<h4>Patrocinados Activos</h4>
+<div class="num">${patrocinadosActivos}</div>
 </div>
 
 <div class="cardKpi">
-<h4>Prospectos</h4>
-<div class="num">${total.prospectos}</div>
-</div>
-
-<div class="cardKpi">
-<h4>Conversaciones</h4>
-<div class="num">${total.conversaciones}</div>
-</div>
-
-<div class="cardKpi">
-<h4>Calificados</h4>
-<div class="num">${total.calificados}</div>
-</div>
-
-<div class="cardKpi">
-<h4>PVD</h4>
-<div class="num">${total.videos}</div>
+<h4>Puntos Personales</h4>
+<div class="num">${pvp}</div>
 </div>
 
 <div class="cardKpi">
 <h4>PVI</h4>
-<div class="num">${total.formularios}</div>
+<div class="num">${pvi}</div>
 </div>
+
+<div class="cardKpi">
+<h4>PVD</h4>
+<div class="num">${pvd}</div>
+</div>
+
+<div class="cardKpi">
+<h4>Activos Izquierda</h4>
+<div class="num">${izquierda}</div>
+</div>
+
+<div class="cardKpi">
+<h4>Activos Derecha</h4>
+<div class="num">${derecha}</div>
+</div>
+
+</div>
+
+<h3 style="
+margin-top:30px;
+margin-bottom:18px;
+">
+📊 KPI Dashboard PRO
+</h3>
+
+<div class="grid">
 
 <div class="cardKpi">
 <h4>Registros</h4>
-<div class="num">${total.registros}</div>
+<div class="num">${totalRegistros}</div>
 </div>
 
 <div class="cardKpi">
-<h4>PVP</h4>
-<div class="num">${total.vp}</div>
+<h4>Clicks</h4>
+<div class="num">${totalClicks}</div>
+</div>
+
+<div class="cardKpi">
+<h4>Conversión</h4>
+<div class="num">${conversion}%</div>
 </div>
 
 </div>
@@ -4799,7 +4879,6 @@ const sponsor =
 
 /* BORRAR ALERTAS */
 
-await sb
 await sb
 .from("vek_alerts")
 .delete()
