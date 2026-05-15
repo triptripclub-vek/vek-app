@@ -4758,38 +4758,14 @@ margin-top:10px;
 🔥 KPIs RED ATOMY
 </h3>
 
-<div class="grid">
-
-<div class="cardKpi green">
-<h4>Patrocinados Activos</h4>
-<div class="num">${patrocinadosActivos}</div>
-</div>
-
-<div class="cardKpi">
-<h4>Puntos Personales</h4>
-<div class="num">${pvp}</div>
-</div>
-
-<div class="cardKpi">
-<h4>PVI</h4>
-<div class="num">${pvi}</div>
-</div>
-
-<div class="cardKpi">
-<h4>PVD</h4>
-<div class="num">${pvd}</div>
-</div>
-
-<div class="cardKpi">
-<h4>Activos Izquierda</h4>
-<div class="num">${izquierda}</div>
-</div>
-
-<div class="cardKpi">
-<h4>Activos Derecha</h4>
-<div class="num">${derecha}</div>
-</div>
-
+<div id="trackedAtomyGauges"
+style="
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(240px,1fr));
+gap:20px;
+margin-bottom:30px;
+">
 </div>
 
 <h3 style="
@@ -4803,22 +4779,249 @@ margin-bottom:18px;
 
 <div class="cardKpi">
 <h4>Registros</h4>
-<div class="num">${totalRegistros}</div>
+<div id="tracked_gauge_registros"></div>
 </div>
 
 <div class="cardKpi">
 <h4>Clicks</h4>
-<div class="num">${totalClicks}</div>
+<div id="tracked_gauge_clicks"></div>
 </div>
 
 <div class="cardKpi">
 <h4>Conversión</h4>
-<div class="num">${conversion}%</div>
+<div id="tracked_gauge_conversion"></div>
 </div>
 
 </div>
 
 `;
+
+/* =========================
+SEMÁFOROS
+========================= */
+
+const atomySemaforo =
+await getAtomySemaforo() || {};
+
+const semaforo =
+await getSemaforo() || {};
+
+/* =========================
+CONTENEDOR
+========================= */
+
+document.getElementById(
+"trackedAtomyGauges"
+).innerHTML = "";
+
+const gaugesContainer =
+document.getElementById(
+"trackedAtomyGauges"
+);
+
+/* =========================
+FUNCIÓN TARJETAS RED ATOMY
+========================= */
+
+function addGauge(
+titulo,
+meta,
+real,
+rojo,
+amarillo,
+verde
+){
+
+const avanceReal =
+meta > 0
+? Math.round((real/meta)*100)
+: 0;
+
+const avance =
+Math.min(avanceReal,100);
+
+let color = "#ef4444";
+let estado = "Rojo";
+
+if(avance >= amarillo){
+color = "#f59e0b";
+estado = "Amarillo";
+}
+
+if(avance >= verde){
+color = "#22c55e";
+estado = "Verde";
+}
+
+gaugesContainer.innerHTML += `
+
+<div style="
+background:#fff;
+border-radius:20px;
+padding:22px;
+box-shadow:0 4px 14px rgba(0,0,0,.08);
+">
+
+<div style="
+font-size:18px;
+font-weight:700;
+margin-bottom:18px;
+">
+${titulo}
+</div>
+
+<div style="
+width:100%;
+height:18px;
+background:#eee;
+border-radius:999px;
+overflow:hidden;
+margin-bottom:16px;
+">
+
+<div style="
+width:${avance}%;
+height:100%;
+background:${color};
+">
+</div>
+
+</div>
+
+<div style="
+font-size:36px;
+font-weight:800;
+color:${color};
+margin-bottom:14px;
+">
+${avanceReal}%
+</div>
+
+<div style="
+font-size:14px;
+line-height:1.8;
+opacity:.85;
+">
+
+<div>
+🎯 Meta esperada:
+<b>${meta}</b>
+</div>
+
+<div>
+✅ Conseguido:
+<b>${real}</b>
+</div>
+
+<div>
+🚦 Estado:
+<b style="color:${color}">
+${estado}
+</b>
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+/* =========================
+KPIs RED ATOMY
+========================= */
+
+addGauge(
+"Patrocinados Activos",
+4,
+patrocinadosActivos,
+atomySemaforo.pat_rojo || 30,
+atomySemaforo.pat_amarillo || 60,
+atomySemaforo.pat_verde || 100
+);
+
+addGauge(
+"Puntos Personales",
+15000,
+pvp,
+atomySemaforo.pvp_rojo || 30,
+atomySemaforo.pvp_amarillo || 60,
+atomySemaforo.pvp_verde || 100
+);
+
+addGauge(
+"PVI",
+30000,
+pvi,
+atomySemaforo.pvi_rojo || 30,
+atomySemaforo.pvi_amarillo || 60,
+atomySemaforo.pvi_verde || 100
+);
+
+addGauge(
+"PVD",
+30000,
+pvd,
+atomySemaforo.pvd_rojo || 30,
+atomySemaforo.pvd_amarillo || 60,
+atomySemaforo.pvd_verde || 100
+);
+
+addGauge(
+"Activos Izquierda",
+2,
+izquierda,
+atomySemaforo.act_izq_rojo || 30,
+atomySemaforo.act_izq_amarillo || 60,
+atomySemaforo.act_izq_verde || 100
+);
+
+addGauge(
+"Activos Derecha",
+2,
+derecha,
+atomySemaforo.act_der_rojo || 30,
+atomySemaforo.act_der_amarillo || 60,
+atomySemaforo.act_der_verde || 100
+);
+
+/* =========================
+GAUGES KPI DASHBOARD PRO
+========================= */
+
+renderGauge(
+"tracked_gauge_registros",
+totalRegistros,
+10,
+{
+rojo:30,
+amarillo:60,
+verde:100
+}
+);
+
+renderGauge(
+"tracked_gauge_clicks",
+totalClicks,
+10,
+{
+rojo:30,
+amarillo:60,
+verde:100
+}
+);
+
+renderGauge(
+"tracked_gauge_conversion",
+conversion,
+100,
+{
+rojo:30,
+amarillo:60,
+verde:100
+}
+);
 
 };
 
