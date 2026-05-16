@@ -1756,7 +1756,13 @@ password: password
 
 if(authError){
 
-alert(authError.message);
+console.log(authError);
+
+alert(
+"AUTH ERROR: " +
+authError.message
+);
+
 return;
 
 }
