@@ -1582,16 +1582,6 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 /* =========================================
    RESPALDO LOCAL
 ========================================= */
-let users = JSON.parse(localStorage.getItem("vek_users")) || {
-demo123:{user:"demo123",pass:"1234"},
-demo2:{user:"demo2",pass:"1234"},
-demo3:{user:"demo3",pass:"1234"},
-demo4:{user:"demo4",pass:"1234"}
-};
-
-function saveUsers(){
-localStorage.setItem("vek_users", JSON.stringify(users));
-}
 
 /* =========================================
    LOGIN USER
@@ -1607,40 +1597,57 @@ return;
 }
 
 /* Buscar en Supabase */
+
 try{
 
-const { data, error } = await sb
+const { data, error } =
+await sb.auth.signInWithPassword({
+
+email: u,
+password: p
+
+});
+
+if(error){
+
+alert(error.message);
+return;
+
+}
+
+const userId = data.user.id;
+
+const { data:userData } = await sb
 .from("users")
 .select("*")
-.eq("username", u)
+.eq("auth_id", userId)
 .limit(1);
 
-if(!error && data && data.length > 0){
+if(userData && userData.length){
 
-if(u === "admin"){
-alert("Acceso no permitido");
-return;
+localStorage.setItem(
+"vek_user",
+userData[0].username
+);
+
+window.currentUser =
+userData[0].username;
+
+openDashboard(
+userData[0].username
+);
+
 }
 
-openDashboard(u);
-return;
+}catch(e){
+
+console.log(e);
+alert("Error iniciando sesión");
+
 }
 
-}catch(e){}
-
-/* Respaldo local */
-if(users[u] && users[u].pass === p){
-
-if(u === "admin"){
-alert("Acceso no permitido");
-return;
 }
 
-openDashboard(u);
-return;
-}
-alert("Datos incorrectos");
-}
 
 /* =========================================
    LOGIN ADMIN
@@ -1707,10 +1714,6 @@ return;
 }
 
 /* Existe local */
-if(users[username]){
-alert("Ese usuario ya existe");
-return;
-}
 
 /* Sponsor automático */
 let sponsor = localStorage.getItem("vek_ref");
@@ -1739,11 +1742,39 @@ return;
 }catch(e){}
 
 /* Insertar */
+/* =========================
+CREAR USUARIO AUTH
+========================= */
+
+const { data:authData, error:authError } =
+await sb.auth.signUp({
+
+email: email,
+password: password
+
+});
+
+if(authError){
+
+alert(authError.message);
+return;
+
+}
+
+const authId =
+authData.user.id;
+
+/* =========================
+GUARDAR USER
+========================= */
+
 const { error } = await sb
 .from("users")
 .insert([{
+
+auth_id: authId,
+
 username: username,
-password: password,
 nombre: nombre,
 email: email,
 telefono: telefono,
@@ -1752,20 +1783,17 @@ sponsor: sponsor,
 whatsapp: telefono,
 status: "Activo",
 created_at: new Date().toISOString()
+
 }]);
 
 if(error){
+
 alert("Error al registrar: " + error.message);
 return;
+
 }
 
-/* Guardar local respaldo */
-users[username] = {
-user: username,
-pass: password
-};
 
-saveUsers();
 
 await saveAttributedRegistration(username);
 
@@ -2734,7 +2762,9 @@ closeSidebar();
 
 }
 
-function logoutUser(){
+async function logoutUser(){
+
+await sb.auth.signOut();
 
 window.currentUser = null;
 
@@ -2748,7 +2778,6 @@ document.getElementById("user").value = "";
 document.getElementById("pass").value = "";
 
 }
-
 
 function showRegisterModule(){
 
@@ -5197,7 +5226,38 @@ box-shadow:0 2px 8px rgba(0,0,0,.05);
 }
 
 
-saveUsers();
+
+async function restoreSession(){
+
+const { data } =
+await sb.auth.getSession();
+
+const session =
+data.session;
+
+if(!session) return;
+
+const authId =
+session.user.id;
+
+const { data:userData } = await sb
+.from("users")
+.select("*")
+.eq("auth_id", authId)
+.limit(1);
+
+if(userData && userData.length){
+
+openDashboard(
+userData[0].username
+);
+
+}
+
+}
+
+restoreSession();
+
 loadPage();
 runClock();
 /* ========================================= */
