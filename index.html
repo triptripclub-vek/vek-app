@@ -1613,7 +1613,6 @@ const { data, error } = await sb
 .from("users")
 .select("*")
 .eq("username", u)
-.eq("password", p)
 .limit(1);
 
 if(!error && data && data.length > 0){
