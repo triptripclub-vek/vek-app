@@ -1114,7 +1114,8 @@ onclick="showSocialHelp()">
 
 </h3>
 
-<select id="social_network" style="margin-bottom:12px;">
+<select id="social_network"
+onchange="loadCampaignsUser()" style="margin-bottom:12px;">
 <option value="facebook">Facebook</option>
 <option value="instagram">Instagram</option>
 <option value="tiktok">TikTok</option>
@@ -1129,7 +1130,8 @@ onclick="showSocialHelp()">
 </select>
 
 <label>Selecciona campaña</label>
-<select id="campaign_select"></select>
+<select id="campaign_select"
+onchange="generateSocialPost()"></select>
 
 
 <textarea id="social_result" readonly style="
@@ -3935,9 +3937,41 @@ document.getElementById(
 
 /* CERRAR ALERTA */
 
+setTimeout(()=>{
+
+const closeBtn =
+document.getElementById("closeVekAlert");
+
+if(closeBtn){
+
+closeBtn.onclick = async function(){
+
 document.getElementById(
-"closeVekAlert"
-).onclick = async function(){
+"vekAlertModal"
+).style.display = "none";
+
+if(currentVekAlert){
+
+await sb
+.from("vek_alerts")
+.update({
+is_read:true
+})
+.eq("id", currentVekAlert.id);
+
+}
+
+setTimeout(()=>{
+
+loadVekAlerts();
+
+},120000);
+
+};
+
+}
+
+},1000);
 
 document.getElementById(
 "vekAlertModal"
