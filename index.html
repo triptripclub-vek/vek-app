@@ -3937,7 +3937,7 @@ document.getElementById(
 
 /* CERRAR ALERTA */
 
-setTimeout(()=>{
+setTimeout(() => {
 
 const closeBtn =
 document.getElementById("closeVekAlert");
@@ -3961,7 +3961,7 @@ is_read:true
 
 }
 
-setTimeout(()=>{
+setTimeout(() => {
 
 loadVekAlerts();
 
@@ -3973,30 +3973,6 @@ loadVekAlerts();
 
 },1000);
 
-document.getElementById(
-"vekAlertModal"
-).style.display = "none";
-
-if(currentVekAlert){
-
-await sb
-.from("vek_alerts")
-.update({
-is_read:true
-})
-.eq("id", currentVekAlert.id);
-
-}
-
-/* SIGUIENTE ALERTA */
-
-setTimeout(()=>{
-
-loadVekAlerts();
-
-}, 120000);
-
-};
 
 /* INICIAR */
 
