@@ -1463,6 +1463,34 @@ Seleccionar patrocinado
 
 </div>
 
+<!-- SEGUIMIENTO AFILIADOS -->
+
+<div class="card" style="margin-top:20px;">
+
+<h3 style="margin-bottom:15px;">
+👥 Seguimiento a Afiliados
+</h3>
+
+<select
+id="affiliate_select"
+style="
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-bottom:20px;
+">
+
+<option value="">
+Seleccionar afiliado
+</option>
+
+</select>
+
+<div id="affiliate_info"></div>
+
+</div>
+
 
 <!-- RED ATOMY -->
 <div id="atomyPage" class="linkCard hidden">
@@ -5086,6 +5114,191 @@ opacity:.7;
 No hay patrocinados pendientes
 </div>
 `;
+
+}
+
+/* =========================================
+SEGUIMIENTO A AFILIADOS
+========================================= */
+
+const affiliateSelect =
+document.getElementById(
+"affiliate_select"
+);
+
+if(affiliateSelect){
+
+affiliateSelect.innerHTML = `
+<option value="">
+Seleccionar afiliado
+</option>
+`;
+
+/* BUSCAR TODOS LOS USERS DE MI RED */
+
+const { data:allUsers } = await sb
+.from("users")
+.select("*")
+.eq("sponsor", sponsor);
+
+for(const u of (allUsers || [])){
+
+/* BUSCAR PROFILE */
+
+const { data:profile } = await sb
+.from("user_profiles")
+.select("*")
+.eq("username", u.username)
+.maybeSingle();
+
+/* SI NO ESTÁ VALIDADO */
+
+if(!profile || profile.atomy_validated !== true){
+
+affiliateSelect.innerHTML += `
+<option value="${u.username}">
+${u.nombre || u.username}
+</option>
+`;
+
+}
+
+}
+
+affiliateSelect.onchange = async function(){
+
+const username = this.value;
+
+if(!username){
+
+document.getElementById(
+"affiliate_info"
+).innerHTML = "";
+
+return;
+
+}
+
+/* OBTENER USER */
+
+const { data:userData } = await sb
+.from("users")
+.select("*")
+.eq("username", username)
+.maybeSingle();
+
+if(!userData) return;
+
+/* OBTENER PROFILE */
+
+const { data:profileData } = await sb
+.from("user_profiles")
+.select("*")
+.eq("username", username)
+.maybeSingle();
+
+document.getElementById(
+"affiliate_info"
+).innerHTML = `
+
+<div style="
+background:#fff;
+padding:18px;
+border:1px solid #ddd;
+border-radius:14px;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
+">
+
+<h3 style="
+margin-bottom:14px;
+color:#2563eb;
+">
+👤 ${userData.nombre || ""}
+</h3>
+
+<div style="margin-bottom:8px;">
+<b>Usuario:</b>
+${userData.username || ""}
+</div>
+
+<div style="margin-bottom:8px;">
+<b>Email:</b>
+${userData.email || ""}
+</div>
+
+<div style="margin-bottom:8px;">
+<b>Teléfono:</b>
+${userData.telefono || ""}
+</div>
+
+<div style="margin-bottom:8px;">
+<b>País:</b>
+${userData.pais || ""}
+</div>
+
+<div style="margin-bottom:8px;">
+<b>Fecha registro:</b>
+${new Date(userData.created_at).toLocaleDateString()}
+</div>
+
+<hr style="
+margin:16px 0;
+border:none;
+border-top:1px solid #eee;
+">
+
+<div style="
+font-weight:bold;
+margin-bottom:12px;
+color:#dc2626;
+">
+⏳ Pendiente de validación Atomy
+</div>
+
+<div style="margin-bottom:8px;">
+<b>Fecha nacimiento:</b>
+${profileData?.birth_date || ""}
+</div>
+
+<div style="margin-bottom:8px;">
+<b>CURP:</b>
+${profileData?.curp || ""}
+</div>
+
+<div style="margin-bottom:8px;">
+<b>Calle:</b>
+${profileData?.street || ""}
+</div>
+
+<div style="margin-bottom:8px;">
+<b>Número exterior:</b>
+${profileData?.ext_number || ""}
+</div>
+
+<div style="margin-bottom:8px;">
+<b>Colonia:</b>
+${profileData?.colony || ""}
+</div>
+
+<div style="margin-bottom:8px;">
+<b>Código Postal:</b>
+${profileData?.postal_code || ""}
+</div>
+
+<div style="margin-bottom:8px;">
+<b>Ciudad:</b>
+${profileData?.city || ""}
+</div>
+
+<div style="margin-bottom:8px;">
+<b>Estado:</b>
+${profileData?.state || ""}
+</div>
+
+</div>
+`;
+
+};
 
 }
 
