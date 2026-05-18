@@ -3882,7 +3882,11 @@ async function loadVekAlerts(){
 try{
 
 const username =
-localStorage.getItem("vek_user");
+(
+localStorage.getItem("vek_user") || ""
+)
+.toLowerCase()
+.trim();
 
 if(!username) return;
 
@@ -3903,9 +3907,15 @@ return;
 
 if(data && data.length > 0){
 
+console.log("ALERTA ENCONTRADA:", data[0]);
+
 currentVekAlert = data[0];
 
 showVekAlert(currentVekAlert);
+
+}else{
+
+console.log("NO HAY ALERTAS");
 
 }
 
@@ -3920,6 +3930,8 @@ console.log(e);
 /* MOSTRAR ALERTA */
 
 function showVekAlert(alertData){
+
+console.log("MOSTRANDO ALERTA");
 
 document.getElementById(
 "vekAlertTitle"
