@@ -3992,8 +3992,13 @@ setTimeout(()=>{
 
 loadVekAlerts();
 
-}, 6000);
+setInterval(()=>{
 
+loadVekAlerts();
+
+},120000);
+
+}, 6000);
 
 /* =========================
 SAVE PROFILE
@@ -5643,6 +5648,10 @@ return;
 container.innerHTML = "";
 
 data.forEach(alert => {
+
+if(alert.type !== "pending_registration"){
+return;
+}
 
 container.innerHTML += `
 
