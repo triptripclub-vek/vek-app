@@ -1987,6 +1987,8 @@ checkRegistrationAlert();
 
 loadSponsorAlerts();
 
+runAutomaticAlerts();
+
 
 
 dashName.innerText = name.toUpperCase();
@@ -3868,6 +3870,164 @@ alert("No se pudo copiar");
 }
 
 }
+
+
+/* =========================================
+   MOTOR AUTOMÁTICO ALERTAS
+========================================= */
+
+async function runAutomaticAlerts(){
+
+try{
+
+const username =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+if(!username){
+return;
+}
+
+/* =========================================
+   OBTENER MÉTRICAS USUARIO
+========================================= */
+
+const { data:metrics } = await sb
+.from("atomy_user_metrics")
+.select("*")
+.eq("user_id", username)
+.maybeSingle();
+
+if(!metrics){
+
+console.log("SIN METRICAS");
+
+return;
+
+}
+
+/* =========================================
+   CALCULAR COLOR CLICKS
+========================================= */
+
+let clicks =
+Number(metrics.clicks || 0);
+
+let semaforoColor = "rojo";
+
+if(clicks >= 31){
+
+semaforoColor = "verde";
+
+}else if(clicks >= 11){
+
+semaforoColor = "amarillo";
+
+}
+
+console.log(
+"COLOR CLICKS:",
+semaforoColor
+);
+
+/* =========================================
+   BUSCAR REGLAS
+========================================= */
+
+const { data:rules } = await sb
+.from("vek_alert_rules")
+.select("*")
+.eq("module","KPI Marketing")
+.eq("kpi_name","Clicks")
+.eq("semaforo_color", semaforoColor);
+
+if(!rules || rules.length === 0){
+
+console.log(
+"No existen reglas"
+);
+
+return;
+
+}
+
+/* =========================================
+   RECORRER REGLAS
+========================================= */
+
+for(const rule of rules){
+
+/* =========================================
+   EVITAR DUPLICADAS
+========================================= */
+
+const { data:existing } = await sb
+.from("vek_alerts")
+.select("*")
+.eq("username", username)
+.eq("title", rule.title)
+.eq("is_read", false);
+
+if(existing && existing.length){
+
+console.log(
+"Ya existe alerta:",
+rule.title
+);
+
+continue;
+
+}
+
+/* =========================================
+   CREAR ALERTA
+========================================= */
+
+const { error } = await sb
+.from("vek_alerts")
+.insert([{
+
+username: username,
+
+title: rule.title,
+
+message: rule.message,
+
+type: "automatic",
+
+is_read:false,
+
+created_at:new Date().toISOString()
+
+}]);
+
+if(error){
+
+console.log(error);
+
+continue;
+
+}
+
+console.log(
+"ALERTA CREADA:",
+rule.title
+);
+
+}
+
+}catch(error){
+
+console.log(
+"ERROR MOTOR ALERTAS",
+error
+);
+
+}
+
+}
+
 
 /* =========================
 ALERTAS VEK
