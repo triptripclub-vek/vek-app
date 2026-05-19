@@ -1958,6 +1958,40 @@ return;
 
 await saveAttributedRegistration(username);
 
+/* =========================
+CREAR METRICAS BASE
+========================= */
+
+await sb
+.from("atomy_user_metrics")
+.insert([{
+
+user_id: username,
+
+/* KPI MARKETING */
+
+clicks: 0,
+registros: 0,
+conversion: 0,
+
+/* RED ATOMY */
+
+pvp: 0,
+pvi: 0,
+pvd: 0,
+
+activos_izq: 0,
+activos_der: 0,
+
+patrocinados_personales: 0,
+
+created_at: new Date().toISOString(),
+updated_at: new Date().toISOString()
+
+}]);
+
+console.log("METRICAS BASE CREADAS");
+
 alert("Cuenta creada correctamente");
 
 /* Volver al login */
