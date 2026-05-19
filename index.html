@@ -3326,7 +3326,7 @@ const { data } = await sb
 
 if(!data || !data.length) return;
 
-const r = data[0];
+const r = data;
 
 for(let key in r){
 let el = document.getElementById("sem_"+key);
@@ -4417,11 +4417,20 @@ return;
 
 alert("Datos guardados correctamente");
 
-document.getElementById("atomy_pvp").value = "";
-document.getElementById("atomy_pvi").value = "";
-document.getElementById("atomy_pvd").value = "";
-document.getElementById("atomy_left").value = "";
-document.getElementById("atomy_right").value = "";
+document.getElementById("atomy_pvp").value =
+r.pvp ?? 0;
+
+document.getElementById("atomy_pvi").value =
+r.pvi ?? 0;
+
+document.getElementById("atomy_pvd").value =
+r.pvd ?? 0;
+
+document.getElementById("atomy_left").value =
+r.activos_izq ?? 0;
+
+document.getElementById("atomy_right").value =
+r.activos_der ?? 0;
 
 }
 
@@ -4790,47 +4799,23 @@ return loadAtomyMetrics();
 
 }
 
-if(!data || !data.length){
-
-document.getElementById("atomy_pvp").value = "";
-document.getElementById("atomy_pvi").value = "";
-document.getElementById("atomy_pvd").value = "";
-document.getElementById("atomy_left").value = "";
-document.getElementById("atomy_right").value = "";
-
-document.getElementById("gaugesContainer").innerHTML = "";
-
-document.getElementById("exp_quincena").innerText = "0";
-document.getElementById("exp_patrocinados").innerText = "0";
-document.getElementById("exp_pvp").innerText = "0";
-document.getElementById("exp_pvi").innerText = "0";
-document.getElementById("exp_pvd").innerText = "0";
-document.getElementById("exp_izquierda").innerText = "0";
-document.getElementById("exp_derecha").innerText = "0";
-document.getElementById("exp_avance").innerText = "0%";
-
-await loadUserExpectativas();
-
-return;
-
-}
 
 const r = data;
 
 document.getElementById("atomy_pvp").value =
-r.pvp || "";
+r.pvp ?? 0;
 
 document.getElementById("atomy_pvi").value =
-r.pvi || "";
+r.pvi ?? 0;
 
 document.getElementById("atomy_pvd").value =
-r.pvd || "";
+r.pvd ?? 0;
 
 document.getElementById("atomy_left").value =
-r.activos_izq || "";
+r.activos_izq ?? 0;
 
 document.getElementById("atomy_right").value =
-r.activos_der || "";
+r.activos_der ?? 0;
 
 await loadUserExpectativas();
 
