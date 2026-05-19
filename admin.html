@@ -730,6 +730,17 @@ Atomy Manager
 
 </button>
 
+<button class="menuBtn"
+onclick="showAlertsManager()">
+
+<i class="fas fa-bell"></i>
+
+<span class="menuText">
+Alertas
+</span>
+
+</button>
+
 
 <button class="menuBtn"><i class="fas fa-user"></i> <span class="menuText"> Editar perfil</span></button>
 
@@ -1215,6 +1226,125 @@ Guardar reglas
 
 </div>
 
+<!-- ALERTAS MANAGER -->
+
+<div id="alertsManagerModule"
+class="linkCard hidden">
+
+<h2 style="margin-bottom:20px;">
+🚨 Alertas Inteligentes
+</h2>
+
+<div style="
+background:#111827;
+padding:20px;
+border-radius:16px;
+margin-bottom:25px;
+">
+
+<h3 style="margin-bottom:15px;">
+Crear nueva alerta
+</h3>
+
+<label>Módulo</label>
+
+<select id="alert_module">
+
+<option value="KPI Marketing">
+KPI Marketing
+</option>
+
+<option value="Red Atomy">
+Red Atomy
+</option>
+
+</select>
+
+<label>KPI</label>
+
+<input
+id="alert_kpi"
+placeholder="Clicks, Registros, PVD..."
+>
+
+<label>Semáforo</label>
+
+<select id="alert_color">
+
+<option value="rojo">
+Rojo
+</option>
+
+<option value="amarillo">
+Amarillo
+</option>
+
+<option value="verde">
+Verde
+</option>
+
+</select>
+
+<label>Título alerta</label>
+
+<input
+id="alert_title"
+placeholder="Ej: Clicks bajos"
+>
+
+<label>Mensaje alerta</label>
+
+<textarea
+id="alert_message"
+style="
+width:100%;
+height:120px;
+padding:12px;
+border-radius:12px;
+margin-bottom:14px;
+"
+placeholder="Mensaje que verá el usuario..."
+></textarea>
+
+<label>Cooldown minutos</label>
+
+<input
+id="alert_cooldown"
+type="number"
+value="120"
+>
+
+<button
+class="blue"
+onclick="saveAlertRule()"
+>
+
+Guardar alerta
+
+</button>
+
+</div>
+
+<div style="
+background:#111827;
+padding:20px;
+border-radius:16px;
+">
+
+<h3 style="margin-bottom:20px;">
+Alertas configuradas
+</h3>
+
+<div id="alerts_list">
+
+Cargando alertas...
+
+</div>
+
+</div>
+
+</div>
+
 </section>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -1588,6 +1718,10 @@ document
 
 document
 .getElementById("atomyManagerModule")
+.classList.add("hidden");
+
+document
+.getElementById("alertsManagerModule")
 .classList.add("hidden");
 
 
@@ -2052,6 +2186,29 @@ document
 document
 .getElementById("atomyManagerModule")
 .classList.remove("hidden");
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
+}
+
+function showAlertsManager(){
+
+hideAllModules();
+
+/* OCULTAR LINK */
+document
+.getElementById("referralModule")
+.classList.add("hidden");
+
+/* MOSTRAR ALERTAS */
+document
+.getElementById("alertsManagerModule")
+.classList.remove("hidden");
+
+/* CARGAR ALERTAS */
+loadAlertRules();
 
 if(window.innerWidth <= 900){
 closeSidebar();
@@ -3078,7 +3235,160 @@ derecha.toLocaleString();
 
 }
 
+/* =========================================
+   ALERT RULES
+========================================= */
 
+async function saveAlertRule(){
+
+const module =
+document.getElementById("alert_module").value;
+
+const kpi =
+document.getElementById("alert_kpi").value;
+
+const color =
+document.getElementById("alert_color").value;
+
+const title =
+document.getElementById("alert_title").value;
+
+const message =
+document.getElementById("alert_message").value;
+
+const cooldown =
+Number(
+document.getElementById("alert_cooldown").value || 120
+);
+
+if(!kpi || !title || !message){
+
+alert("Completa todos los campos");
+
+return;
+
+}
+
+const { error } = await sb
+.from("vek_alert_rules")
+.insert([{
+
+module: module,
+kpi_name: kpi,
+semaforo_color: color,
+title: title,
+message: message,
+cooldown_minutes: cooldown
+
+}]);
+
+if(error){
+
+console.log(error);
+
+alert("Error guardando alerta");
+
+return;
+
+}
+
+alert("Alerta creada correctamente");
+
+loadAlertRules();
+
+}
+
+/* =========================================
+   LOAD ALERT RULES
+========================================= */
+
+async function loadAlertRules(){
+
+const container =
+document.getElementById("alerts_list");
+
+container.innerHTML =
+"Cargando alertas...";
+
+const { data, error } = await sb
+.from("vek_alert_rules")
+.select("*")
+.order("created_at",{ascending:false});
+
+if(error){
+
+console.log(error);
+
+container.innerHTML =
+"Error cargando alertas";
+
+return;
+
+}
+
+if(!data || data.length===0){
+
+container.innerHTML =
+"No hay alertas";
+
+return;
+
+}
+
+container.innerHTML = "";
+
+data.forEach(rule=>{
+
+container.innerHTML += `
+
+<div style="
+background:#1f2937;
+padding:16px;
+border-radius:14px;
+margin-bottom:14px;
+">
+
+<h4 style="
+margin-bottom:10px;
+font-size:18px;
+">
+
+${rule.title}
+
+</h4>
+
+<p style="
+margin-bottom:12px;
+line-height:1.5;
+">
+
+${rule.message}
+
+</p>
+
+<div style="
+font-size:13px;
+color:#9ca3af;
+">
+
+${rule.module}
+|
+${rule.kpi_name}
+|
+${rule.semaforo_color}
+|
+Cooldown:
+${rule.cooldown_minutes} min
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
 
 saveUsers();
 
