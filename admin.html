@@ -1494,21 +1494,42 @@ return;
 }catch(e){}
 
 /* Insertar */
-const { error } = await sb
-.from("users")
+let response;
+
+if(window.editingAlertId){
+
+response = await sb
+.from("vek_alert_rules")
+.update({
+
+module: module,
+kpi_name: kpi,
+semaforo_color: color,
+title: title,
+message: message,
+cooldown_minutes: cooldown
+
+})
+.eq("id", window.editingAlertId);
+
+}else{
+
+response = await sb
+.from("vek_alert_rules")
 .insert([{
-username: username,
-password: password,
-nombre: nombre,
-email: email,
-telefono: telefono,
-pais: pais,
-sponsor: sponsor,
-whatsapp: telefono,
-status: "Activo",
-created_at: new Date().toISOString()
+
+module: module,
+kpi_name: kpi,
+semaforo_color: color,
+title: title,
+message: message,
+cooldown_minutes: cooldown
+
 }]);
 
+}
+
+const { error } = response;
 if(error){
 alert("Error al registrar: " + error.message);
 return;
@@ -3294,6 +3315,8 @@ return;
 
 alert("Alerta creada correctamente");
 
+window.editingAlertId = null;
+
 loadAlertRules();
 
 }
@@ -3369,6 +3392,7 @@ ${rule.message}
 <div style="
 font-size:13px;
 color:#9ca3af;
+margin-bottom:14px;
 ">
 
 ${rule.module}
@@ -3382,10 +3406,139 @@ ${rule.cooldown_minutes} min
 
 </div>
 
+<div style="
+display:flex;
+gap:10px;
+">
+
+<button
+onclick="editAlertRule('${rule.id}')"
+style="
+flex:1;
+background:#2563eb;
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+"
+>
+
+Editar
+
+</button>
+
+<button
+onclick="deleteAlertRule('${rule.id}')"
+style="
+flex:1;
+background:#ef4444;
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+"
+>
+
+Eliminar
+
+</button>
+
+</div>
+
 </div>
 
 `;
 
+
+});
+
+}
+
+/* =========================================
+   DELETE ALERT
+========================================= */
+
+async function deleteAlertRule(id){
+
+const ok =
+confirm("¿Eliminar alerta?");
+
+if(!ok) return;
+
+const { error } = await sb
+.from("vek_alert_rules")
+.delete()
+.eq("id", id);
+
+if(error){
+
+console.log(error);
+
+alert("Error eliminando");
+
+return;
+
+}
+
+alert("Alerta eliminada");
+
+loadAlertRules();
+
+}
+
+/* =========================================
+   EDIT ALERT
+========================================= */
+
+async function editAlertRule(id){
+
+const { data, error } = await sb
+.from("vek_alert_rules")
+.select("*")
+.eq("id", id)
+.single();
+
+if(error || !data){
+
+alert("No se pudo cargar alerta");
+
+return;
+
+}
+
+/* LLENAR FORMULARIO */
+
+document.getElementById("alert_module").value =
+data.module;
+
+document.getElementById("alert_kpi").value =
+data.kpi_name;
+
+document.getElementById("alert_color").value =
+data.semaforo_color;
+
+document.getElementById("alert_title").value =
+data.title;
+
+document.getElementById("alert_message").value =
+data.message;
+
+document.getElementById("alert_cooldown").value =
+data.cooldown_minutes;
+
+/* ACTIVAR MODO EDICION */
+
+window.editingAlertId = id;
+
+/* SUBIR ARRIBA */
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
 });
 
 }
