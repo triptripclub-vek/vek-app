@@ -4752,6 +4752,50 @@ const { data, error } = await sb
 .eq("user_id", user)
 .limit(1);
 
+/* SI NO EXISTEN METRICAS -> CREARLAS */
+
+if(error || !data || data.length === 0){
+
+console.log("CREANDO METRICAS AUTOMATICAS");
+
+const { error:createError } = await sb
+.from('atomy_user_metrics')
+.insert([{
+
+user_id:user,
+
+/* RED ATOMY */
+
+pvp:0,
+pvi:0,
+pvd:0,
+
+activos_izq:0,
+activos_der:0,
+patrocinados_personales:0,
+
+/* KPI MARKETING */
+
+clicks:0,
+registros:0,
+conversiones:0
+
+}]);
+
+if(createError){
+
+console.log("ERROR CREANDO METRICAS", createError);
+
+return;
+
+}
+
+/* RECARGAR */
+
+return loadAtomyMetrics();
+
+}
+
 if(error){
 
 console.log(error);
