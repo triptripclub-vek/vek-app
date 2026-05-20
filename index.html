@@ -4090,6 +4090,7 @@ const { data, error } = await sb
 .select("*")
 .eq("username", username)
 .eq("is_read", false)
+.neq("type", "pending_registration")
 .order("created_at", { ascending:true })
 .limit(1);
 
