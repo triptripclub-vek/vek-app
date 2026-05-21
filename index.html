@@ -914,6 +914,12 @@ border-radius:50%;
 position:absolute;
 }
 
+#academyCourseView > div:nth-child(3){
+
+grid-template-columns:1fr !important;
+
+}
+
 .gaugeNum{
 position:relative;
 z-index:2;
@@ -1479,6 +1485,77 @@ Guardar Semáforo
 <div id="academyCoursesUser">
 
 Cargando cursos...
+
+</div>
+
+</div>
+
+<!-- VIEW CURSO -->
+
+<div
+id="academyCourseView"
+class="hidden">
+
+<button
+onclick="backToAcademyCourses()"
+style="
+margin-bottom:20px;
+background:#334155;
+color:white;
+border:none;
+padding:12px 18px;
+border-radius:12px;
+cursor:pointer;
+">
+
+← Volver
+
+</button>
+
+<div
+id="academyCourseHeader"
+style="
+margin-bottom:25px;
+">
+</div>
+
+<div
+style="
+display:grid;
+grid-template-columns:320px 1fr;
+gap:20px;
+align-items:start;
+">
+
+<!-- SIDEBAR MODULOS -->
+
+<div
+id="academyModulesList"
+style="
+background:#0f172a;
+padding:18px;
+border-radius:18px;
+color:white;
+">
+
+Cargando módulos...
+
+</div>
+
+<!-- CONTENIDO CLASE -->
+
+<div
+id="academyClassContent"
+style="
+background:white;
+padding:25px;
+border-radius:18px;
+min-height:400px;
+">
+
+Selecciona una clase
+
+</div>
 
 </div>
 
@@ -6040,6 +6117,392 @@ Entrar al curso
 `;
 
 }
+
+}
+
+
+/* =========================================
+OPEN COURSE USER
+========================================= */
+
+async function openCourseUser(courseId){
+
+document
+.getElementById("academyCoursesUser")
+.classList.add("hidden");
+
+document
+.getElementById("academyCourseView")
+.classList.remove("hidden");
+
+/* =========================
+CURSO
+========================= */
+
+const { data:course } = await sb
+.from("academy_courses")
+.select("*")
+.eq("id", courseId)
+.single();
+
+if(course){
+
+document
+.getElementById("academyCourseHeader")
+.innerHTML = `
+
+<div style="
+background:#0f172a;
+color:white;
+padding:25px;
+border-radius:18px;
+">
+
+${course.thumbnail_url ? `
+
+<img
+src="${course.thumbnail_url}"
+style="
+width:100%;
+max-height:260px;
+object-fit:cover;
+border-radius:14px;
+margin-bottom:18px;
+">
+
+` : ""}
+
+<h2 style="
+font-size:34px;
+margin-bottom:10px;
+">
+${course.title}
+</h2>
+
+<p style="
+opacity:.9;
+line-height:1.6;
+">
+${course.description || ""}
+</p>
+
+</div>
+
+`;
+
+}
+
+/* =========================
+MODULOS
+========================= */
+
+loadModulesUser(courseId);
+
+}
+
+/* =========================================
+LOAD MODULES USER
+========================================= */
+
+async function loadModulesUser(courseId){
+
+const container =
+document.getElementById(
+"academyModulesList"
+);
+
+container.innerHTML =
+"Cargando módulos...";
+
+const { data, error } = await sb
+.from("academy_modules")
+.select("*")
+.eq("course_id", courseId)
+.order("sort_order", {
+ascending:true
+});
+
+if(error){
+
+console.log(error);
+
+container.innerHTML =
+"Error cargando módulos";
+
+return;
+
+}
+
+if(!data || data.length === 0){
+
+container.innerHTML =
+"No hay módulos";
+
+return;
+
+}
+
+container.innerHTML = "";
+
+for(const mod of data){
+
+container.innerHTML += `
+
+<div style="
+margin-bottom:20px;
+">
+
+<div style="
+font-weight:bold;
+font-size:18px;
+margin-bottom:12px;
+padding-bottom:10px;
+border-bottom:1px solid rgba(255,255,255,.12);
+">
+
+📚 ${mod.title}
+
+</div>
+
+<div id="module_classes_${mod.id}">
+
+Cargando clases...
+
+</div>
+
+</div>
+
+`;
+
+await loadClassesUser(mod.id);
+
+}
+
+}
+
+/* =========================================
+LOAD CLASSES USER
+========================================= */
+
+async function loadClassesUser(moduleId){
+
+const container =
+document.getElementById(
+"module_classes_" + moduleId
+);
+
+const { data, error } = await sb
+.from("academy_lessons")
+.select("*")
+.eq("module_id", moduleId)
+.eq("published", true)
+.order("lesson_order", {
+ascending:true
+});
+
+if(error){
+
+console.log(error);
+
+container.innerHTML =
+"Error cargando clases";
+
+return;
+
+}
+
+if(!data || data.length === 0){
+
+container.innerHTML =
+"Sin clases";
+
+return;
+
+}
+
+container.innerHTML = "";
+
+for(const cls of data){
+
+container.innerHTML += `
+
+<button
+onclick="openClassUser('${cls.id}')"
+style="
+width:100%;
+text-align:left;
+padding:14px;
+border:none;
+border-radius:12px;
+margin-bottom:10px;
+background:#1e293b;
+color:white;
+cursor:pointer;
+font-size:15px;
+">
+
+▶ ${cls.title}
+
+</button>
+
+`;
+
+}
+
+}
+
+/* =========================================
+OPEN CLASS USER
+========================================= */
+
+async function openClassUser(classId){
+
+const container =
+document.getElementById(
+"academyClassContent"
+);
+
+container.innerHTML =
+"Cargando clase...";
+
+const { data, error } = await sb
+.from("academy_lessons")
+.select("*")
+.eq("id", classId)
+.single();
+
+if(error || !data){
+
+container.innerHTML =
+"Error cargando clase";
+
+return;
+
+}
+
+const cls = data;
+
+container.innerHTML = `
+
+<h2 style="
+font-size:32px;
+margin-bottom:18px;
+">
+${cls.title}
+</h2>
+
+${cls.video_url ? `
+
+<div style="
+margin-bottom:25px;
+">
+
+<iframe
+src="${cls.video_url}"
+style="
+width:100%;
+height:420px;
+border:none;
+border-radius:18px;
+"
+allowfullscreen>
+</iframe>
+
+</div>
+
+` : ""}
+
+${cls.image_url ? `
+
+<img
+src="${cls.image_url}"
+style="
+width:100%;
+border-radius:18px;
+margin-bottom:20px;
+">
+
+` : ""}
+
+${cls.content ? `
+
+<div style="
+line-height:1.8;
+font-size:17px;
+margin-bottom:25px;
+white-space:pre-wrap;
+">
+
+${cls.content}
+
+</div>
+
+` : ""}
+
+${cls.pdf_url ? `
+
+<a
+href="${cls.pdf_url}"
+target="_blank"
+style="
+display:inline-block;
+background:#2563eb;
+color:white;
+padding:14px 20px;
+border-radius:12px;
+text-decoration:none;
+font-weight:bold;
+margin-bottom:20px;
+">
+
+📄 Abrir PDF
+
+</a>
+
+` : ""}
+
+${cls.external_link ? `
+
+<div style="margin-top:20px;">
+
+<a
+href="${cls.external_link}"
+target="_blank"
+style="
+display:inline-block;
+background:#16a34a;
+color:white;
+padding:14px 20px;
+border-radius:12px;
+text-decoration:none;
+font-weight:bold;
+">
+
+🔗 Abrir enlace
+
+</a>
+
+</div>
+
+` : ""}
+
+`;
+
+}
+
+/* =========================================
+BACK TO COURSES
+========================================= */
+
+function backToAcademyCourses(){
+
+document
+.getElementById("academyCourseView")
+.classList.add("hidden");
+
+document
+.getElementById("academyCoursesUser")
+.classList.remove("hidden");
 
 }
 
