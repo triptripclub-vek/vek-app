@@ -4127,6 +4127,45 @@ ${module.description || ""}
 
 </div>
 
+<div style="
+display:flex;
+gap:10px;
+">
+
+<button
+onclick="editModule('${module.id}')"
+style="
+flex:1;
+background:#2563eb;
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+"
+>
+Editar
+</button>
+
+<button
+onclick="deleteModule('${module.id}')"
+style="
+flex:1;
+background:#ef4444;
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+"
+>
+Eliminar
+</button>
+
+</div>
+
 </div>
 
 `;
@@ -4151,7 +4190,23 @@ return;
 
 }
 
-const { error } = await sb
+let response;
+
+if(editingModuleId){
+
+response = await sb
+.from("academy_modules")
+.update({
+
+title:title,
+description:description
+
+})
+.eq("id", editingModuleId);
+
+}else{
+
+response = await sb
 .from("academy_modules")
 .insert([{
 
@@ -4160,6 +4215,10 @@ title:title,
 description:description
 
 }]);
+
+}
+
+const error = response.error;
 
 if(error){
 
@@ -4175,6 +4234,67 @@ alert("Módulo creado correctamente");
 
 document.getElementById("module_title").value = "";
 document.getElementById("module_description").value = "";
+
+editingModuleId = null;
+
+loadCourseModules();
+
+}
+
+async function editModule(id){
+
+const { data, error } = await sb
+.from("academy_modules")
+.select("*")
+.eq("id", id)
+.single();
+
+if(error){
+
+console.log(error);
+
+alert("Error cargando módulo");
+
+return;
+
+}
+
+editingModuleId = id;
+
+document.getElementById("module_title").value =
+data.title || "";
+
+document.getElementById("module_description").value =
+data.description || "";
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+async function deleteModule(id){
+
+const ok =
+confirm("¿Eliminar módulo?");
+
+if(!ok) return;
+
+const { error } = await sb
+.from("academy_modules")
+.delete()
+.eq("id", id);
+
+if(error){
+
+console.log(error);
+
+alert("Error eliminando módulo");
+
+return;
+
+}
 
 loadCourseModules();
 
