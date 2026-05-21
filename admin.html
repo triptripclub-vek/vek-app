@@ -1470,6 +1470,8 @@ const SUPABASE_URL = "https://fztcpxdlakbregupsush.supabase.co";
 const SUPABASE_KEY = "sb_publishable_aq7SNHs2gTQbV9OuD9D50Q_V6CFl8eJ";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+let editingCourseId = null;
+
 /* =========================================
    RESPALDO LOCAL
 ========================================= */
@@ -3706,7 +3708,26 @@ return;
 
 }
 
-const { error } = await sb
+let response;
+
+if(editingCourseId){
+
+response = await sb
+.from("academy_courses")
+.update({
+
+title:title,
+description:description,
+instructor:instructor,
+category:category,
+cover_image:cover
+
+})
+.eq("id", editingCourseId);
+
+}else{
+
+response = await sb
 .from("academy_courses")
 .insert([{
 
@@ -3717,6 +3738,10 @@ category:category,
 cover_image:cover
 
 }]);
+
+}
+
+const error = response.error;
 
 if(error){
 
@@ -3737,6 +3762,7 @@ document.getElementById("academy_description").value = "";
 document.getElementById("academy_instructor").value = "";
 document.getElementById("academy_category").value = "";
 document.getElementById("academy_cover").value = "";
+editingCourseId = null;
 
 loadAcademyCourses();
 
@@ -3779,6 +3805,7 @@ return;
 }
 
 container.innerHTML = "";
+
 
 data.forEach(course=>{
 
@@ -3826,11 +3853,118 @@ ${course.category || "General"}
 
 </div>
 
+<div style="
+display:flex;
+gap:10px;
+">
+
+<button
+onclick="editCourse('${course.id}')"
+style="
+flex:1;
+background:#2563eb;
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+"
+>
+Editar
+</button>
+
+<button
+onclick="deleteCourse('${course.id}')"
+style="
+flex:1;
+background:#ef4444;
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+"
+>
+Eliminar
+</button>
+
+</div>
+
 </div>
 
 `;
 
 });
+
+}
+
+async function editCourse(id){
+
+const { data, error } = await sb
+.from("academy_courses")
+.select("*")
+.eq("id", id)
+.single();
+
+if(error){
+
+console.log(error);
+
+alert("Error cargando curso");
+
+return;
+
+}
+
+editingCourseId = id;
+
+document.getElementById("academy_title").value =
+data.title || "";
+
+document.getElementById("academy_description").value =
+data.description || "";
+
+document.getElementById("academy_instructor").value =
+data.instructor || "";
+
+document.getElementById("academy_category").value =
+data.category || "";
+
+document.getElementById("academy_cover").value =
+data.cover_image || "";
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+async function deleteCourse(id){
+
+const ok =
+confirm("¿Eliminar curso?");
+
+if(!ok) return;
+
+const { error } = await sb
+.from("academy_courses")
+.delete()
+.eq("id", id);
+
+if(error){
+
+console.log(error);
+
+alert("Error eliminando curso");
+
+return;
+
+}
+
+loadAcademyCourses();
 
 }
 
