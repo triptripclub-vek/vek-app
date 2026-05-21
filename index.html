@@ -6385,6 +6385,7 @@ let videoUrl = "";
 
 if(cls.video_url){
 
+// YOUTUBE NORMAL
 if(cls.video_url.includes("watch?v=")){
 
 const videoId =
@@ -6395,13 +6396,38 @@ cls.video_url
 videoUrl =
 `https://www.youtube.com/embed/${videoId}`;
 
-}else{
+}
+
+// YOUTU.BE
+else if(cls.video_url.includes("youtu.be/")){
+
+const videoId =
+cls.video_url
+.split("youtu.be/")[1]
+.split("?")[0]
+.split("&")[0];
+
+videoUrl =
+`https://www.youtube.com/embed/${videoId}`;
+
+}
+
+// YA EMBED
+else if(cls.video_url.includes("/embed/")){
+
+videoUrl = cls.video_url;
+
+}
+
+// MP4 DIRECTO
+else if(cls.video_url.includes(".mp4")){
 
 videoUrl = cls.video_url;
 
 }
 
 }
+
 container.innerHTML = `
 
 <h2 style="
@@ -6411,14 +6437,37 @@ margin-bottom:18px;
 ${cls.title}
 </h2>
 
-${cls.video_url ? `
+${videoUrl ? `
 
 <div style="
 margin-bottom:25px;
 ">
 
+${videoUrl.includes("youtube") ? `
+
 <iframe
 src="${videoUrl}"
+style="
+width:100%;
+height:420px;
+border:none;
+border-radius:18px;
+"
+allowfullscreen>
+</iframe>
+
+` : `
+
+<video
+src="${videoUrl}"
+controls
+style="
+width:100%;
+border-radius:18px;
+">
+</video>
+
+`}
 style="
 width:100%;
 height:420px;
