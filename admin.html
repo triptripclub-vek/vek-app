@@ -1452,6 +1452,82 @@ Cargando cursos...
 
 </div>
 
+<!-- ===================================================== -->
+<!-- COURSE MODULES MANAGER -->
+<!-- ===================================================== -->
+
+<div id="courseModulesPanel"
+class="linkCard hidden"
+style="margin-top:20px;">
+
+<h2 style="margin-bottom:20px;">
+📚 Gestión de módulos
+</h2>
+
+<div style="
+background:#111827;
+padding:20px;
+border-radius:16px;
+margin-bottom:25px;
+">
+
+<h3 style="margin-bottom:20px;">
+Crear módulo
+</h3>
+
+<label>Título módulo</label>
+
+<input
+id="module_title"
+placeholder="Ej: Introducción"
+>
+
+<label>Descripción módulo</label>
+
+<textarea
+id="module_description"
+style="
+width:100%;
+height:120px;
+padding:12px;
+border-radius:12px;
+margin-bottom:14px;
+"
+placeholder="Descripción del módulo..."
+></textarea>
+
+<button
+class="blue"
+onclick="saveCourseModule()"
+>
+
+Guardar módulo
+
+</button>
+
+</div>
+
+<div style="
+background:#111827;
+padding:20px;
+border-radius:16px;
+">
+
+<h3 style="margin-bottom:20px;">
+Módulos creados
+</h3>
+
+<div id="course_modules_list">
+
+No hay módulos
+
+</div>
+
+</div>
+
+</div>
+
+
 </section>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -1471,6 +1547,10 @@ const SUPABASE_KEY = "sb_publishable_aq7SNHs2gTQbV9OuD9D50Q_V6CFl8eJ";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let editingCourseId = null;
+
+let currentCourseModules = null;
+
+let editingModuleId = null;
 
 /* =========================================
    RESPALDO LOCAL
@@ -1856,6 +1936,10 @@ document
 
 document
 .getElementById("academyManagerModule")
+.classList.add("hidden");
+
+document
+.getElementById("courseModulesPanel")
 .classList.add("hidden");
 
 
@@ -3875,6 +3959,22 @@ Editar
 </button>
 
 <button
+onclick="openCourseModules('${course.id}')"
+style="
+flex:1;
+background:#22c55e;
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+"
+>
+Módulos
+</button>
+
+<button
 onclick="deleteCourse('${course.id}')"
 style="
 flex:1;
@@ -3939,6 +4039,144 @@ window.scrollTo({
 top:0,
 behavior:"smooth"
 });
+
+}
+
+function openCourseModules(courseId){
+
+currentCourseModules = courseId;
+
+hideAllModules();
+
+document
+.getElementById("courseModulesPanel")
+.classList.remove("hidden");
+
+loadCourseModules();
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+async function loadCourseModules(){
+
+const container =
+document.getElementById("course_modules_list");
+
+container.innerHTML =
+"Cargando módulos...";
+
+const { data, error } = await sb
+.from("academy_modules")
+.select("*")
+.eq("course_id", currentCourseModules)
+.order("created_at",{ascending:true});
+
+if(error){
+
+console.log(error);
+
+container.innerHTML =
+"Error cargando módulos";
+
+return;
+
+}
+
+if(!data || data.length===0){
+
+container.innerHTML =
+"No hay módulos";
+
+return;
+
+}
+
+container.innerHTML = "";
+
+data.forEach(module=>{
+
+container.innerHTML += `
+
+<div style="
+background:#1f2937;
+padding:16px;
+border-radius:14px;
+margin-bottom:14px;
+">
+
+<div style="
+font-size:18px;
+font-weight:bold;
+margin-bottom:10px;
+">
+
+${module.title}
+
+</div>
+
+<div style="
+line-height:1.5;
+margin-bottom:12px;
+">
+
+${module.description || ""}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+async function saveCourseModule(){
+
+const title =
+document.getElementById("module_title").value;
+
+const description =
+document.getElementById("module_description").value;
+
+if(!title){
+
+alert("Ingresa título");
+
+return;
+
+}
+
+const { error } = await sb
+.from("academy_modules")
+.insert([{
+
+course_id: currentCourseModules,
+title:title,
+description:description
+
+}]);
+
+if(error){
+
+console.log(error);
+
+alert("Error guardando módulo");
+
+return;
+
+}
+
+alert("Módulo creado correctamente");
+
+document.getElementById("module_title").value = "";
+document.getElementById("module_description").value = "";
+
+loadCourseModules();
 
 }
 
