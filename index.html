@@ -6381,21 +6381,27 @@ return;
 }
 
 const cls = data;
-let videoUrl = cls.video_url || "";
+let videoUrl = "";
 
-if(videoUrl.includes("watch?v=")){
+if(cls.video_url){
+
+if(cls.video_url.includes("watch?v=")){
+
+const videoId =
+cls.video_url
+.split("watch?v=")[1]
+.split("&")[0];
 
 videoUrl =
-videoUrl.replace(
-"watch?v=",
-"embed/"
-);
+`https://www.youtube.com/embed/${videoId}`;
 
-videoUrl =
-videoUrl.split("&")[0];
+}else{
+
+videoUrl = cls.video_url;
 
 }
 
+}
 container.innerHTML = `
 
 <h2 style="
