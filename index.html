@@ -1468,6 +1468,22 @@ Guardar Semáforo
 </div>
 </div>
 
+<!-- ACADEMY USER -->
+
+<div id="academyUserModule" class="linkCard hidden">
+
+<h2 style="margin-bottom:20px;">
+🎓 VEK Network Academy
+</h2>
+
+<div id="academyCoursesUser">
+
+Cargando cursos...
+
+</div>
+
+</div>
+
 <!-- REGISTER MODULE -->
 
 <div
@@ -2926,7 +2942,8 @@ const modules = [
 "registerModule",
 "sponsoredModule",
 "kpiManagerModule",
-"socialManagerModule"
+"socialManagerModule",
+"academyUserModule"
 
 ];
 
@@ -3020,13 +3037,20 @@ closeSidebar();
 
 }
 
-function openAcademy(){
+async function openAcademy(){
+
+hideAllModules();
+
+document
+.getElementById("academyUserModule")
+.classList.remove("hidden");
+
+await loadAcademyCoursesUser();
 
 if(window.innerWidth <= 900){
 closeSidebar();
 }
 
-window.open("https://triptripclub.systeme.io/31529e03","_blank");
 }
 
 async function loadHistory(){
@@ -5913,6 +5937,107 @@ if(userData && userData.length){
 openDashboard(
 userData[0].username
 );
+
+}
+
+}
+
+/* =========================================
+ACADEMY USER
+========================================= */
+
+async function loadAcademyCoursesUser(){
+
+const container =
+document.getElementById(
+"academyCoursesUser"
+);
+
+container.innerHTML =
+"Cargando cursos...";
+
+const { data, error } = await sb
+.from("academy_courses")
+.select("*")
+.eq("published", true)
+.order("created_at", {
+ascending:false
+});
+
+if(error){
+
+console.log(error);
+
+container.innerHTML =
+"Error cargando cursos";
+
+return;
+
+}
+
+if(!data || data.length === 0){
+
+container.innerHTML =
+"No hay cursos disponibles";
+
+return;
+
+}
+
+container.innerHTML = "";
+
+for(const course of data){
+
+container.innerHTML += `
+
+<div style="
+background:#0f172a;
+color:white;
+padding:20px;
+border-radius:18px;
+margin-bottom:18px;
+">
+
+${course.thumbnail_url ? `
+
+<img
+src="${course.thumbnail_url}"
+style="
+width:100%;
+border-radius:14px;
+margin-bottom:14px;
+max-height:220px;
+object-fit:cover;
+">
+
+` : ""}
+
+<h3 style="
+font-size:24px;
+margin-bottom:10px;
+">
+${course.title}
+</h3>
+
+<p style="
+opacity:.85;
+line-height:1.5;
+margin-bottom:18px;
+">
+${course.description || ""}
+</p>
+
+<button
+class="copyBtn"
+onclick="openCourseUser('${course.id}')">
+
+Entrar al curso
+
+</button>
+
+</div>
+
+`;
 
 }
 
