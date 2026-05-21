@@ -1527,6 +1527,145 @@ No hay módulos
 
 </div>
 
+<!-- ===================================================== -->
+<!-- LESSONS MANAGER -->
+<!-- ===================================================== -->
+
+<div id="moduleLessonsPanel"
+class="linkCard hidden"
+style="margin-top:20px;">
+
+<h2 style="margin-bottom:20px;">
+🎬 Gestión de clases
+</h2>
+
+<div style="
+background:#111827;
+padding:20px;
+border-radius:16px;
+margin-bottom:25px;
+">
+
+<h3 style="margin-bottom:20px;">
+Crear clase
+</h3>
+
+<label>Título clase</label>
+
+<input
+id="lesson_title"
+placeholder="Ej: Bienvenida"
+>
+
+<label>Descripción clase</label>
+
+<textarea
+id="lesson_description"
+style="
+width:100%;
+height:100px;
+padding:12px;
+border-radius:12px;
+margin-bottom:14px;
+"
+placeholder="Descripción..."
+></textarea>
+
+<label>Video URL</label>
+
+<input
+id="lesson_video"
+placeholder="https://youtube.com/..."
+>
+
+<label>PDF URL</label>
+
+<input
+id="lesson_pdf"
+placeholder="https://..."
+>
+
+<label>Imagen URL</label>
+
+<input
+id="lesson_image"
+placeholder="https://..."
+>
+
+<label>Enlace externo</label>
+
+<input
+id="lesson_link"
+placeholder="https://..."
+>
+
+<label>Texto clase</label>
+
+<textarea
+id="lesson_content"
+style="
+width:100%;
+height:180px;
+padding:12px;
+border-radius:12px;
+margin-bottom:14px;
+"
+placeholder="Contenido de la clase..."
+></textarea>
+
+<label>Duración</label>
+
+<input
+id="lesson_duration"
+placeholder="Ej: 15 min"
+>
+
+<label>Orden</label>
+
+<input
+id="lesson_order"
+type="number"
+placeholder="1"
+>
+
+<label>Publicado</label>
+
+<select id="lesson_published">
+<option value="true">Sí</option>
+<option value="false">No</option>
+</select>
+
+<button
+class="blue"
+onclick="saveLesson()"
+>
+
+Guardar clase
+
+</button>
+
+</div>
+
+<div style="
+background:#111827;
+padding:20px;
+border-radius:16px;
+">
+
+<h3 style="margin-bottom:20px;">
+Clases creadas
+</h3>
+
+<div id="module_lessons_list">
+
+No hay clases
+
+</div>
+
+</div>
+
+</div>
+
 
 </section>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1551,6 +1690,10 @@ let editingCourseId = null;
 let currentCourseModules = null;
 
 let editingModuleId = null;
+
+let currentModuleLessons = null;
+
+let editingLessonId = null;
 
 /* =========================================
    RESPALDO LOCAL
@@ -1940,6 +2083,10 @@ document
 
 document
 .getElementById("courseModulesPanel")
+.classList.add("hidden");
+
+document
+.getElementById("moduleLessonsPanel")
 .classList.add("hidden");
 
 
@@ -4132,6 +4279,8 @@ display:flex;
 gap:10px;
 ">
 
+
+
 <button
 onclick="editModule('${module.id}')"
 style="
@@ -4146,6 +4295,22 @@ cursor:pointer;
 "
 >
 Editar
+</button>
+
+<button
+onclick="openModuleLessons('${module.id}')"
+style="
+flex:1;
+background:#22c55e;
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+"
+>
+Clases
 </button>
 
 <button
@@ -4271,6 +4436,364 @@ window.scrollTo({
 top:0,
 behavior:"smooth"
 });
+
+}
+
+function openModuleLessons(moduleId){
+
+currentModuleLessons = moduleId;
+
+hideAllModules();
+
+document
+.getElementById("moduleLessonsPanel")
+.classList.remove("hidden");
+
+loadLessons();
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+async function loadLessons(){
+
+const container =
+document.getElementById("module_lessons_list");
+
+container.innerHTML =
+"Cargando clases...";
+
+const { data, error } = await sb
+.from("academy_lessons")
+.select("*")
+.eq("module_id", currentModuleLessons)
+.order("lesson_order",{ascending:true});
+
+if(error){
+
+console.log(error);
+
+container.innerHTML =
+"Error cargando clases";
+
+return;
+
+}
+
+if(!data || data.length===0){
+
+container.innerHTML =
+"No hay clases";
+
+return;
+
+}
+
+container.innerHTML = "";
+
+data.forEach(lesson=>{
+
+container.innerHTML += `
+
+<div style="
+background:#1f2937;
+padding:16px;
+border-radius:14px;
+margin-bottom:14px;
+">
+
+<div style="
+font-size:18px;
+font-weight:bold;
+margin-bottom:10px;
+">
+
+${lesson.title}
+
+</div>
+
+<div style="
+margin-bottom:12px;
+line-height:1.5;
+">
+
+${lesson.description || ""}
+
+</div>
+
+<div style="
+font-size:13px;
+color:#9ca3af;
+margin-bottom:12px;
+">
+
+Duración:
+${lesson.duration || "No definida"}
+
+<br>
+
+Orden:
+${lesson.lesson_order || 0}
+
+</div>
+
+<div style="
+display:flex;
+gap:10px;
+">
+
+<button
+onclick="editLesson('${lesson.id}')"
+style="
+flex:1;
+background:#2563eb;
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+"
+>
+Editar
+</button>
+
+<button
+onclick="deleteLesson('${lesson.id}')"
+style="
+flex:1;
+background:#ef4444;
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+"
+>
+Eliminar
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+async function saveLesson(){
+
+const title =
+document.getElementById("lesson_title").value;
+
+const description =
+document.getElementById("lesson_description").value;
+
+const video =
+document.getElementById("lesson_video").value;
+
+const pdf =
+document.getElementById("lesson_pdf").value;
+
+const image =
+document.getElementById("lesson_image").value;
+
+const link =
+document.getElementById("lesson_link").value;
+
+const content =
+document.getElementById("lesson_content").value;
+
+const duration =
+document.getElementById("lesson_duration").value;
+
+const order =
+Number(
+document.getElementById("lesson_order").value || 0
+);
+
+const published =
+document.getElementById("lesson_published").value === "true";
+
+if(!title){
+
+alert("Ingresa título");
+
+return;
+
+}
+
+let response;
+
+/* EDITAR */
+
+if(editingLessonId){
+
+response = await sb
+.from("academy_lessons")
+.update({
+
+title:title,
+description:description,
+video_url:video,
+pdf_url:pdf,
+image_url:image,
+external_link:link,
+content:content,
+duration:duration,
+lesson_order:order,
+published:published
+
+})
+.eq("id", editingLessonId);
+
+}
+
+/* CREAR */
+
+else{
+
+response = await sb
+.from("academy_lessons")
+.insert([{
+
+module_id: currentModuleLessons,
+title:title,
+description:description,
+video_url:video,
+pdf_url:pdf,
+image_url:image,
+external_link:link,
+content:content,
+duration:duration,
+lesson_order:order,
+published:published
+
+}]);
+
+}
+
+const error = response.error;
+
+if(error){
+
+console.log(error);
+
+alert("Error guardando clase");
+
+return;
+
+}
+
+alert("Clase guardada correctamente");
+
+/* LIMPIAR FORM */
+
+document.getElementById("lesson_title").value = "";
+document.getElementById("lesson_description").value = "";
+document.getElementById("lesson_video").value = "";
+document.getElementById("lesson_pdf").value = "";
+document.getElementById("lesson_image").value = "";
+document.getElementById("lesson_link").value = "";
+document.getElementById("lesson_content").value = "";
+document.getElementById("lesson_duration").value = "";
+document.getElementById("lesson_order").value = "";
+document.getElementById("lesson_published").value = "true";
+
+editingLessonId = null;
+
+loadLessons();
+
+}
+
+async function editLesson(id){
+
+const { data, error } = await sb
+.from("academy_lessons")
+.select("*")
+.eq("id", id)
+.single();
+
+if(error){
+
+console.log(error);
+
+alert("Error cargando clase");
+
+return;
+
+}
+
+editingLessonId = id;
+
+document.getElementById("lesson_title").value =
+data.title || "";
+
+document.getElementById("lesson_description").value =
+data.description || "";
+
+document.getElementById("lesson_video").value =
+data.video_url || "";
+
+document.getElementById("lesson_pdf").value =
+data.pdf_url || "";
+
+document.getElementById("lesson_image").value =
+data.image_url || "";
+
+document.getElementById("lesson_link").value =
+data.external_link || "";
+
+document.getElementById("lesson_content").value =
+data.content || "";
+
+document.getElementById("lesson_duration").value =
+data.duration || "";
+
+document.getElementById("lesson_order").value =
+data.lesson_order || 0;
+
+document.getElementById("lesson_published").value =
+data.published ? "true" : "false";
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+async function deleteLesson(id){
+
+const ok =
+confirm("¿Eliminar clase?");
+
+if(!ok) return;
+
+const { error } = await sb
+.from("academy_lessons")
+.delete()
+.eq("id", id);
+
+if(error){
+
+console.log(error);
+
+alert("Error eliminando clase");
+
+return;
+
+}
+
+alert("Clase eliminada");
+
+loadLessons();
 
 }
 
