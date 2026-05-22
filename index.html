@@ -6502,46 +6502,44 @@ ${cls.content}
 
 ${cls.pdf_url ? `
 
-<a
-href="${cls.pdf_url}"
-target="_blank"
-style="
-display:inline-block;
-background:#2563eb;
-color:white;
-padding:14px 20px;
-border-radius:12px;
-text-decoration:none;
-font-weight:bold;
-margin-bottom:20px;
+<div style="
+margin-top:25px;
+margin-bottom:25px;
 ">
 
-📄 Abrir PDF
+<iframe
+src="${cls.pdf_url}"
+style="
+width:100%;
+height:700px;
+border:none;
+border-radius:18px;
+background:white;
+">
+</iframe>
 
-</a>
+</div>
 
 ` : ""}
 
+
+
 ${cls.external_link ? `
 
-<div style="margin-top:20px;">
-
-<a
-href="${cls.external_link}"
-target="_blank"
-style="
-display:inline-block;
-background:#16a34a;
-color:white;
-padding:14px 20px;
-border-radius:12px;
-text-decoration:none;
-font-weight:bold;
+<div style="
+margin-top:25px;
 ">
 
-🔗 Abrir enlace
-
-</a>
+<iframe
+src="${cls.external_link}"
+style="
+width:100%;
+height:700px;
+border:none;
+border-radius:18px;
+background:white;
+">
+</iframe>
 
 </div>
 
