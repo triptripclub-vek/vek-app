@@ -920,27 +920,6 @@ grid-template-columns:1fr !important;
 
 }
 
-@media(max-width:768px){
-
-#academyClassContent{
-
-padding:10px !important;
-overflow-x:hidden !important;
-
-}
-
-#academyClassContent iframe{
-
-width:100% !important;
-max-width:100% !important;
-height:85vh !important;
-display:block !important;
-border:none !important;
-
-}
-
-}
-
 .gaugeNum{
 position:relative;
 z-index:2;
@@ -6526,29 +6505,23 @@ ${cls.pdf_url ? `
 <div style="
 margin-top:25px;
 margin-bottom:25px;
-width:100%;
-overflow:hidden;
-border-radius:18px;
-background:#fff;
 ">
 
 <iframe
-src="https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(cls.pdf_url)}"
+src="${cls.pdf_url}"
 style="
 width:100%;
-height:85vh;
+height:700px;
 border:none;
 border-radius:18px;
 background:white;
-display:block;
-"
-allowfullscreen
-loading="lazy">
+">
 </iframe>
 
 </div>
 
 ` : ""}
+
 
 
 ${cls.external_link ? `
