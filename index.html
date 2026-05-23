@@ -6558,7 +6558,6 @@ margin-top:30px;
 
 <button
 onclick="completeLesson(
-'${cls.course_id}',
 '${cls.module_id}',
 '${cls.id}'
 )"
@@ -6574,7 +6573,7 @@ cursor:pointer;
 width:100%;
 ">
 
-✅ Completar clase
+✅ Marcar como Terminada
 
 </button>
 
@@ -6708,7 +6707,6 @@ ACADEMY PROGRESS
 ========================================= */
 
 async function completeLesson(
-courseId,
 moduleId,
 lessonId
 ){
@@ -6722,11 +6720,21 @@ if(!username){
 return;
 }
 
+const { data:moduleData } = await sb
+.from("academy_modules")
+.select("course_id")
+.eq("id", moduleId)
+.single();
+
+if(!moduleData){
+return;
+}
+
 const payload = {
 
 username: username,
 
-course_id: courseId,
+course_id: moduleData.course_id,
 
 module_id: moduleId,
 
