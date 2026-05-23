@@ -10,6 +10,22 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 body{background:#dfe6ef;color:#111}
+
+iframe{
+width:100%;
+max-width:100%;
+display:block;
+border:none;
+}
+
+#academyClassContent{
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
+}
+
+html,body{
+overflow-x:hidden;
+}
 .hidden{display:none!important}
 img{max-width:100%;display:block}
 a{text-decoration:none}
@@ -238,7 +254,6 @@ box-shadow:0 8px 18px rgba(0,0,0,.22);
     margin:0 auto;
     background:#fff;
     border-radius:20px;
-    overflow:hidden;
     box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
 
@@ -6500,84 +6515,80 @@ ${cls.content}
 
 ` : ""}
 
+
 ${cls.pdf_url ? `
 
 <div style="
 margin-top:25px;
-background:#fff;
-padding:25px;
+margin-bottom:25px;
+width:100%;
 border-radius:18px;
-text-align:center;
-border:1px solid #e2e8f0;
+background:#fff;
+overflow:auto;
+-webkit-overflow-scrolling:touch;
 ">
 
 <div style="
+padding:12px 18px;
 font-size:18px;
 font-weight:700;
-margin-bottom:15px;
-color:#0f172a;
+border-bottom:1px solid #e5e7eb;
+background:#f8fafc;
 ">
 📄 Material PDF de la clase
 </div>
 
-<a
-href="${cls.pdf_url}"
-target="_blank"
+<iframe
+src="https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(cls.pdf_url)}"
 style="
-display:inline-block;
-background:#2563eb;
-color:white;
-padding:16px 24px;
-border-radius:14px;
-font-weight:bold;
-text-decoration:none;
-font-size:16px;
-">
-
-Abrir PDF
-
-</a>
+width:100%;
+height:${window.innerWidth <= 768 ? '650px' : '1100px'};
+border:none;
+display:block;
+overflow:auto;
+"
+>
+</iframe>
 
 </div>
 
 ` : ""}
+
+
 ${cls.external_link ? `
 
 <div style="
 margin-top:25px;
-background:#fff;
-padding:25px;
+margin-bottom:25px;
+width:100%;
 border-radius:18px;
-text-align:center;
-border:1px solid #e2e8f0;
+background:#fff;
+overflow:auto;
+-webkit-overflow-scrolling:touch;
 ">
 
 <div style="
+padding:12px 18px;
 font-size:18px;
 font-weight:700;
-margin-bottom:15px;
-color:#0f172a;
+border-bottom:1px solid #e5e7eb;
+background:#f8fafc;
 ">
-🌐 Abrir recurso externo
+🌐 Recurso interactivo
 </div>
 
-<a
-href="${cls.external_link}"
-target="_blank"
+<iframe
+src="${cls.external_link}"
 style="
-display:inline-block;
-background:#16a34a;
-color:white;
-padding:16px 24px;
-border-radius:14px;
-font-weight:bold;
-text-decoration:none;
-font-size:16px;
-">
-
-Abrir recurso
-
-</a>
+width:100%;
+height:${window.innerWidth <= 768 ? '750px' : '1200px'};
+border:none;
+display:block;
+overflow:auto;
+"
+allowfullscreen
+loading="lazy">
+</iframe>
 
 </div>
 
