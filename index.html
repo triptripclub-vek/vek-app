@@ -6508,19 +6508,19 @@ margin-bottom:25px;
 background:#fff;
 padding:20px;
 border-radius:18px;
-text-align:center;
 ">
 
 <div style="
 font-size:18px;
 font-weight:700;
 margin-bottom:15px;
+text-align:center;
 ">
 📄 Material PDF
 </div>
 
 <button
-onclick="openPdfViewer('${cls.pdf_url}')"
+onclick="showPdfModal('${cls.pdf_url}')"
 style="
 background:#2563eb;
 color:white;
@@ -6531,17 +6531,13 @@ font-size:18px;
 font-weight:bold;
 cursor:pointer;
 width:100%;
-max-width:320px;
 ">
-
-Abrir PDF
-
+Ver PDF
 </button>
 
 </div>
 
 ` : ""}
-
 
 ${cls.external_link ? `
 
@@ -6584,28 +6580,24 @@ document
 
 }
 
-function openPdfViewer(url){
 
-if(!url){
-alert("PDF no disponible");
-return;
-}
+function showPdfModal(url){
 
-/* móvil */
-if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+document.getElementById("pdfModal").style.display = "block";
 
-window.open(url, "_blank");
+document.getElementById("pdfFrame").src = url;
 
-return;
+document.body.style.overflow = "hidden";
 
 }
 
-/* escritorio */
-window.open(
-url,
-"_blank",
-"noopener,noreferrer"
-);
+function closePdfModal(){
+
+document.getElementById("pdfModal").style.display = "none";
+
+document.getElementById("pdfFrame").src = "";
+
+document.body.style.overflow = "auto";
 
 }
 
@@ -6635,6 +6627,52 @@ Entendido
 </div>
 
 </div>
+
+<div
+id="pdfModal"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#000;
+z-index:999999;
+"
+>
+
+<button
+onclick="closePdfModal()"
+style="
+position:absolute;
+top:15px;
+right:15px;
+z-index:2;
+background:red;
+color:#fff;
+border:none;
+padding:12px 18px;
+border-radius:10px;
+font-weight:bold;
+font-size:16px;
+">
+✕ Cerrar
+</button>
+
+<iframe
+id="pdfFrame"
+src=""
+style="
+width:100%;
+height:100%;
+border:none;
+background:#fff;
+">
+</iframe>
+
+</div>
+
 </body>
    </html>
    
