@@ -6505,23 +6505,42 @@ ${cls.pdf_url ? `
 <div style="
 margin-top:25px;
 margin-bottom:25px;
+background:#fff;
+padding:20px;
+border-radius:18px;
+text-align:center;
 ">
 
-<iframe
-src="${cls.pdf_url}"
-style="
-width:100%;
-height:700px;
-border:none;
-border-radius:18px;
-background:white;
+<div style="
+font-size:18px;
+font-weight:700;
+margin-bottom:15px;
 ">
-</iframe>
+📄 Material PDF
+</div>
+
+<button
+onclick="openPdfViewer('${cls.pdf_url}')"
+style="
+background:#2563eb;
+color:white;
+border:none;
+padding:16px 24px;
+border-radius:14px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+width:100%;
+max-width:320px;
+">
+
+Abrir PDF
+
+</button>
 
 </div>
 
 ` : ""}
-
 
 
 ${cls.external_link ? `
@@ -6562,6 +6581,31 @@ document
 document
 .getElementById("academyCoursesUser")
 .classList.remove("hidden");
+
+}
+
+function openPdfViewer(url){
+
+if(!url){
+alert("PDF no disponible");
+return;
+}
+
+/* móvil */
+if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+
+window.open(url, "_blank");
+
+return;
+
+}
+
+/* escritorio */
+window.open(
+url,
+"_blank",
+"noopener,noreferrer"
+);
 
 }
 
