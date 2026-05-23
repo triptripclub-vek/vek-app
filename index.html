@@ -6323,7 +6323,19 @@ return;
 
 container.innerHTML = "";
 
+
 for(const cls of data){
+
+const { data:progressData } = await sb
+.from("academy_progress")
+.select("*")
+.eq("username", window.currentUser)
+.eq("lesson_id", cls.id)
+.limit(1);
+
+const completed =
+progressData &&
+progressData.length;
 
 container.innerHTML += `
 
@@ -6336,13 +6348,13 @@ padding:14px;
 border:none;
 border-radius:12px;
 margin-bottom:10px;
-background:#1e293b;
+background:${completed ? '#16a34a' : '#1e293b'};
 color:white;
 cursor:pointer;
 font-size:15px;
 ">
 
-▶ ${cls.title}
+${completed ? '✅' : '▶'} ${cls.title}
 
 </button>
 
@@ -6540,6 +6552,34 @@ Ver PDF
 
 ` : ""}
 
+<div style="
+margin-top:30px;
+">
+
+<button
+onclick="completeLesson(
+'${cls.course_id}',
+'${cls.module_id}',
+'${cls.id}'
+)"
+style="
+background:#22c55e;
+color:white;
+border:none;
+padding:18px;
+border-radius:14px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+width:100%;
+">
+
+✅ Completar clase
+
+</button>
+
+</div>
+
 ${cls.external_link ? `
 
 <div style="
@@ -6662,6 +6702,85 @@ document.getElementById("pdfViewer").innerHTML = "";
 document.body.style.overflow = "auto";
 
 }
+
+/* =========================================
+ACADEMY PROGRESS
+========================================= */
+
+async function completeLesson(
+courseId,
+moduleId,
+lessonId
+){
+
+const username =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+if(!username){
+return;
+}
+
+const payload = {
+
+username: username,
+
+course_id: courseId,
+
+module_id: moduleId,
+
+lesson_id: lessonId,
+
+completed: true,
+
+progress_percent: 100,
+
+completed_at:
+new Date().toISOString()
+
+};
+
+const { error } = await sb
+.from("academy_progress")
+.upsert([payload],{
+onConflict:"username,lesson_id"
+});
+
+if(error){
+
+console.log(error);
+
+alert(
+"Error guardando progreso"
+);
+
+return;
+
+}
+
+alert(
+"Clase completada correctamente"
+);
+
+/* REFRESCAR MODULOS */
+
+const { data:lessonData } = await sb
+.from("academy_lessons")
+.select("module_id")
+.eq("id", lessonId)
+.single();
+
+if(lessonData){
+
+await loadClassesUser(
+lessonData.module_id
+);
+
+}
+
+}
+
 
 restoreSession();
 
