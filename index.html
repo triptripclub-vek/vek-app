@@ -6500,7 +6500,7 @@ ${cls.content}
 
 ` : ""}
 
-src="https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(cls.pdf_url)}"
+${cls.pdf_url ? `
 
 <div style="
 margin-top:25px;
@@ -6528,7 +6528,6 @@ allowfullscreen>
 </div>
 
 ` : ""}
-
 
 ${cls.external_link ? `
 
