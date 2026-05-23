@@ -6500,28 +6500,34 @@ ${cls.content}
 
 ` : ""}
 
-${cls.pdf_url ? `
+src="https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(cls.pdf_url)}"
 
 <div style="
 margin-top:25px;
 margin-bottom:25px;
-">
-
-<iframe
-src="${cls.pdf_url}"
-style="
 width:100%;
-height:700px;
-border:none;
+overflow:hidden;
+overflow-x:hidden;
+-webkit-overflow-scrolling:touch;
 border-radius:18px;
 background:white;
 ">
+
+<iframe
+src="https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(cls.pdf_url)}"
+style="
+width:100%;
+height:${window.innerWidth <= 768 ? '500px' : '900px'};
+border:none;
+border-radius:18px;
+background:white;
+"
+allowfullscreen>
 </iframe>
 
 </div>
 
 ` : ""}
-
 
 
 ${cls.external_link ? `
