@@ -1804,6 +1804,7 @@ margin-top:30px;
 
 </section>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script>
 /* =========================================
@@ -6581,13 +6582,74 @@ document
 }
 
 
-function showPdfModal(url){
+async function showPdfModal(url){
 
 document.getElementById("pdfModal").style.display = "block";
 
-document.getElementById("pdfFrame").src = url;
-
 document.body.style.overflow = "hidden";
+
+const viewer =
+document.getElementById("pdfViewer");
+
+viewer.innerHTML = "Cargando PDF...";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+try{
+
+const pdf =
+await pdfjsLib.getDocument(url).promise;
+
+viewer.innerHTML = "";
+
+for(let pageNum = 1; pageNum <= pdf.numPages; pageNum++){
+
+const page =
+await pdf.getPage(pageNum);
+
+const viewport =
+page.getViewport({ scale: 1.4 });
+
+const canvas =
+document.createElement("canvas");
+
+const context =
+canvas.getContext("2d");
+
+canvas.width = viewport.width;
+canvas.height = viewport.height;
+
+canvas.style.width = "100%";
+canvas.style.maxWidth = "900px";
+canvas.style.background = "#fff";
+canvas.style.borderRadius = "12px";
+
+viewer.appendChild(canvas);
+
+await page.render({
+canvasContext: context,
+viewport: viewport
+}).promise;
+
+}
+
+}catch(err){
+
+console.log(err);
+
+viewer.innerHTML = `
+<div style="
+color:white;
+text-align:center;
+padding:40px;
+font-size:18px;
+">
+Error cargando PDF
+</div>
+`;
+
+}
 
 }
 
@@ -6595,7 +6657,7 @@ function closePdfModal(){
 
 document.getElementById("pdfModal").style.display = "none";
 
-document.getElementById("pdfFrame").src = "";
+document.getElementById("pdfViewer").innerHTML = "";
 
 document.body.style.overflow = "auto";
 
@@ -6637,18 +6699,19 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-background:#000;
+background:#111827;
 z-index:999999;
+overflow:auto;
 "
 >
 
 <button
 onclick="closePdfModal()"
 style="
-position:absolute;
+position:fixed;
 top:15px;
 right:15px;
-z-index:2;
+z-index:9999999;
 background:red;
 color:#fff;
 border:none;
@@ -6660,19 +6723,18 @@ font-size:16px;
 ✕ Cerrar
 </button>
 
-<iframe
-id="pdfFrame"
-src=""
+<div
+id="pdfViewer"
 style="
-width:100%;
-height:100%;
-border:none;
-background:#fff;
+padding:80px 15px 40px;
+display:flex;
+flex-direction:column;
+gap:20px;
+align-items:center;
 ">
-</iframe>
-
 </div>
 
+</div>
 </body>
    </html>
    
