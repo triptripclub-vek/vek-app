@@ -914,9 +914,40 @@ border-radius:50%;
 position:absolute;
 }
 
+@media(max-width:768px){
+
 #academyCourseView > div:nth-child(3){
 
+display:flex !important;
+flex-direction:column !important;
 grid-template-columns:1fr !important;
+
+}
+
+#academyModulesList{
+width:100% !important;
+margin-bottom:20px;
+}
+
+#academyClassContent{
+width:100% !important;
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
+padding:12px !important;
+}
+
+#academyClassContent iframe{
+width:100% !important;
+min-height:70vh !important;
+border:none !important;
+display:block !important;
+background:#fff;
+}
+
+#academyClassContent embed{
+width:100% !important;
+min-height:70vh !important;
+}
 
 }
 
