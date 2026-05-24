@@ -6657,17 +6657,40 @@ async function saveLessonWatchTime(username) {
         console.log("Minutos vistos:", minutesWatched);
 
         // Obtener progreso actual
-        const { data: progressData, error: fetchError } = await sb
-            .from("academy_progress")
-            .select("*")
-            .eq("lesson_id", academyCurrentLesson)
-            .eq("username", username)
-            .single();
+        let { data: progressData, error: fetchError } = await sb
+    .from("academy_progress")
+    .select("*")
+    .eq("lesson_id", academyCurrentLesson)
+    .eq("username", username)
+    .maybeSingle();
 
-        if (fetchError) {
-            console.error(fetchError);
-            return;
-        }
+if (fetchError) {
+    console.error(fetchError);
+    return;
+}
+
+// SI NO EXISTE → CREAR REGISTRO
+if (!progressData) {
+
+    const { data: newProgress, error: insertError } = await sb
+        .from("academy_progress")
+        .insert([{
+            lesson_id: academyCurrentLesson,
+            username: username,
+            watched_minutes: 0,
+            progress_percent: 0,
+            completed: false
+        }])
+        .select()
+        .single();
+
+    if (insertError) {
+        console.error(insertError);
+        return;
+    }
+
+    progressData = newProgress;
+}
 
         const currentMinutes =
             Number(progressData?.watched_minutes || 0);
