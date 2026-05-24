@@ -1814,6 +1814,15 @@ const SUPABASE_URL = "https://fztcpxdlakbregupsush.supabase.co";
 const SUPABASE_KEY = "sb_publishable_aq7SNHs2gTQbV9OuD9D50Q_V6CFl8eJ";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+
+// ===========================
+// ACADEMY WATCH TRACKING
+// ===========================
+
+let academyLessonStart = null;
+let academyCurrentLesson = null;
+let academyWatchInterval = null;
+
 /* =========================================
    RESPALDO LOCAL
 ========================================= */
@@ -6370,6 +6379,13 @@ OPEN CLASS USER
 
 async function openClassUser(classId){
 
+// Guardar tiempo anterior
+if (academyCurrentLesson) {
+
+    await saveLessonWatchTime(window.currentUser);
+
+}
+
 const container =
 document.getElementById(
 "academyClassContent"
@@ -6602,7 +6618,114 @@ background:white;
 
 `;
 
+startLessonTracking(classId);
+
 }
+
+// ===========================
+// START LESSON TRACKING
+// ===========================
+
+function startLessonTracking(classId) {
+
+    academyLessonStart = Date.now();
+    academyCurrentLesson = classId;
+
+    console.log("Tracking iniciado:", classId);
+
+}
+
+
+// ===========================
+// SAVE WATCH TIME
+// ===========================
+
+async function saveLessonWatchTime(username) {
+
+    try {
+
+        if (!academyLessonStart || !academyCurrentLesson) return;
+
+        const now = Date.now();
+
+        const minutesWatched = Math.floor(
+            (now - academyLessonStart) / 1000 / 60
+        );
+
+        if (minutesWatched <= 0) return;
+
+        console.log("Minutos vistos:", minutesWatched);
+
+        // Obtener progreso actual
+        const { data: progressData, error: fetchError } = await sb
+            .from("academy_progress")
+            .select("*")
+            .eq("lesson_id", academyCurrentLesson)
+            .eq("username", username)
+            .single();
+
+        if (fetchError) {
+            console.error(fetchError);
+            return;
+        }
+
+        const currentMinutes =
+            Number(progressData?.watched_minutes || 0);
+
+        const totalMinutes =
+            currentMinutes + minutesWatched;
+
+        // Obtener configuración
+        const { data: settingsData } = await sb
+            .from("academy_settings")
+            .select("minimum_class_minutes")
+            .limit(1)
+            .single();
+
+        const minimumMinutes =
+            Number(settingsData?.minimum_class_minutes || 5);
+
+        // Calcular progreso %
+        let progressPercent = Math.min(
+            100,
+            Math.floor((totalMinutes / minimumMinutes) * 100)
+        );
+
+        const completed =
+            totalMinutes >= minimumMinutes;
+
+        // Actualizar progreso
+        const { error: updateError } = await sb
+            .from("academy_progress")
+            .update({
+                watched_minutes: totalMinutes,
+                progress_percent: progressPercent,
+                completed: completed,
+                completed_at: completed
+                    ? new Date().toISOString()
+                    : null
+            })
+            .eq("lesson_id", academyCurrentLesson)
+            .eq("username", username);
+
+        if (updateError) {
+            console.error(updateError);
+            return;
+        }
+
+        console.log("Progreso actualizado");
+
+        // reset
+        academyLessonStart = Date.now();
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+
+}
+
 
 /* =========================================
 BACK TO COURSES
