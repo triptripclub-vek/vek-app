@@ -6677,7 +6677,7 @@ setInterval(()=>{
         username
     );
 
-},60000);
+},10000);
 
 }
 
@@ -6694,11 +6694,17 @@ async function saveLessonWatchTime(username) {
 
         const now = Date.now();
 
+console.log({
+    academyLessonStart,
+    academyCurrentLesson,
+    username
+});
+
         const minutesWatched = Math.floor(
             (now - academyLessonStart) / 1000 / 60
         );
 
-        if (minutesWatched <= 0) return;
+        if (minutesWatched < 0) return;
 
         console.log("Minutos vistos:", minutesWatched);
 
@@ -6718,7 +6724,10 @@ if (fetchError) {
 // SI NO EXISTE → CREAR REGISTRO
 if (!progressData) {
 
-    const { data: newProgress, error: insertError } = await sb
+console.log(
+    "INSERTANDO EN academy_progress"
+);    
+const { data: newProgress, error: insertError } = await sb
         .from("academy_progress")
         .insert([{
             lesson_id: academyCurrentLesson,
@@ -6731,9 +6740,14 @@ if (!progressData) {
         .single();
 
     if (insertError) {
-        console.error(insertError);
-        return;
-    }
+
+    console.error(
+        "ERROR INSERT:",
+        insertError
+    );
+
+    return;
+}
 
     progressData = newProgress;
 }
