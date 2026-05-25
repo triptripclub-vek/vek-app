@@ -3067,6 +3067,8 @@ closeSidebar();
 
 async function logoutUser(){
 
+stopLessonTracking();
+
 await sb.auth.signOut();
 
 window.currentUser = null;
@@ -6770,13 +6772,19 @@ const { data: newProgress, error: insertError } = await sb
         const previousMinutes =
 Number(progressData?.watched_minutes || 0);
 
+const additionalMinutes =
+(now - academyLessonStart)
+/1000/60;
+
 const totalMinutes =
 Number(
-Math.max(
-previousMinutes,
-previousMinutes + minutesWatched
+(
+previousMinutes +
+additionalMinutes
 ).toFixed(2)
 );
+
+academyLessonStart = now;
 
         // Obtener configuración
         const { data: settingsData } = await sb
@@ -6807,13 +6815,19 @@ academyCurrentLesson
         const { error: updateError } = await sb
     .from("academy_progress")
     .update({
-        watched_minutes: totalMinutes,
-        progress_percent: progressPercent,
-        completed: completed,
-        completed_at: completed
-            ? new Date().toISOString()
-            : null
-    })
+
+    course_id: academyCurrentCourse,
+    module_id: academyCurrentModule,
+
+    watched_minutes: totalMinutes,
+    progress_percent: progressPercent,
+    completed: completed,
+
+    completed_at: completed
+        ? new Date().toISOString()
+        : null
+
+})
     .eq("lesson_id", academyCurrentLesson)
     .eq("username", username);
 
@@ -6864,6 +6878,8 @@ BACK TO COURSES
 
 function backToAcademyCourses(){
 
+stopLessonTracking();
+
 document
 .getElementById("academyCourseView")
 .classList.add("hidden");
@@ -6871,6 +6887,31 @@ document
 document
 .getElementById("academyCoursesUser")
 .classList.remove("hidden");
+
+}
+
+function stopLessonTracking(){
+
+    if(academyWatchInterval){
+
+        clearInterval(
+            academyWatchInterval
+        );
+
+        academyWatchInterval = null;
+    }
+
+    academyLessonStart = null;
+
+    academyCurrentLesson = null;
+
+    academyCurrentCourse = null;
+
+    academyCurrentModule = null;
+
+    console.log(
+        "Tracking detenido"
+    );
 
 }
 
@@ -6955,6 +6996,28 @@ document.getElementById("pdfViewer").innerHTML = "";
 document.body.style.overflow = "auto";
 
 }
+
+window.addEventListener(
+    "beforeunload",
+    ()=>{
+
+        stopLessonTracking();
+
+    }
+);
+
+document.addEventListener(
+    "visibilitychange",
+    ()=>{
+
+        if(document.hidden){
+
+            stopLessonTracking();
+
+        }
+
+    }
+);
 
 /* =========================================
 ACADEMY PROGRESS
