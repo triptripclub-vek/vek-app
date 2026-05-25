@@ -6625,9 +6625,25 @@ background:white;
 
 `;
 
+// OBTENER course_id REAL
+const { data: moduleData } = await sb
+.from("academy_modules")
+.select("course_id")
+.eq("id", moduleId)
+.single();
+
+if(!moduleData){
+
+console.log(
+"NO SE ENCONTRO course_id"
+);
+
+return;
+}
+
 startLessonTracking(
     classId,
-    courseId,
+    moduleData.course_id,
     moduleId
 );
 
@@ -6781,6 +6797,12 @@ currentMinutes + minutesWatched
 
         const completed =
             totalMinutes >= minimumMinutes;
+
+console.log({
+academyCurrentCourse,
+academyCurrentModule,
+academyCurrentLesson
+});
 
         // Actualizar progreso
         const { error: updateError } = await sb
