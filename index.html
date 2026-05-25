@@ -6700,11 +6700,10 @@ console.log({
     username
 });
 
-        const minutesWatched = Math.floor(
-            (now - academyLessonStart) / 1000 / 60
-        );
+       const minutesWatched =
+(now - academyLessonStart) / 1000 / 60;
 
-        if (minutesWatched < 0) return;
+        if (minutesWatched <= 0) return;
 
         console.log("Minutos vistos:", minutesWatched);
 
@@ -6730,12 +6729,14 @@ console.log(
 const { data: newProgress, error: insertError } = await sb
         .from("academy_progress")
         .insert([{
-            lesson_id: academyCurrentLesson,
-            username: username,
-            watched_minutes: 0,
-            progress_percent: 0,
-            completed: false
-        }])
+    lesson_id: academyCurrentLesson,
+    course_id: academyCurrentCourse,
+    module_id: academyCurrentModule,
+    username: username,
+    watched_minutes: 0,
+    progress_percent: 0,
+    completed: false
+}])
         .select()
         .single();
 
@@ -6756,7 +6757,11 @@ const { data: newProgress, error: insertError } = await sb
             Number(progressData?.watched_minutes || 0);
 
         const totalMinutes =
-            currentMinutes + minutesWatched;
+Number(
+(
+currentMinutes + minutesWatched
+).toFixed(2)
+);
 
         // Obtener configuración
         const { data: settingsData } = await sb
@@ -6789,7 +6794,9 @@ const { data: newProgress, error: insertError } = await sb
                     : null
             })
             .eq("lesson_id", academyCurrentLesson)
-            .eq("username", username);
+.eq("course_id", academyCurrentCourse)
+.eq("module_id", academyCurrentModule)
+.eq("username", username);
 
         if (updateError) {
             console.error(updateError);
