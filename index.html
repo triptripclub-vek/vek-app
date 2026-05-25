@@ -1821,6 +1821,8 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let academyLessonStart = null;
 let academyCurrentLesson = null;
+let academyCurrentCourse = null;
+let academyCurrentModule = null;
 let academyWatchInterval = null;
 
 /* =========================================
@@ -6573,6 +6575,8 @@ margin-top:30px;
 ">
 
 <button
+id="completeLessonBtn"
+disabled
 onclick="completeLesson(
 '${cls.module_id}',
 '${cls.id}'
@@ -6618,7 +6622,11 @@ background:white;
 
 `;
 
-startLessonTracking(classId);
+startLessonTracking(
+    classId,
+    courseId,
+    moduleId
+);
 
 }
 
@@ -6626,12 +6634,34 @@ startLessonTracking(classId);
 // START LESSON TRACKING
 // ===========================
 
-function startLessonTracking(classId) {
+function startLessonTracking(
+classId,
+courseId,
+moduleId
+){
+
+    // LIMPIAR INTERVALO VIEJO
+    if(academyWatchInterval){
+
+        clearInterval(
+            academyWatchInterval
+        );
+
+        academyWatchInterval = null;
+    }
 
     academyLessonStart = Date.now();
+
     academyCurrentLesson = classId;
 
-    console.log("Tracking iniciado:", classId);
+    academyCurrentCourse = courseId;
+
+    academyCurrentModule = moduleId;
+
+    console.log(
+        "Tracking iniciado:",
+        classId
+    );
 
 }
 
@@ -6737,6 +6767,28 @@ if (!progressData) {
         }
 
         console.log("Progreso actualizado");
+const completeBtn =
+document.getElementById(
+"completeLessonBtn"
+);
+
+if(completeBtn){
+
+    if(minutesWatched >= 5){
+
+        completeBtn.disabled = false;
+
+        completeBtn.style.opacity = "1";
+
+    }else{
+
+        completeBtn.disabled = true;
+
+        completeBtn.style.opacity = "0.5";
+
+    }
+
+}
 
         // reset
         academyLessonStart = Date.now();
@@ -6898,7 +6950,8 @@ new Date().toISOString()
 const { error } = await sb
 .from("academy_progress")
 .upsert([payload],{
-onConflict:"username,lesson_id"
+onConflict:
+"username,course_id,module_id,lesson_id"
 });
 
 if(error){
