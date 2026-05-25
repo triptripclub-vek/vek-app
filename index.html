@@ -6344,9 +6344,7 @@ const { data:progressData } = await sb
 .eq("lesson_id", cls.id)
 .limit(1);
 
-const completed =
-progressData &&
-progressData.length;
+const completed = !!progressData?.completed;
 
 container.innerHTML += `
 
@@ -6669,7 +6667,7 @@ moduleId
         academyWatchInterval = null;
     }
 
-    academyLessonStart = Date.now();
+    academyLessonStart = now;
 
     academyCurrentLesson = classId;
 
@@ -6769,13 +6767,14 @@ const { data: newProgress, error: insertError } = await sb
     progressData = newProgress;
 }
 
-        const currentMinutes =
-            Number(progressData?.watched_minutes || 0);
+        const previousMinutes =
+Number(progressData?.watched_minutes || 0);
 
-        const totalMinutes =
+const totalMinutes =
 Number(
-(
-currentMinutes + minutesWatched
+Math.max(
+previousMinutes,
+previousMinutes + minutesWatched
 ).toFixed(2)
 );
 
@@ -6848,7 +6847,7 @@ if(completeBtn){
 }
 
         // reset
-        academyLessonStart = Date.now();
+        academyLessonStart = now;
 
     } catch (err) {
 
