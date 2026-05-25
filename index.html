@@ -6806,19 +6806,17 @@ academyCurrentLesson
 
         // Actualizar progreso
         const { error: updateError } = await sb
-            .from("academy_progress")
-            .update({
-                watched_minutes: totalMinutes,
-                progress_percent: progressPercent,
-                completed: completed,
-                completed_at: completed
-                    ? new Date().toISOString()
-                    : null
-            })
-            .eq("lesson_id", academyCurrentLesson)
-.eq("course_id", academyCurrentCourse)
-.eq("module_id", academyCurrentModule)
-.eq("username", username);
+    .from("academy_progress")
+    .update({
+        watched_minutes: totalMinutes,
+        progress_percent: progressPercent,
+        completed: completed,
+        completed_at: completed
+            ? new Date().toISOString()
+            : null
+    })
+    .eq("lesson_id", academyCurrentLesson)
+    .eq("username", username);
 
         if (updateError) {
             console.error(updateError);
