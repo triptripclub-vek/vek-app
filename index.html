@@ -6802,15 +6802,7 @@ academyLessonStart = now;
             Math.floor((totalMinutes / minimumMinutes) * 100)
         );
 
-        const completed =
-            totalMinutes >= minimumMinutes;
-
-console.log({
-academyCurrentCourse,
-academyCurrentModule,
-academyCurrentLesson
-});
-
+       
         // Actualizar progreso
         const { error: updateError } = await sb
     .from("academy_progress")
@@ -6821,11 +6813,7 @@ academyCurrentLesson
 
     watched_minutes: totalMinutes,
     progress_percent: progressPercent,
-    completed: completed,
-
-    completed_at: completed
-        ? new Date().toISOString()
-        : null
+   
 
 })
     .eq("lesson_id", academyCurrentLesson)
