@@ -6665,6 +6665,19 @@ moduleId
         "Tracking iniciado:",
         classId
     );
+const username =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+academyWatchInterval =
+setInterval(()=>{
+
+    saveLessonWatchTime(
+        username
+    );
+
+},60000);
 
 }
 
