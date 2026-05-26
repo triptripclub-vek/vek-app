@@ -719,6 +719,20 @@ font-weight:900;
 <span class="menuText"> Social Manager</span>
 </button>
 
+<button
+class="menuBtn hidden"
+id="btnAcademySettingsManager"
+onclick="showAcademySettingsManager()">
+
+<i class="fas fa-graduation-cap"></i>
+
+<span class="menuText">
+Academy Settings
+</span>
+
+</button>
+
+
 
 <button class="menuBtn"
 onclick="showAtomyManager()">
@@ -1023,6 +1037,58 @@ Crear campaña
 
 <h4>Campañas creadas</h4>
 <div id="admin_campaigns"></div>
+
+</div>
+
+<div id="academySettingsManagerModule" class="linkCard hidden">
+
+<h3 style="margin-bottom:18px;">
+🎓 Academy Settings Manager
+</h3>
+
+<label>
+Clases esperadas por semana
+</label>
+
+<input
+id="academy_classes_per_week"
+type="number"
+placeholder="3">
+
+<label>
+Mínimo minutos por clase
+</label>
+
+<input
+id="academy_minimum_minutes"
+type="number"
+placeholder="5">
+
+<label>
+Porcentaje verde mínimo
+</label>
+
+<input
+id="academy_green_min"
+type="number"
+placeholder="90">
+
+<label>
+Porcentaje amarillo mínimo
+</label>
+
+<input
+id="academy_yellow_min"
+type="number"
+placeholder="70">
+
+<button
+class="copyBtn"
+onclick="saveAcademySettings()">
+
+Guardar Configuración
+
+</button>
 
 </div>
 
@@ -1910,6 +1976,7 @@ btnKpiManager.classList.remove("hidden");
 btnSemaforo.classList.remove("hidden");
 btnSocialManager.classList.remove("hidden");
 showDashboard();
+btnAcademySettingsManager.classList.remove("hidden");
 }
 
 }
@@ -2065,6 +2132,10 @@ socialModule.classList.add("hidden");
 landingModule.classList.add("hidden");
 kpiManagerModule.classList.add("hidden");
 socialManagerModule.classList.add("hidden");
+
+document
+.getElementById("academySettingsManagerModule")
+.classList.add("hidden");
 document
 .getElementById("referralModule")
 .classList.add("hidden");
@@ -2538,6 +2609,25 @@ closeSidebar();
 
 }
 
+function showAcademySettingsManager(){
+
+hideAllModules();
+
+document
+.getElementById(
+"academySettingsManagerModule"
+)
+.classList.remove("hidden");
+
+loadAcademySettings();
+
+if(window.innerWidth <= 900){
+closeSidebar();
+}
+
+}
+
+
 function showAtomyManager(){
 
 hideAllModules();
@@ -2877,6 +2967,129 @@ if(el) el.value = r[key] || 0;
 }
 
 }
+
+async function loadAcademySettings(){
+
+const { data, error } = await sb
+.from("academy_settings")
+.select("*")
+.limit(1)
+.single();
+
+if(error || !data){
+
+console.log(error);
+return;
+
+}
+
+document.getElementById(
+"academy_classes_per_week"
+).value =
+data.classes_per_week || 3;
+
+document.getElementById(
+"academy_minimum_minutes"
+).value =
+data.minimum_class_minutes || 5;
+
+document.getElementById(
+"academy_green_min"
+).value =
+data.green_min || 90;
+
+document.getElementById(
+"academy_yellow_min"
+).value =
+data.yellow_min || 70;
+
+}
+
+async function saveAcademySettings(){
+
+const payload = {
+
+classes_per_week: Number(
+document.getElementById(
+"academy_classes_per_week"
+).value || 3
+),
+
+minimum_class_minutes: Number(
+document.getElementById(
+"academy_minimum_minutes"
+).value || 5
+),
+
+green_min: Number(
+document.getElementById(
+"academy_green_min"
+).value || 90
+),
+
+yellow_min: Number(
+document.getElementById(
+"academy_yellow_min"
+).value || 70
+),
+
+updated_at:
+new Date().toISOString()
+
+};
+
+const { data: existing } = await sb
+.from("academy_settings")
+.select("id")
+.limit(1);
+
+let error = null;
+
+/* UPDATE */
+
+if(existing && existing.length > 0){
+
+const rowId = existing[0].id;
+
+const result = await sb
+.from("academy_settings")
+.update(payload)
+.eq("id", rowId);
+
+error = result.error;
+
+}
+
+/* INSERT */
+
+else{
+
+const result = await sb
+.from("academy_settings")
+.insert([payload]);
+
+error = result.error;
+
+}
+
+if(error){
+
+console.log(error);
+
+alert(
+"Error guardando configuración"
+);
+
+return;
+
+}
+
+alert(
+"Configuración Academy guardada"
+);
+
+}
+
 
 function showKpiManager(){
 
