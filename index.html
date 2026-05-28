@@ -762,30 +762,50 @@ margin-bottom:22px;
 
 .cardKpi{
 background:#fff;
-padding:20px;
+padding:20px 20px 20px 30px;
 border-radius:20px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
 transition:.25s;
 position:relative;
 overflow:hidden;
-border:1px solid #eef2f7;
+border:none;
+}
+
+.cardKpi *{
+position:relative;
+z-index:20;
+}
+
+.cardKpi.red::before,
+.cardKpi.yellow::before,
+.cardKpi.green::before{
+content:"";
+position:absolute;
+left:0;
+top:0;
+bottom:0;
+width:14px;
+display:block;
+z-index:10;
+border-radius:20px 0 0 20px;
+}
+
+.cardKpi.red::before{
+background:#ef4444;
+}
+
+.cardKpi.yellow::before{
+background:#f59e0b;
+}
+
+.cardKpi.green::before{
+background:#22c55e;
 }
 
 .cardKpi:hover{
 transform:translateY(-3px);
 }
 
-.cardKpi.red{
-border-left:8px solid #ef4444;
-}
-
-.cardKpi.yellow{
-border-left:8px solid #f59e0b;
-}
-
-.cardKpi.green{
-border-left:8px solid #22c55e;
-}
 
 .cardKpi h4{
 font-size:14px;
@@ -1057,21 +1077,7 @@ font-weight:bold;
 
 <div class="grid" id="dashboardCards">
 
-<div class="cardKpi"><h4>Publicaciones</h4><div class="num" id="kpi_publicaciones">0</div></div>
-
-<div class="cardKpi"><h4>Prospectos</h4><div class="num" id="kpi_prospectos">0</div></div>
-
-<div class="cardKpi"><h4>Conversaciones</h4><div class="num" id="kpi_conversaciones">0</div></div>
-
-<div class="cardKpi"><h4>Calificados</h4><div class="num" id="kpi_calificados">0</div></div>
-
-<div class="cardKpi"><h4>PVD</h4><div class="num" id="kpi_videos">0</div></div>
-
-<div class="cardKpi"><h4>PVI</h4><div class="num" id="kpi_formularios">0</div></div>
-
-<div class="cardKpi"><h4>Registros</h4><div class="num" id="kpi_registros">0</div></div>
-
-<div class="cardKpi"><h4>PVP</h4><div class="num" id="kpi_vp">0</div></div>
+<div id="academyDashboardKPI"></div>
 
 </div>
 
@@ -3289,56 +3295,187 @@ document.getElementById("kpi_registros")
 
 }
 
+
 async function loadKpisMonth(){
 
-const user = (window.currentUser || "").toLowerCase().trim();
+const user =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
 if(!user)return;
 
-const now = new Date();
-const prefix =
-now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
+const academyDashboardKPI =
+document.getElementById(
+"academyDashboardKPI"
+);
 
-const { data } = await sb
-.from("activity")
+academyDashboardKPI.innerHTML = "";
+
+/* SETTINGS */
+
+const { data: academySettings } = await sb
+.from("academy_settings")
 .select("*")
-.ilike("username",user);
+.limit(1);
 
-let total = {
-publicaciones:0,
-prospectos:0,
-conversaciones:0,
-calificados:0,
-videos:0,
-formularios:0,
-registros:0,
-vp:0
-};
+let classesPerWeek = 3;
 
-(data||[]).forEach(r=>{
+let greenMin = 90;
 
-if(String(r.fecha).startsWith(prefix)){
+let yellowMin = 70;
 
-total.publicaciones += Number(r.publicaciones||0);
-total.prospectos += Number(r.prospectos||0);
-total.conversaciones += Number(r.conversaciones||0);
-total.calificados += Number(r.calificados||0);
-total.videos += Number(r.videos||0);
-total.formularios += Number(r.formularios||0);
-total.registros += Number(r.registros||0);
-total.vp += Number(r.vp||0);
+if(
+academySettings &&
+academySettings.length
+){
+
+classesPerWeek =
+Number(
+academySettings[0].classes_per_week || 3
+);
+
+greenMin =
+Number(
+academySettings[0].green_min || 90
+);
+
+yellowMin =
+Number(
+academySettings[0].yellow_min || 70
+);
 
 }
 
-});
+/* USER PROFILE */
 
-paintCard("publicaciones", total.publicaciones);
-paintCard("prospectos", total.prospectos);
-paintCard("conversaciones", total.conversaciones);
-paintCard("calificados", total.calificados);
-paintCard("videos", total.videos);
-paintCard("formularios", total.formularios);
-paintCard("registros", total.registros);
-paintCard("vp", total.vp);
+const { data: profileData } = await sb
+.from("user_profiles")
+.select("*")
+.eq("username", user)
+.limit(1);
+
+let createdDate = new Date();
+
+if(profileData && profileData.length){
+
+createdDate = new Date(
+profileData[0].validated_at ||
+profileData[0].created_at
+);
+
+}
+
+/* WEEKS */
+
+const nowDate = new Date();
+
+const diffWeeks =
+Math.floor(
+(nowDate - createdDate)
+/
+(1000 * 60 * 60 * 24 * 7)
+);
+
+const activeWeeks =
+Math.max(1,diffWeeks);
+
+/* EXPECTED */
+
+const expectedClasses =
+classesPerWeek * activeWeeks;
+
+/* COMPLETED */
+
+const { data: completedAcademy } = await sb
+.from("academy_progress")
+.select("*")
+.eq("username", user)
+.eq("completed", true);
+
+const completedClasses =
+completedAcademy
+? completedAcademy.length
+: 0;
+
+/* PERCENT */
+
+let pct =
+Math.round(
+(completedClasses / expectedClasses)
+* 100
+);
+
+if(!isFinite(pct)) pct = 0;
+
+let state = "Bajo meta";
+let fill = "#ef4444";
+let cardClass = "red";
+
+if(pct >= greenMin){
+
+state = "Excelente";
+fill = "#22c55e";
+cardClass = "green";
+
+}
+else if(pct >= yellowMin){
+
+state = "En progreso";
+fill = "#f59e0b";
+cardClass = "yellow";
+
+}
+
+/* RENDER */
+
+academyDashboardKPI.innerHTML = `
+
+<div class="cardKpi ${cardClass}">
+
+<h4>Academy KPI</h4>
+
+<div class="num">
+${completedClasses}
+</div>
+
+<div class="progressWrap">
+
+<div class="progressBar">
+
+<div
+class="progressFill"
+style="
+width:${pct <= 0 ? 8 : Math.min(pct,100)}%;
+background:${fill};
+">
+</div>
+
+</div>
+
+<div class="kpiMeta">
+🎯 Meta esperada: ${expectedClasses}
+</div>
+
+<div class="kpiMeta">
+✅ Conseguido: ${completedClasses}
+</div>
+
+<div class="kpiState">
+🚦 Estado:
+<span style="
+color:${fill};
+font-weight:900;
+">
+${state}
+</span>
+</div>
+
+</div>
+
+</div>
+
+`;
 
 }
 
@@ -3405,10 +3542,26 @@ document.getElementById("kpi_"+kpi).innerHTML = `
 ${val}
 <div class="progressWrap">
 <div class="progressBar">
-<div class="progressFill" style="width:${Math.min(pct,100)}%;background:${fill};"></div>
+<div class="progressFill" style="width:${pct <= 0 ? 8 : Math.min(pct,100)}%;background:${fill};"></div>
 </div>
-<div class="kpiMeta">${pct}% de ${meta}</div>
-<div class="kpiState">${state}</div>
+<div class="kpiMeta">
+🎯 Meta esperada: ${meta}
+</div>
+
+<div class="kpiMeta">
+✅ Conseguido: ${val}
+</div>
+
+<div class="kpiState">
+🚦 Estado:
+<span style="
+color:
+${fill};
+font-weight:900;
+">
+${state}
+</span>
+</div>
 </div>
 `;
 
