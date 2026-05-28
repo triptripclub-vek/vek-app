@@ -879,6 +879,20 @@ left:0;
 display:block;}
 }
 
+.sponsoredProfileGrid{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(250px,1fr));
+gap:14px;
+}
+
+.sponsoredProfileGrid div{
+background:#f8fafc;
+padding:12px;
+border-radius:12px;
+font-size:14px;
+}
+
 .progressWrap{
 margin-top:12px;
 }
@@ -5431,6 +5445,22 @@ const username = this.value;
 if(!username) return;
 
 /* =========================
+PERFIL PATROCINADO
+========================= */
+
+const { data:userProfile } = await sb
+.from("user_profiles")
+.select("*")
+.eq("username", username)
+.maybeSingle();
+
+const { data:userBasic } = await sb
+.from("users")
+.select("*")
+.eq("username", username)
+.maybeSingle();
+
+/* =========================
 KPIs RED ATOMY
 ========================= */
 
@@ -5519,6 +5549,92 @@ RENDER
 document.getElementById(
 "tracked_user_kpis"
 ).innerHTML = `
+
+<div class="card" style="
+margin-bottom:30px;
+padding:25px;
+border-radius:20px;
+background:white;
+">
+
+<h2 style="
+margin-bottom:20px;
+font-size:32px;
+">
+👥 ${userProfile?.full_name || username}
+</h2>
+
+<div class="sponsoredProfileGrid">
+
+
+<div>
+<b>Usuario:</b>
+${username}
+</div>
+
+<div>
+<b>Email:</b>
+${userBasic?.email || "-"}
+</div>
+
+<div>
+<b>Teléfono:</b>
+${userProfile?.phone || "-"}
+</div>
+
+<div>
+<b>País:</b>
+${userProfile?.country || "-"}
+</div>
+
+<div>
+<b>Fecha nacimiento:</b>
+${userProfile?.birth_date || "-"}
+</div>
+
+<div>
+<b>CURP:</b>
+${userProfile?.curp || "-"}
+</div>
+
+<div>
+<b>Calle:</b>
+${userProfile?.street || "-"}
+</div>
+
+<div>
+<b>Número exterior:</b>
+${userProfile?.ext_number || "-"}
+</div>
+
+<div>
+<b>Número interior:</b>
+${userProfile?.int_number || "-"}
+</div>
+
+<div>
+<b>Colonia:</b>
+${userProfile?.colony || "-"}
+</div>
+
+<div>
+<b>Código Postal:</b>
+${userProfile?.postal_code || "-"}
+</div>
+
+<div>
+<b>Ciudad:</b>
+${userProfile?.city || "-"}
+</div>
+
+<div>
+<b>Estado:</b>
+${userProfile?.state || "-"}
+</div>
+
+</div>
+
+</div>
 
 <h3 style="
 margin-bottom:18px;
