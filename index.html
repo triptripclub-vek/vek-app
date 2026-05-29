@@ -475,6 +475,24 @@ transform:scale(1);
 
 }
 
+#dashboardRedAtomyKPIs{
+width:100%;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:18px;
+}
+
+#dashboardRedAtomyKPIs .cardKpi{
+min-width:0;
+width:100%;
+height:260px;
+}
+
+#dashboardRedAtomyKPIs .cardKpi{
+width:100%;
+height:260px;
+}
+
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -762,13 +780,22 @@ margin-bottom:22px;
 
 .cardKpi{
 background:#fff;
-padding:20px 20px 20px 30px;
+padding:20px;
 border-radius:20px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
 transition:.25s;
 position:relative;
 overflow:hidden;
-border:none;
+border:1px solid #eef2f7;
+
+height:260px;
+min-height:260px;
+max-height:260px;
+
+display:flex;
+flex-direction:column;
+
+box-sizing:border-box;
 }
 
 .cardKpi *{
@@ -816,6 +843,7 @@ margin-bottom:10px;
 .num{
 font-size:34px;
 font-weight:900;
+min-height:50px;
 }
 
 .linkCard{
@@ -894,7 +922,7 @@ font-size:14px;
 }
 
 .progressWrap{
-margin-top:12px;
+margin-top:auto;
 }
 
 .progressBar{
@@ -1089,9 +1117,15 @@ font-weight:bold;
 
 <div id="sponsorAlerts"></div>
 
-<div class="grid" id="dashboardCards">
+<div id="dashboardCards">
 
 <div id="academyDashboardKPI"></div>
+
+<!-- KPIs RED ATOMY -->
+<div id="dashboardRedAtomyKPIs"></div>
+
+<!-- KPI GAUGES -->
+<div id="dashboardMarketingKPIs"></div>
 
 </div>
 
@@ -2164,6 +2198,10 @@ location.origin +
 }
 
 loadKpisMonth();
+
+loadDashboardRedAtomyKPIs();
+
+loadDashboardMarketingKPIs();
 
 loadRealRegistrations();
 
@@ -3492,6 +3530,337 @@ ${state}
 `;
 
 }
+
+/* =========================================
+DASHBOARD RED ATOMY KPIS
+========================================= */
+
+async function loadDashboardRedAtomyKPIs(){
+
+const container =
+document.getElementById(
+"dashboardRedAtomyKPIs"
+);
+
+if(!container) return;
+
+container.innerHTML = "";
+
+const user =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+if(!user) return;
+
+/* METRICAS */
+
+const { data:metrics } = await sb
+.from("atomy_user_metrics")
+.select("*")
+.eq("user_id", user)
+.maybeSingle();
+
+const pvp =
+Number(metrics?.pvp || 0);
+
+const pvi =
+Number(metrics?.pvi || 0);
+
+const pvd =
+Number(metrics?.pvd || 0);
+
+const izq =
+Number(metrics?.activos_izq || 0);
+
+const der =
+Number(metrics?.activos_der || 0);
+
+/* PATROCINADOS */
+
+const { data:sponsored } = await sb
+.from("users")
+.select("username")
+.eq("sponsor", user);
+
+let patrocinados = 0;
+
+if(sponsored){
+patrocinados = sponsored.length;
+}
+
+/* RENDER */
+
+container.style.display = "flex";
+container.style.flexDirection = "column";
+container.style.width = "100%";
+container.style.gap = "18px";
+
+container.innerHTML = `
+
+<div class="cardKpi yellow">
+
+<h4>PVP</h4>
+
+<div class="num">${pvp}</div>
+
+<div class="progressWrap">
+
+<div class="progressBar">
+<div class="progressFill"
+style="
+width:62%;
+background:#f59e0b;
+">
+</div>
+</div>
+
+<div class="kpiMeta">
+🎯 Meta esperada: 5000
+</div>
+
+<div class="kpiMeta">
+✅ Conseguido: ${pvp}
+</div>
+
+<div class="kpiState">
+🚦 Estado: Amarillo
+</div>
+
+</div>
+
+</div>
+
+<div class="cardKpi red">
+
+<h4>PVI</h4>
+
+<div class="num">${pvi}</div>
+
+<div class="progressWrap">
+
+<div class="progressBar">
+<div class="progressFill"
+style="
+width:10%;
+background:#ef4444;
+">
+</div>
+</div>
+
+<div class="kpiMeta">
+🎯 Meta esperada: 10000
+</div>
+
+<div class="kpiMeta">
+✅ Conseguido: ${pvi}
+</div>
+
+<div class="kpiState">
+🚦 Estado: Rojo
+</div>
+
+</div>
+
+</div>
+
+
+<div class="cardKpi yellow">
+
+<h4>PVD</h4>
+
+<div class="num">${pvd}</div>
+
+<div class="progressWrap">
+
+<div class="progressBar">
+<div class="progressFill"
+style="
+width:62%;
+background:#f59e0b;
+">
+</div>
+</div>
+
+<div class="kpiMeta">
+🎯 Meta esperada: 5000
+</div>
+
+<div class="kpiMeta">
+✅ Conseguido: ${pvd}
+</div>
+
+<div class="kpiState">
+🚦 Estado: Amarillo
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+
+/* =========================================
+DASHBOARD MARKETING KPIS
+========================================= */
+
+async function loadDashboardMarketingKPIs(){
+
+const container =
+document.getElementById(
+"dashboardMarketingKPIs"
+);
+
+if(!container) return;
+
+container.innerHTML = "";
+
+const user =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+if(!user) return;
+
+/* REGISTROS */
+
+const { data:regs } = await sb
+.from("attributed_registrations")
+.select("*")
+.eq("username_owner", user);
+
+const totalRegs =
+(regs || []).length;
+
+/* CLICKS */
+
+const { data:clicks } = await sb
+.from("social_clicks")
+.select("*")
+.eq("username", user);
+
+const totalClicks =
+(clicks || []).length;
+
+/* CONVERSION */
+
+let conversion = 0;
+
+if(totalClicks > 0){
+
+conversion =
+Math.round(
+(totalRegs / totalClicks) * 100
+);
+
+}
+
+/* RENDER */
+
+container.innerHTML = `
+
+<div class="cardKpi green">
+
+<h4>Registros</h4>
+
+<div id="dash_gauge_reg"></div>
+
+<div class="kpiMeta">
+🎯 Meta esperada: 2
+</div>
+
+<div class="kpiMeta">
+✅ Conseguido: ${totalRegs}
+</div>
+
+<div class="kpiState">
+🚦 Estado
+</div>
+
+</div>
+
+
+<div class="cardKpi yellow">
+
+<h4>Clicks</h4>
+
+<div id="dash_gauge_click"></div>
+
+<div class="kpiMeta">
+🎯 Meta esperada: 10
+</div>
+
+<div class="kpiMeta">
+✅ Conseguido: ${totalClicks}
+</div>
+
+<div class="kpiState">
+🚦 Estado
+</div>
+
+</div>
+
+
+<div class="cardKpi red">
+
+<h4>Conversión</h4>
+
+<div id="dash_gauge_conv"></div>
+
+<div class="kpiMeta">
+🎯 Meta esperada: 100
+</div>
+
+<div class="kpiMeta">
+✅ Conseguido: ${conversion}
+</div>
+
+<div class="kpiState">
+🚦 Estado
+</div>
+
+</div>
+
+`;
+
+renderGauge(
+"dash_gauge_reg",
+totalRegs,
+10,
+{
+rojo:30,
+amarillo:60,
+verde:100
+}
+);
+
+renderGauge(
+"dash_gauge_click",
+totalClicks,
+10,
+{
+rojo:30,
+amarillo:60,
+verde:100
+}
+);
+
+renderGauge(
+"dash_gauge_conv",
+conversion,
+100,
+{
+rojo:30,
+amarillo:60,
+verde:100
+}
+);
+
+}
+
 
 async function paintCard(kpi,val){
 
