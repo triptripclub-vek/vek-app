@@ -2951,19 +2951,53 @@ closeSidebar();
 
 async function loadSemaforoActual(){
 
-const { data } = await sb
+/* MARKETING */
+
+const { data: marketing } = await sb
 .from("atomy_semaforos")
 .select("*")
 .order("updated_at",{ascending:false})
 .limit(1);
 
-if(!data || !data.length) return;
+if(marketing && marketing.length){
 
-const r = data[0];
+const m = marketing[0];
+
+for(let key in m){
+
+const el =
+document.getElementById("sem_" + key);
+
+if(el){
+el.value = m[key] ?? 0;
+}
+
+}
+
+}
+
+/* RED ATOMY */
+
+const { data: red } = await sb
+.from("atomy_red_semaforos")
+.select("*")
+.limit(1);
+
+if(red && red.length){
+
+const r = red[0];
 
 for(let key in r){
-let el = document.getElementById("sem_"+key);
-if(el) el.value = r[key] || 0;
+
+const el =
+document.getElementById("sem_" + key);
+
+if(el){
+el.value = r[key] ?? 0;
+}
+
+}
+
 }
 
 }
