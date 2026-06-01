@@ -3407,9 +3407,22 @@ if(sem && sem.verde != null && sem.amarillo != null){
 
 let deg = Math.min(pct,100)*3.6;
 
+let gaugeBackground;
+
+if(pct === 0){
+
+    gaugeBackground = color;
+
+}else{
+
+    gaugeBackground =
+    `conic-gradient(${color} ${deg}deg,#e5e7eb ${deg}deg)`;
+
+}
+
 document.getElementById(containerId).innerHTML = `
 <div class="gaugeWrap"
-style="background:conic-gradient(${color} ${deg}deg,#e5e7eb ${deg}deg);">
+style="background:${gaugeBackground};">
 <div class="gaugeNum">${pct}%</div>
 </div>
 
@@ -3417,6 +3430,7 @@ style="background:conic-gradient(${color} ${deg}deg,#e5e7eb ${deg}deg);">
 ${value} / ${meta}
 </div>
 `;
+
 }
 
 /* =========================
