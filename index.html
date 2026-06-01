@@ -4290,7 +4290,11 @@ meta > 0
 : 0;
 
 const avance =
-Math.min(avanceReal,100);
+avanceReal === 0
+? 10
+: Math.min(avanceReal,100);
+
+
 let color = "#ef4444";
 let estado = "Rojo";
 
@@ -6141,7 +6145,9 @@ meta > 0
 : 0;
 
 const avance =
-Math.min(avanceReal,100);
+avanceReal === 0
+? 2
+: Math.min(avanceReal,100);
 
 let color = "#ef4444";
 let estado = "Rojo";
@@ -6184,8 +6190,10 @@ margin-bottom:16px;
 
 <div style="
 width:${avance}%;
-height:100%;
+height:18px;
 background:${color};
+display:block;
+min-width:6px;
 ">
 </div>
 
