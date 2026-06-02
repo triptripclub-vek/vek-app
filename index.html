@@ -477,20 +477,29 @@ transform:scale(1);
 
 #dashboardRedAtomyKPIs{
 width:100%;
-display:grid;
-grid-template-columns:repeat(3,1fr);
+display:flex;
+flex-direction:column;
 gap:18px;
 }
 
 #dashboardRedAtomyKPIs .cardKpi{
-min-width:0;
 width:100%;
-height:260px;
+height:auto;
+overflow:visible;
 }
 
 #dashboardRedAtomyKPIs .cardKpi{
 width:100%;
 height:260px;
+}
+
+.kpiBigValue{
+    font-size:30px;
+    font-weight:900;
+    line-height:1;
+    color:#111827;
+    margin-bottom:20px;
+    display:block;
 }
 
 </style>
@@ -3576,6 +3585,65 @@ Number(metrics?.activos_izq || 0);
 const der =
 Number(metrics?.activos_der || 0);
 
+const metaPVP = 5000;
+const metaPVI = 10000;
+const metaPVD = 5000;
+
+const pvpPct = Math.round((pvp/metaPVP)*100);
+const pviPct = Math.round((pvi/metaPVI)*100);
+const pvdPct = Math.round((pvd/metaPVD)*100);
+
+const { data: sem } = await sb
+.from("atomy_red_semaforos")
+.select("*")
+.order("created_at",{ascending:false})
+.limit(1)
+.maybeSingle();
+
+function estado(tipo,pct){
+
+const rojo =
+Number(sem?.[tipo+"_rojo"] || 50);
+
+const amarillo =
+Number(sem?.[tipo+"_amarillo"] || 60);
+
+const verde =
+Number(sem?.[tipo+"_verde"] || 80);
+
+if(pct >= verde){
+
+return {
+card:"green",
+fill:"#22c55e",
+text:"Verde"
+};
+
+}
+
+if(pct >= amarillo){
+
+return {
+card:"yellow",
+fill:"#f59e0b",
+text:"Amarillo"
+};
+
+}
+
+return {
+card:"red",
+fill:"#ef4444",
+text:"Rojo"
+};
+
+}
+
+const pvpState = estado("pvp",pvpPct);
+const pviState = estado("pvi",pviPct);
+const pvdState = estado("pvd",pvdPct);
+
+
 /* PATROCINADOS */
 
 const { data:sponsored } = await sb
@@ -3598,25 +3666,25 @@ container.style.gap = "18px";
 
 container.innerHTML = `
 
-<div class="cardKpi yellow">
+<div class="cardKpi ${pvpState.card}">
 
 <h4>PVP</h4>
 
-<div class="num">${pvp}</div>
+<div class="kpiBigValue">${pvp}</div>
 
 <div class="progressWrap">
 
 <div class="progressBar">
 <div class="progressFill"
 style="
-width:62%;
-background:#f59e0b;
+width:${Math.min(pvpPct,100)}%;
+background:${pvpState.fill};
 ">
 </div>
 </div>
 
 <div class="kpiMeta">
-🎯 Meta esperada: 5000
+🎯 Meta esperada: ${metaPVP}
 </div>
 
 <div class="kpiMeta">
@@ -3624,14 +3692,14 @@ background:#f59e0b;
 </div>
 
 <div class="kpiState">
-🚦 Estado: Amarillo
+🚦 Estado: ${pvpState.text}
 </div>
 
 </div>
 
 </div>
 
-<div class="cardKpi red">
+<div class="cardKpi ${pviState.card}">
 
 <h4>PVI</h4>
 
@@ -3642,14 +3710,14 @@ background:#f59e0b;
 <div class="progressBar">
 <div class="progressFill"
 style="
-width:10%;
-background:#ef4444;
+width:${Math.min(pviPct,100)}%;
+background:${pviState.fill};
 ">
 </div>
 </div>
 
 <div class="kpiMeta">
-🎯 Meta esperada: 10000
+🎯 Meta esperada: ${metaPVI}
 </div>
 
 <div class="kpiMeta">
@@ -3657,7 +3725,7 @@ background:#ef4444;
 </div>
 
 <div class="kpiState">
-🚦 Estado: Rojo
+🚦 Estado: ${pviState.text}
 </div>
 
 </div>
@@ -3665,7 +3733,8 @@ background:#ef4444;
 </div>
 
 
-<div class="cardKpi yellow">
+
+<div class="cardKpi ${pvdState.card}">
 
 <h4>PVD</h4>
 
@@ -3676,14 +3745,14 @@ background:#ef4444;
 <div class="progressBar">
 <div class="progressFill"
 style="
-width:62%;
-background:#f59e0b;
+width:${Math.min(pvdPct,100)}%;
+background:${pvdState.fill};
 ">
 </div>
 </div>
 
 <div class="kpiMeta">
-🎯 Meta esperada: 5000
+🎯 Meta esperada: ${metaPVD}
 </div>
 
 <div class="kpiMeta">
@@ -3691,7 +3760,7 @@ background:#f59e0b;
 </div>
 
 <div class="kpiState">
-🚦 Estado: Amarillo
+🚦 Estado: ${pvdState.text}
 </div>
 
 </div>
