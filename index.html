@@ -3794,6 +3794,68 @@ const user =
 
 if(!user) return;
 
+/* KPI MANAGER */
+
+const { data:kpiData } = await sb
+.from("kpi_manager")
+.select("*")
+.order("updated_at",{ascending:false})
+.limit(1);
+
+const kpi =
+(kpiData && kpiData.length)
+? kpiData[0]
+: {};
+
+const metaRegs =
+Number(kpi.registros || 1);
+
+const metaClicks =
+Number(kpi.clicks || 1);
+
+const metaConversion =
+Number(kpi.conversion || 1);
+
+/* SEMAFOROS */
+
+const { data:semData } = await sb
+.from("atomy_semaforos")
+.select("*")
+.order("updated_at",{ascending:false})
+.limit(1);
+
+const sem =
+(semData && semData.length)
+? semData[0]
+: {};
+
+const regRojo =
+Number(sem.reg_rojo || 30);
+
+const regAmarillo =
+Number(sem.reg_amarillo || 60);
+
+const regVerde =
+Number(sem.reg_verde || 100);
+
+const clickRojo =
+Number(sem.click_rojo || 30);
+
+const clickAmarillo =
+Number(sem.click_amarillo || 60);
+
+const clickVerde =
+Number(sem.click_verde || 100);
+
+const convRojo =
+Number(sem.conv_rojo || 30);
+
+const convAmarillo =
+Number(sem.conv_amarillo || 60);
+
+const convVerde =
+Number(sem.conv_verde || 100);
+
 /* REGISTROS */
 
 const { data:regs } = await sb
@@ -3820,25 +3882,117 @@ let conversion = 0;
 
 if(totalClicks > 0){
 
-conversion =
-Math.round(
+conversion = Math.round(
 (totalRegs / totalClicks) * 100
 );
 
 }
 
+/* PORCENTAJES */
+
+const regPct =
+Math.round(
+(totalRegs / metaRegs) * 100
+);
+
+const clickPct =
+Math.round(
+(totalClicks / metaClicks) * 100
+);
+
+const convPct =
+Math.round(
+(conversion / metaConversion) * 100
+);
+
+/* ESTADOS */
+
+function getState(
+pct,
+rojo,
+amarillo,
+verde
+){
+
+if(pct >= verde){
+
+return {
+card:"green",
+fill:"#22c55e",
+text:"Excelente"
+};
+
+}
+
+if(pct >= amarillo){
+
+return {
+card:"yellow",
+fill:"#f59e0b",
+text:"En progreso"
+};
+
+}
+
+return {
+card:"red",
+fill:"#ef4444",
+text:"Bajo meta"
+};
+
+}
+
+const regState =
+getState(
+regPct,
+regRojo,
+regAmarillo,
+regVerde
+);
+
+const clickState =
+getState(
+clickPct,
+clickRojo,
+clickAmarillo,
+clickVerde
+);
+
+const convState =
+getState(
+convPct,
+convRojo,
+convAmarillo,
+convVerde
+);
+
 /* RENDER */
 
 container.innerHTML = `
 
-<div class="cardKpi green">
+<div class="cardKpi ${regState.card}">
 
 <h4>Registros</h4>
 
-<div id="dash_gauge_reg"></div>
+<div class="num">
+${regPct}%
+</div>
+
+<div class="progressWrap">
+
+<div class="progressBar">
+
+<div class="progressFill"
+style="
+width:${Math.min(regPct,100)}%;
+background:${regState.fill};
+">
+</div>
+
+</div>
 
 <div class="kpiMeta">
-🎯 Meta esperada: 2
+🎯 Meta esperada: ${metaRegs}
 </div>
 
 <div class="kpiMeta">
@@ -3846,20 +4000,37 @@ container.innerHTML = `
 </div>
 
 <div class="kpiState">
-🚦 Estado
+🚦 ${regState.text}
 </div>
 
 </div>
 
+</div>
 
-<div class="cardKpi yellow">
+
+<div class="cardKpi ${clickState.card}">
 
 <h4>Clicks</h4>
 
-<div id="dash_gauge_click"></div>
+<div class="num">
+${clickPct}%
+</div>
+
+<div class="progressWrap">
+
+<div class="progressBar">
+
+<div class="progressFill"
+style="
+width:${Math.min(clickPct,100)}%;
+background:${clickState.fill};
+">
+</div>
+
+</div>
 
 <div class="kpiMeta">
-🎯 Meta esperada: 10
+🎯 Meta esperada: ${metaClicks}
 </div>
 
 <div class="kpiMeta">
@@ -3867,20 +4038,37 @@ container.innerHTML = `
 </div>
 
 <div class="kpiState">
-🚦 Estado
+🚦 ${clickState.text}
 </div>
 
 </div>
 
+</div>
 
-<div class="cardKpi red">
+
+<div class="cardKpi ${convState.card}">
 
 <h4>Conversión</h4>
 
-<div id="dash_gauge_conv"></div>
+<div class="num">
+${convPct}%
+</div>
+
+<div class="progressWrap">
+
+<div class="progressBar">
+
+<div class="progressFill"
+style="
+width:${Math.min(convPct,100)}%;
+background:${convState.fill};
+">
+</div>
+
+</div>
 
 <div class="kpiMeta">
-🎯 Meta esperada: 100
+🎯 Meta esperada: ${metaConversion}
 </div>
 
 <div class="kpiMeta">
@@ -3888,48 +4076,16 @@ container.innerHTML = `
 </div>
 
 <div class="kpiState">
-🚦 Estado
+🚦 ${convState.text}
+</div>
+
 </div>
 
 </div>
 
 `;
 
-renderGauge(
-"dash_gauge_reg",
-totalRegs,
-10,
-{
-rojo:30,
-amarillo:60,
-verde:100
 }
-);
-
-renderGauge(
-"dash_gauge_click",
-totalClicks,
-10,
-{
-rojo:30,
-amarillo:60,
-verde:100
-}
-);
-
-renderGauge(
-"dash_gauge_conv",
-conversion,
-100,
-{
-rojo:30,
-amarillo:60,
-verde:100
-}
-);
-
-}
-
 
 async function paintCard(kpi,val){
 
