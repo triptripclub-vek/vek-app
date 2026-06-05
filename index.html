@@ -2191,6 +2191,8 @@ loadSponsorAlerts();
 
 runAutomaticAlerts();
 
+runAcademyAlerts();
+
 
 
 dashName.innerText = name.toUpperCase();
@@ -4985,6 +4987,182 @@ loadVekAlerts();
 
 console.log(
 "ERROR MOTOR ALERTAS",
+error
+);
+
+}
+
+}
+
+async function runAcademyAlerts(){
+
+try{
+
+const username =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+if(!username) return;
+
+/* CONFIGURACIÓN ACADEMY */
+
+const { data: academySettings } = await sb
+.from("academy_settings")
+.select("*")
+.limit(1);
+
+if(!academySettings || !academySettings.length){
+return;
+}
+
+const classesPerWeek =
+Number(
+academySettings[0].classes_per_week || 1
+);
+
+const greenMin =
+Number(
+academySettings[0].green_min || 80
+);
+
+const yellowMin =
+Number(
+academySettings[0].yellow_min || 60
+);
+
+/* PERFIL */
+
+const { data: profileData } = await sb
+.from("user_profiles")
+.select("*")
+.eq("username", username)
+.limit(1);
+
+let createdDate = new Date();
+
+if(profileData && profileData.length){
+
+createdDate = new Date(
+profileData[0].validated_at ||
+profileData[0].created_at
+);
+
+}
+
+/* SEMANAS ACTIVAS */
+
+const nowDate = new Date();
+
+const diffWeeks =
+Math.floor(
+(nowDate - createdDate)
+/
+(1000 * 60 * 60 * 24 * 7)
+);
+
+const activeWeeks =
+Math.max(1,diffWeeks);
+
+/* META ESPERADA */
+
+const expectedClasses =
+classesPerWeek * activeWeeks;
+
+/* CLASES TERMINADAS */
+
+const { data: completedAcademy } = await sb
+.from("academy_progress")
+.select("*")
+.eq("username", username)
+.eq("completed", true);
+
+const completedClasses =
+completedAcademy
+? completedAcademy.length
+: 0;
+
+/* PORCENTAJE */
+
+let pct =
+Math.round(
+(completedClasses / expectedClasses)
+* 100
+);
+
+if(!isFinite(pct)){
+pct = 0;
+}
+
+/* COLOR */
+
+let semaforoColor = "rojo";
+
+if(pct >= greenMin){
+
+semaforoColor = "verde";
+
+}
+else if(pct >= yellowMin){
+
+semaforoColor = "amarillo";
+
+}
+
+/* REGLAS */
+
+const { data: rules } = await sb
+.from("vek_alert_rules")
+.select("*")
+.eq("module","Academy Network")
+.eq("kpi_name","Academy KPI")
+.eq("semaforo_color", semaforoColor);
+
+if(!rules || !rules.length){
+return;
+}
+
+/* CREAR ALERTAS */
+
+for(const rule of rules){
+
+const { data: existing } = await sb
+.from("vek_alerts")
+.select("*")
+.eq("username", username)
+.eq("title", rule.title)
+.eq("is_read", false);
+
+if(existing && existing.length){
+continue;
+}
+
+await sb
+.from("vek_alerts")
+.insert([{
+
+username: username,
+
+title: rule.title,
+
+message: rule.message,
+
+type: "automatic",
+
+is_read:false,
+
+created_at:new Date().toISOString()
+
+}]);
+
+}
+
+loadVekAlerts();
+
+}catch(error){
+
+console.log(
+"ERROR ACADEMY ALERTS",
 error
 );
 
