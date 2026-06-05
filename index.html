@@ -2190,8 +2190,8 @@ checkRegistrationAlert();
 loadSponsorAlerts();
 
 runAutomaticAlerts();
-
 runAcademyAlerts();
+runRedAtomyAlerts();
 
 
 
@@ -2234,6 +2234,114 @@ document.getElementById("btnSocialManager")
 .classList.add("hidden");
 
 
+
+}
+
+async function runRedAtomyAlerts(){
+
+try{
+
+const username =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+if(!username) return;
+
+/* METRICAS */
+
+const { data: metrics } = await sb
+.from("atomy_user_metrics")
+.select("*")
+.eq("user_id", username)
+.maybeSingle();
+
+if(!metrics) return;
+
+/* SEMAFOROS */
+
+const sem = await getAtomySemaforo();
+
+if(!sem) return;
+
+const kpis = [
+{
+name:"PVP",
+value:Number(metrics.pvp || 0)
+},
+{
+name:"PVI",
+value:Number(metrics.pvi || 0)
+},
+{
+name:"PVD",
+value:Number(metrics.pvd || 0)
+}
+];
+
+for(const kpi of kpis){
+
+let color = "rojo";
+
+if(kpi.value >= Number(sem[kpi.name.toLowerCase()+"_verde"] || 0)){
+color = "verde";
+}
+else if(
+kpi.value >=
+Number(sem[kpi.name.toLowerCase()+"_amarillo"] || 0)
+){
+color = "amarillo";
+}
+
+const { data: rules } = await sb
+.from("vek_alert_rules")
+.select("*")
+.eq("module","Red Atomy")
+.eq("kpi_name",kpi.name)
+.eq("semaforo_color",color);
+
+if(!rules || !rules.length){
+continue;
+}
+
+for(const rule of rules){
+
+const { data: existing } = await sb
+.from("vek_alerts")
+.select("*")
+.eq("username",username)
+.eq("title",rule.title)
+.eq("is_read",false);
+
+if(existing && existing.length){
+continue;
+}
+
+await sb
+.from("vek_alerts")
+.insert([{
+username:username,
+title:rule.title,
+message:rule.message,
+type:"automatic",
+is_read:false,
+created_at:new Date().toISOString()
+}]);
+
+}
+
+}
+
+loadVekAlerts();
+
+}catch(error){
+
+console.log(
+"ERROR RED ATOMY ALERTS",
+error
+);
+
+}
 
 }
 
@@ -4871,6 +4979,7 @@ console.log("SIN METRICAS");
 return;
 
 }
+
 
 /* =========================================
    CALCULAR COLOR CLICKS
