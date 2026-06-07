@@ -6900,7 +6900,10 @@ const { data:profile } = await sb
 
 /* SI NO ESTÁ VALIDADO */
 
-if(!profile || profile.atomy_validated !== true){
+if(
+!profile ||
+profile.registration_completed !== true
+){
 
 affiliateSelect.innerHTML += `
 <option value="${u.username}">
