@@ -1126,6 +1126,8 @@ font-weight:bold;
 
 <div id="sponsorAlerts"></div>
 
+<div id="newAffiliateAlert"></div>
+
 <div id="dashboardCards">
 
 <div id="academyDashboardKPI"></div>
@@ -2188,6 +2190,8 @@ window.currentUser
 checkRegistrationAlert();
 
 loadSponsorAlerts();
+
+loadAffiliateAlerts();
 
 runAutomaticAlerts();
 runAcademyAlerts();
@@ -6189,7 +6193,7 @@ No hay patrocinados pendientes
 </div>
 `;
 
-return;
+
 
 }
 
@@ -7005,6 +7009,24 @@ color:#dc2626;
 ⏳ Pendiente de validación Atomy
 </div>
 
+${userData.affiliate_contacted !== true ? `
+<button
+onclick="markAffiliateContacted('${userData.username}')"
+style="
+background:#22c55e;
+color:white;
+border:none;
+padding:12px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+width:100%;
+margin-top:15px;
+">
+📞 Usuario Contactado
+</button>
+` : ``}
+
 <div style="margin-bottom:8px;">
 <b>Fecha nacimiento:</b>
 ${profileData?.birth_date || ""}
@@ -7113,6 +7135,49 @@ alert("Usuario validado correctamente");
 }
 
 
+async function markAffiliateContacted(username){
+
+const sponsor =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+/* MARCAR CONTACTADO */
+
+const { error } = await sb
+.from("users")
+.update({
+affiliate_contacted:true
+})
+.eq("username",username);
+
+if(error){
+
+alert(error.message);
+return;
+
+}
+
+/* BORRAR ALERTA */
+
+await sb
+.from("vek_alerts")
+.delete()
+.eq("username", sponsor)
+.eq("lead_username", username)
+.eq("type", "pending_registration");
+
+/* RECARGAR */
+
+loadSponsorAlerts();
+loadSponsoredModule();
+
+alert(
+"Alerta eliminada correctamente"
+);
+
+}
+
 async function checkRegistrationAlert(){
 
 const user = window.currentUser;
@@ -7212,6 +7277,98 @@ box-shadow:0 2px 8px rgba(0,0,0,.05);
 
 }
 
+async function loadAffiliateAlerts(){
+
+const sponsor =
+(window.currentUser || "")
+.toLowerCase()
+.trim();
+
+if(!sponsor) return;
+
+const container =
+document.getElementById(
+"newAffiliateAlert"
+);
+
+if(!container) return;
+
+container.innerHTML = "";
+
+const { data: affiliates } = await sb
+.from("users")
+.select("*")
+.eq("sponsor", sponsor)
+.order("created_at",{ascending:false});
+console.log(
+"AFILIADOS:",
+affiliates
+);
+
+if(!affiliates || !affiliates.length){
+return;
+}
+
+for(const affiliate of affiliates){
+
+if(
+affiliate.affiliate_contacted !== true
+)
+
+{
+
+container.innerHTML = `
+
+<div style="
+background:#fef2f2;
+border:2px solid #ef4444;
+padding:20px;
+border-radius:16px;
+margin-bottom:20px;
+">
+
+<h3>
+🚨 Nuevo afiliado registrado
+</h3>
+
+<p>
+Tienes un nuevo afiliado:
+</p>
+
+<b>
+${affiliate.username}
+</b>
+
+<p>
+Contáctalo ahora y ayúdalo
+a completar su registro.
+</p>
+
+<button
+onclick="showPage('sponsoredModule')"
+style="
+background:#ef4444;
+color:white;
+border:none;
+padding:12px 18px;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+">
+Ir a Seguimiento de Afiliados
+</button>
+
+</div>
+
+`;
+
+break;
+
+}
+
+}
+
+}
 
 
 async function restoreSession(){
