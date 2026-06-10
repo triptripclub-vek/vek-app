@@ -1046,6 +1046,18 @@ Mis patrocinados
 
 <button
 class="menuBtn"
+onclick="showSocialBranding()">
+
+<i class="fas fa-id-badge"></i>
+
+<span class="menuText">
+Social Branding
+</span>
+
+</button>
+
+<button
+class="menuBtn"
 onclick="showRegisterModule()">
 
 <i class="fas fa-file-alt"></i>
@@ -1309,6 +1321,68 @@ font-family:Arial;
 <div id="historyModule" class="linkCard hidden" style="margin-bottom:22px;">
 <h3 style="margin-bottom:18px;">📈 Mis últimos registros</h3>
 <div id="historyList">Cargando...</div>
+</div>
+
+
+<!-- =====================================
+SOCIAL BRANDING MODULE
+===================================== -->
+
+<div
+id="socialBrandingModule"
+class="linkCard hidden">
+
+<h2>
+🌐 Social Branding Setup
+</h2>
+
+<div
+style="
+margin-top:20px;
+padding:20px;
+background:#f8fafc;
+border-radius:15px;
+">
+
+<h3>
+FASE 1
+</h3>
+
+<p>
+Construye tu identidad digital profesional
+antes de comenzar la automatización
+de marketing de VEK.
+</p>
+
+<div
+style="
+margin-top:25px;
+display:grid;
+gap:12px;
+">
+
+<button
+class="saveBtn"
+onclick="showAlignmentModule()">
+
+🎯 Módulo 1
+Alineación Estratégica VEK
+
+</button>
+
+<button
+class="saveBtn"
+disabled>
+
+📧 Módulo 2
+Identidad Digital
+
+</button>
+
+</div>
+
+</div>
+
 </div>
 
 <div id="kpiModule" class="linkCard hidden">
@@ -3193,6 +3267,12 @@ if(socialModule){
 socialModule.classList.add("hidden");
 }
 
+if(document.getElementById("socialBrandingModule")){
+document
+.getElementById("socialBrandingModule")
+.classList.add("hidden");
+}
+
 if(landingModule){
 landingModule.classList.add("hidden");
 }
@@ -3245,6 +3325,19 @@ closeSidebar();
 }
 
 }
+
+function showSocialBranding(){
+
+hideAllModules();
+
+document
+.getElementById(
+"socialBrandingModule"
+)
+.classList.remove("hidden");
+
+}
+
 
 async function logoutUser(){
 
