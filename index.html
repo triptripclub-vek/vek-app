@@ -1336,6 +1336,9 @@ class="linkCard hidden">
 🌐 Social Branding Setup
 </h2>
 
+<hr style="margin:20px 0;">
+
+
 <div
 style="
 margin-top:20px;
@@ -1369,6 +1372,39 @@ onclick="showAlignmentModule()">
 Alineación Estratégica VEK
 
 </button>
+
+<div id="alignmentModule" class="hidden">
+
+<h3>
+🎯 Módulo 1
+Alineación Estratégica VEK
+</h3>
+
+<div
+style="
+background:#eee;
+height:15px;
+border-radius:20px;
+margin:20px 0;
+">
+
+<div
+id="alignmentProgress"
+style="
+background:#22c55e;
+width:33%;
+height:15px;
+border-radius:20px;
+">
+</div>
+
+</div>
+
+<div id="alignmentStep1"></div>
+
+</div>
+
+
 
 <button
 class="saveBtn"
@@ -2314,6 +2350,194 @@ document.getElementById("btnSocialManager")
 
 
 }
+
+
+function showAlignmentModule(){
+
+document
+.getElementById("alignmentModule")
+.classList.remove("hidden");
+
+loadAlignmentStep1();
+
+}
+
+
+async function loadAlignmentStep1(){
+
+const container =
+document.getElementById(
+"alignmentStep1"
+);
+
+container.innerHTML = `
+
+<h4>
+Paso 1
+</h4>
+
+<p>
+¿Cuál es tu situación actual?
+</p>
+
+<label>
+<input type="checkbox"
+value="Ya uso productos de uso diario en el hogar">
+Ya uso productos de uso diario en el hogar
+</label>
+
+<br><br>
+
+<label>
+<input type="checkbox"
+value="Estoy dispuesto a cambiar mi marca actual si eso me genera ingresos">
+Estoy dispuesto a cambiar mi marca actual si eso me genera ingresos
+</label>
+
+<br><br>
+
+<label>
+<input type="checkbox"
+value="Quiero generar ingresos extra">
+Quiero generar ingresos extra
+</label>
+
+<br><br>
+
+<label>
+<input type="checkbox"
+value="No tengo ingresos pero quiero generarlos">
+No tengo ingresos pero quiero generarlos
+</label>
+
+<br><br>
+
+<label>
+<input type="checkbox"
+value="Tengo experiencia en emprendimientos digitales">
+Tengo experiencia en emprendimientos digitales
+</label>
+
+<br><br>
+
+<button
+class="saveBtn"
+onclick="saveAlignmentStep1()">
+
+Guardar y Continuar
+
+</button>
+
+`;
+
+}
+
+
+async function saveAlignmentStep1(){
+
+const checks =
+document.querySelectorAll(
+'#alignmentStep1 input[type="checkbox"]:checked'
+);
+
+const values =
+Array.from(checks)
+.map(c=>c.value);
+
+if(values.length===0){
+
+alert(
+"Selecciona al menos una opción"
+);
+
+return;
+
+}
+
+const username =
+window.currentUser;
+
+const { error } =
+await sb
+.from("vek_social_branding")
+.upsert({
+
+username,
+
+current_situation:values,
+
+step1_completed:true
+
+});
+
+if(error){
+
+alert(error.message);
+return;
+
+}
+
+alert(
+"Paso 1 guardado"
+);
+
+loadAlignmentStep2();
+
+}
+
+
+async function loadAlignmentStep2(){
+
+const container =
+document.getElementById(
+"alignmentStep1"
+);
+
+document
+.getElementById(
+"alignmentProgress"
+)
+.style.width="66%";
+
+container.innerHTML=`
+
+<h4>
+Paso 2
+</h4>
+
+<p>
+¿Cuál es tu experiencia en redes sociales?
+</p>
+
+<select
+id="socialExperience"
+style="
+width:100%;
+padding:12px;
+">
+
+<option>Ninguna</option>
+<option>Básica</option>
+<option>Intermedia</option>
+<option>Avanzada</option>
+
+</select>
+
+<br><br>
+
+<button
+class="saveBtn"
+onclick="saveAlignmentStep2()">
+
+Guardar y Continuar
+
+</button>
+
+`;
+
+}
+
+
 
 async function runRedAtomyAlerts(){
 
