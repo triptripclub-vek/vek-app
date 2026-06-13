@@ -2553,12 +2553,10 @@ await sb
 .from("vek_social_branding")
 .upsert({
 
-username: username,
+username:username,
 
 social_experience:
-socialExperience,
-
-step2_completed:true
+socialExperience
 
 });
 
@@ -2569,10 +2567,206 @@ return;
 
 }
 
-alert("Paso 2 guardado");
+loadAlignmentStep3();
 
-// siguiente paso
-// loadAlignmentStep3();
+}
+
+
+async function loadAlignmentStep3(){
+
+document.getElementById(
+"alignmentProgress"
+).style.width="100%";
+
+document.getElementById(
+"alignmentStep1"
+).innerHTML = `
+
+<h4>
+Paso 3
+</h4>
+
+<p>
+¿Cuánto tiempo puedes dedicar por día?
+</p>
+
+<select
+id="availableTime"
+style="
+width:100%;
+padding:12px;
+">
+
+<option>15 minutos</option>
+<option>30 minutos</option>
+<option>1 hora</option>
+<option>2 horas o más</option>
+
+</select>
+
+<br><br>
+
+<button
+class="saveBtn"
+onclick="saveAlignmentStep3()">
+
+Finalizar Módulo 1
+
+</button>
+
+`;
+
+}
+
+
+async function saveAlignmentStep3(){
+
+const availableTime =
+document.getElementById(
+"availableTime"
+).value;
+
+const username =
+window.currentUser;
+
+let nivel="";
+let velocidad="";
+let ruta="";
+let plan="";
+
+if(
+availableTime==="15 minutos"
+){
+
+nivel="Principiante";
+velocidad="Lenta";
+ruta="Ruta Básica";
+plan="15 minutos diarios";
+
+}
+
+if(
+availableTime==="30 minutos"
+){
+
+nivel="Comprometido";
+velocidad="Media";
+ruta="Ruta Estándar";
+plan="30 minutos diarios";
+
+}
+
+if(
+availableTime==="1 hora"
+){
+
+nivel="Constructor";
+velocidad="Rápida";
+ruta="Ruta Acelerada";
+plan="1 hora diaria";
+
+}
+
+if(
+availableTime==="2 horas o más"
+){
+
+nivel="Líder";
+velocidad="Muy rápida";
+ruta="Ruta Intensiva";
+plan="2 horas diarias";
+
+}
+
+const { error } =
+await sb
+.from("vek_social_branding")
+.update({
+
+available_time:
+availableTime,
+
+user_level:
+nivel,
+
+recommended_route:
+ruta,
+
+implementation_speed:
+velocidad,
+
+action_plan:
+plan
+
+})
+.eq(
+"username",
+username
+);
+
+if(error){
+
+alert(error.message);
+return;
+
+}
+
+showAlignmentResults(
+nivel,
+ruta,
+velocidad,
+plan
+);
+
+}
+
+function showAlignmentResults(
+nivel,
+ruta,
+velocidad,
+plan
+){
+
+document.getElementById(
+"alignmentStep1"
+).innerHTML = `
+
+<div
+style="
+background:#ecfdf5;
+padding:20px;
+border-radius:15px;
+">
+
+<h3>
+✅ Módulo 1 Completado
+</h3>
+
+<hr>
+
+<p>
+<b>Nivel:</b>
+${nivel}
+</p>
+
+<p>
+<b>Ruta recomendada:</b>
+${ruta}
+</p>
+
+<p>
+<b>Velocidad:</b>
+${velocidad}
+</p>
+
+<p>
+<b>Plan inicial:</b>
+${plan}
+</p>
+
+</div>
+
+`;
 
 }
 
