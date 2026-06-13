@@ -2538,6 +2538,44 @@ Guardar y Continuar
 }
 
 
+async function saveAlignmentStep2(){
+
+const socialExperience =
+document.getElementById(
+"socialExperience"
+).value;
+
+const username =
+window.currentUser;
+
+const { error } =
+await sb
+.from("vek_social_branding")
+.upsert({
+
+username: username,
+
+social_experience:
+socialExperience,
+
+step2_completed:true
+
+});
+
+if(error){
+
+alert(error.message);
+return;
+
+}
+
+alert("Paso 2 guardado");
+
+// siguiente paso
+// loadAlignmentStep3();
+
+}
+
 
 async function runRedAtomyAlerts(){
 
