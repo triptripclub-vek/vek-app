@@ -1404,16 +1404,26 @@ border-radius:20px;
 
 </div>
 
-
-
 <button
 class="saveBtn"
-disabled>
+onclick="showDigitalIdentityModule()">
 
 📧 Módulo 2
 Identidad Digital
 
 </button>
+
+<div
+id="digitalIdentityModule"
+class="hidden">
+
+</div>
+
+<div
+id="digitalIdentityContent">
+
+</div>
+
 
 </div>
 
@@ -2767,6 +2777,146 @@ ${plan}
 </div>
 
 `;
+
+}
+
+async function showDigitalIdentityModule(){
+
+document
+.getElementById(
+"digitalIdentityModule"
+)
+.classList.toggle(
+"hidden"
+);
+
+renderDigitalIdentity();
+
+}
+
+async function renderDigitalIdentity(){
+
+const div =
+document.getElementById(
+"digitalIdentityContent"
+);
+
+div.innerHTML = `
+<h3>📧 Módulo 2 Identidad Digital</h3>
+
+<div id="digitalProgress"></div>
+
+<div id="digitalSteps"></div>
+`;
+
+loadDigitalStep();
+
+}
+
+function loadDigitalStep(){
+
+document
+.getElementById(
+"digitalSteps"
+)
+.innerHTML = `
+
+<div class="linkCard">
+
+<h3>
+📧 Paso 1
+Crear Gmail Profesional
+</h3>
+
+<p>
+Crea un correo nuevo
+exclusivamente para tu negocio.
+</p>
+
+<ul>
+
+<li>
+Usar nombre real
+</li>
+
+<li>
+Agregar teléfono
+</li>
+
+<li>
+Activar recuperación
+</li>
+
+<li>
+Activar doble autenticación
+</li>
+
+</ul>
+
+<a
+target="_blank"
+href="https://fztcpxdlakbregupsush.supabase.co/storage/v1/object/public/social-content/gmail%20tutorial.mp4">
+
+▶ Ver Tutorial Gmail
+
+</a>
+
+<br><br>
+
+<input
+id="gmailInput"
+placeholder="Correo Gmail">
+
+<button
+onclick="saveGmailStep()">
+
+Guardar
+
+</button>
+
+</div>
+
+`;
+
+}
+
+async function saveGmailStep(){
+
+const gmail =
+document
+.getElementById(
+"gmailInput"
+)
+.value
+.trim();
+
+if(!gmail){
+
+alert(
+"Ingrese un correo"
+);
+
+return;
+}
+
+await sb
+.from(
+"vek_digital_identity"
+)
+upsert([{
+
+username:
+currentUser,
+
+gmail_completed:true,
+
+gmail_email:gmail
+
+}]);
+
+alert(
+"Gmail guardado"
+);
 
 }
 
